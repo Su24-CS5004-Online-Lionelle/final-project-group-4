@@ -16,4 +16,8 @@ public class StockList {
     public List<Stock> toList() {
         return stockList;
     }
+
+    public void addStock(Stock stock) {
+        stockList.add(stock);
+    }
 }
