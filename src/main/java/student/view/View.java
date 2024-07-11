@@ -41,5 +41,12 @@ public class View {
     }
 
     public static void display(List<Stock> records) {
+
+        for (Stock record : records) {
+            System.out.println("code = " + record.getCode());
+            System.out.println("change = " + record.getChange());
+            System.out.println("Dividend = " + record.getDividend());
+            System.out.println("----");
+        }
     }
 }

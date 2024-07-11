@@ -24,7 +24,6 @@ public class Controller {
         parseInput(input);
 
         // init model
-        testPrintAll();
         Model model = new Model();
 
         // data manipulation
@@ -38,18 +37,8 @@ public class Controller {
         } else {
             throw new Exception("Invalid Input");
         }
-
     }
-
-    private void testPrintAll() {
-        System.out.println("query = " + query);
-        System.out.println("orderBy = " + orderBy);
-        System.out.println("order = " + order);
-        System.out.println("stockToAdd = " + stockToAdd);
-        System.out.println("stockToRm = " + stockToRm);
-        System.out.println("----");
-    }
-
+    
     private void parseInput(String input) throws Exception {
         String[] strArray = input.split("\\s+");
 
