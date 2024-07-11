@@ -24,6 +24,7 @@ public class Model {
     }
 
     public void addStock(String stockToAdd) {
+
     }
 
     public void rmStock(String stockToRm) {
