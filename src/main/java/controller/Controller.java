@@ -13,7 +13,7 @@ import java.util.List;
  * backend logic.
  */
 public class Controller {
-    private Model model;
+    private Model model; // Reference to the Model component
 
     /**
      * Constructs a Controller and initializes the Model with the provided API key.
@@ -22,18 +22,18 @@ public class Controller {
      * @param apiKey the API key used to access the AlphaVantage API
      */
     public Controller(String apiKey) {
-        this.model = new Model(apiKey);
+        this.model = new Model(apiKey); // Initializes the Model with the API key
     }
 
     /**
      * Runs the main logic of the controller, including displaying the welcome
-     * message
-     * and prompting the user to enter a stock symbol.
+     * message and prompting the user to enter a stock symbol.
      */
     public void run() {
-        View.welcome();
-        String symbol = View.getInput("Enter stock symbol: ");
-        fetchAndDisplayStockData(symbol);
+        View.welcome(); // Display the welcome message
+        String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol input
+        fetchAndDisplayStockData(symbol); // Fetch and display stock data for the entered symbol
+        askForMoreStocks(); // Prompt user to check more stocks
     }
 
     /**
@@ -42,9 +42,21 @@ public class Controller {
      * @param symbol the stock symbol to fetch data for
      */
     public void fetchAndDisplayStockData(String symbol) {
-        TimeSeriesResponse response = model.fetchStockData(symbol);
-        List<Stock> stocks = Stock.fromTimeSeriesResponse(response, symbol); // Now passing the symbol directly
-        View.display(stocks);
+        TimeSeriesResponse response = model.fetchStockData(symbol); // Fetches stock data from the Model
+        List<Stock> stocks = Stock.fromTimeSeriesResponse(response, symbol); // Converts response to Stock objects
+        View.display(stocks); // Displays the list of Stock objects to the user
+    }
+
+    /**
+     * Prompts the user if they want to check more stocks and handles the response.
+     */
+    private void askForMoreStocks() {
+        if (View.askForMoreStocks()) { // Checks if the user wants to add more stocks
+            String symbol = View.getInput("Enter another stock symbol: "); // Prompt user for another stock symbol
+            fetchAndDisplayStockData(symbol); // Fetch and display data for the new symbol
+        } else {
+            View.goodbye(); // Displays a goodbye message if the user does not want to check more stocks
+        }
     }
 }
 

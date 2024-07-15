@@ -2,11 +2,7 @@ package view;
 
 import java.util.List;
 import java.util.Scanner;
-
 import model.DataMgmt.Stock;
-
-//This was designed by Kangning and is just a demo so we can see the output and test the API. The messages displayed to
-//user, allowable interaction and GUI will be done here by assigned team member.
 
 /**
  * The View class handles the user interface interactions.
@@ -62,6 +58,25 @@ public class View {
     public static String getInput(String prompt) {
         System.out.print(prompt); // Display the prompt message
         return scanner.nextLine(); // Read and return the user's input
+    }
+
+    /**
+     * Prompts the user if they want to add more stocks.
+     *
+     * @return true if the user wants to add more stocks, false otherwise
+     */
+    public static boolean promptAddMoreStocks() {
+        System.out.print("Do you want to add more stocks? (yes/no): ");
+        String input = scanner.nextLine().trim().toLowerCase();
+        return input.equals("yes") || input.equals("y");
+    }
+
+    /**
+     * Displays a farewell message to the user.
+     * Prints "Goodbye! Have a great day." to the standard output.
+     */
+    public static void goodbye() {
+        System.out.println("Goodbye! Have a great day.");
     }
 
     /**
