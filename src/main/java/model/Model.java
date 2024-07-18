@@ -3,22 +3,20 @@ package model;
 import model.DataMgmt.Stock;
 import model.NetUtils.MarketDataAPI;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
+import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * The Model class represents the core data management logic of the application.
- * It interacts with the MarketDataAPI to fetch stock data and provides methods
- * to
- * retrieve and sort stock records.
+ * The Model class represents the core data management logic of the application. It interacts with
+ * the MarketDataAPI to fetch stock data and provides methods to retrieve and sort stock records.
  */
 public class Model {
     private MarketDataAPI marketDataAPI;
 
     /**
-     * Constructs a Model and initializes the MarketDataAPI with the provided API
-     * key.
+     * Constructs a Model and initializes the MarketDataAPI with the provided API key.
      *
      * @param apiKey the API key used to access the AlphaVantage API
      */
@@ -37,20 +35,40 @@ public class Model {
     }
 
     /**
-     * Retrieves and sorts the stock records based on the query symbol, orderBy
-     * field, and order direction.
+     * Fetches the stock data for the given symbol and date from the MarketDataAPI.
      *
-     * @param query   the stock symbol to query
+     * @param symbol the stock symbol to fetch data for
+     * @param date the date to fetch data for in the format "yyyy-MM-dd"
+     * @return the StockUnit containing the stock data for the specified date
+     */
+    public StockUnit fetchStockDataForDate(String symbol, String date) {
+        return marketDataAPI.fetchStockDataForDate(symbol, date);
+    }
+
+    /**
+     * Fetches the stock data for the given symbol for the current date from the MarketDataAPI.
+     *
+     * @param symbol the stock symbol to fetch data for
+     * @return the StockUnit containing the stock data for the current date
+     */
+    public StockUnit fetchStockDataForToday(String symbol) {
+        return marketDataAPI.fetchStockDataForToday(symbol);
+    }
+
+    /**
+     * Retrieves and sorts the stock records based on the query symbol, orderBy field, and order
+     * direction.
+     *
+     * @param query the stock symbol to query
      * @param orderBy the field to sort by (e.g., "price", "volume", "date")
-     * @param order   the order direction ("asc" for ascending, "desc" for
-     *                descending)
+     * @param order the order direction ("asc" for ascending, "desc" for descending)
      * @return a list of Stock objects sorted according to the specified order
      */
     public List<Stock> getRecord(String query, String orderBy, String order) {
         // Fetch the stock data for the given query symbol
         TimeSeriesResponse response = fetchStockData(query);
         // Convert the response to a list of Stock objects
-        List<Stock> stocks = Stock.fromTimeSeriesResponse(response, query);
+        List<Stock> stocks = Stock.fromTimeSeriesResponse(response);
 
         // Add sorting logic based on orderBy and order if needed
         if (orderBy != null && order != null) {
@@ -76,53 +94,20 @@ public class Model {
      */
     private Comparator<Stock> getComparator(String orderBy) {
         switch (orderBy.toLowerCase()) {
-            case "price":
-                return Comparator.comparing(Stock::getPrice); // Compare by price
+            case "open":
+                return Comparator.comparing(Stock::getOpen); // Compare by open price
+            case "high":
+                return Comparator.comparing(Stock::getHigh); // Compare by high price
+            case "low":
+                return Comparator.comparing(Stock::getLow); // Compare by low price
+            case "close":
+                return Comparator.comparing(Stock::getClose); // Compare by close price
             case "volume":
                 return Comparator.comparing(Stock::getVolume); // Compare by volume
             case "date":
                 return Comparator.comparing(Stock::getDate); // Compare by date
             default:
-                return Comparator.comparing(Stock::getSymbol); // Compare by symbol
+                throw new IllegalArgumentException("Invalid orderBy field: " + orderBy);
         }
     }
 }
-
-// public void createStockList(String name) {
-// StockList newList = new StockList(name);
-// stockLists.add(newList);
-// }
-
-// public StockList getStockList(String name) {
-// return stockLists.stream()
-// .filter(list -> list.getName().equalsIgnoreCase(name))
-// .findFirst()
-// .orElse(null);
-// }
-
-// public void addStockToList(String listName, Stock stock) {
-// StockList list = getStockList(listName);
-// if (list != null) {
-// list.addStock(stock);
-// }
-// }
-
-// public void removeStockFromList(String listName, Stock stock) {
-// StockList list = getStockList(listName);
-// if (list != null) {
-// list.removeStock(stock);
-// }
-// }
-
-// public void addStock(String stockToAdd) {
-// // Implementation for adding stock to a persistent store (e.g., database,
-// file,
-// // etc.)
-// System.out.println("Adding stock: " + stockToAdd);
-// }
-
-// public void rmStock(String stockToRm) {
-// // Implementation for removing stock from a persistent store (e.g., database,
-// // file, etc.)
-// System.out.println("Removing stock: " + stockToRm);
-// }
