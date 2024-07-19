@@ -5,6 +5,7 @@ import model.NetUtils.MarketDataAPI;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import java.util.List;
  * the MarketDataAPI to fetch stock data and provides methods to retrieve and sort stock records.
  */
 public class Model {
+
     private MarketDataAPI marketDataAPI;
+    private static Model instance;
 
     /**
      * Constructs a Model and initializes the MarketDataAPI with the provided API key.
@@ -21,8 +24,23 @@ public class Model {
      * @param apiKey the API key used to access the AlphaVantage API
      */
     public Model(String apiKey) {
+
         this.marketDataAPI = new MarketDataAPI(apiKey);
     }
+
+    /**
+     * Returns the singleton instance of the Model class.
+     *
+     * @param apiKey the API key used to initialize the MarketDataAPI
+     * @return the singleton instance of the Model
+     */
+    public static synchronized Model getInstance(String apiKey) {
+        if (instance == null) {
+            instance = new Model(apiKey);
+        }
+        return instance;
+    }
+
 
     /**
      * Fetches the stock data for the given symbol from the MarketDataAPI.

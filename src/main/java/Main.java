@@ -15,7 +15,8 @@ public class Main {
         // API key used to access the AlphaVantage API
         String apiKey = "9WJQJ49V70I2R1VT";
 
-        Controller controller = new Controller(apiKey);
+        Controller controller = Controller.getInstance(apiKey);
         controller.run();
+
     }
 }

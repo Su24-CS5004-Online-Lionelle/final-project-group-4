@@ -1,8 +1,17 @@
 package view;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
+
+import controller.Controller;
 import model.DataMgmt.Stock;
+
+import javax.swing.*;
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -10,12 +19,21 @@ import model.DataMgmt.Stock;
  */
 public class View {
 
+    private class Slot {
+        Stock stock;
+
+        public Slot(Stock stock, Integer loc) {
+            this.stock = stock;
+        }
+    }
+
+    JFrame frame;
+
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
             Help message:
             - Enter a stock symbol to fetch and display its data.
             - You can fetch data for today or for a specific date.
-            - Type 'exit' to quit the application.
             """;
 
     // Static welcome message displayed at the start of the application
@@ -26,8 +44,6 @@ public class View {
             - Enter 'AAPL' to view data for Apple Inc.
             - Enter 'GOOGL' to view data for Alphabet Inc.
             You can fetch data for today or for a specific date.
-
-            Your input:
             """;
 
     // Scanner for reading user input from the console
@@ -111,4 +127,81 @@ public class View {
     public static void displayError(String message) {
         System.err.println("Error: " + message); // Print the error message to standard error
     }
+
+    public View() {
+        this.frame = new JFrame("STOCK QUERY");
+        build(frame);
+    }
+
+    private void build(JFrame frame) {
+        frame.setSize(800, 800);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(null);
+
+        // create JTextField instance
+        JTextField textField = new JTextField();
+        textField.setBounds(50, 50, 200, 30);
+        frame.add(textField);
+
+        // create Submit Button instance
+        JButton submitButton = new JButton("Submit");
+        submitButton.setBounds(270, 50, 80, 30);
+        frame.add(submitButton);
+
+        // create Help Button instance
+        JButton helpButton = new JButton("Help");
+        helpButton.setBounds(370, 50, 80, 30);
+        frame.add(helpButton);
+
+        // create JLabel instance
+        JLabel outputLabel = new JLabel("");
+        outputLabel.setBounds(50, 100, 300, 500);
+        outputLabel.setVerticalAlignment(SwingConstants.TOP);
+        frame.add(outputLabel);
+
+        // set initial welcome text
+        outputLabel.setForeground(Color.BLACK);
+        outputLabel.setText("<html>" + welcomeMessage.replace("\n", "<br>") + "</html>");
+
+        // add submit button's ActionListener
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get content from input field
+                String codeInput = textField.getText();
+
+                refreshBlock(codeInput, outputLabel);
+            }
+        });
+
+        // add help button's ActionListener
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outputLabel.setForeground(Color.BLACK);
+                outputLabel.setText("<html>" + helpMessage.replace("\n", "<br>") + "</html>");
+            }
+        });
+
+        // set JFrame visible
+        frame.setVisible(true);
+    }
+
+    private void refreshBlock(String codeInput, JLabel outputLabel) {
+        Queue<String> stocks = Controller.getInstance().fetchAllStock(codeInput);
+        if (stocks != null) {
+            StringBuilder sb = new StringBuilder();
+            for (String stockStr : stocks) {
+                sb.append(stockStr);
+            }
+
+            outputLabel.setText("<html>" + sb.toString().replace("\n", "<br>") + "</html>");
+        } else {
+            outputLabel.setForeground(Color.RED);
+            outputLabel.setText("CONNECTION FAILED");
+        }
+
+
+    }
+
 }

@@ -7,7 +7,10 @@ import view.View;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * The Controller class handles the interactions between the view and the model. It manages the flow
@@ -15,6 +18,13 @@ import java.util.List;
  */
 public class Controller {
     private Model model; // Reference to the Model component
+    private static Controller instance;
+
+    private Queue<String> stockList;
+
+    public Queue<String> getStockList() {
+        return stockList;
+    }
 
     /**
      * Constructs a Controller and initializes the Model with the provided API key. API key will be
@@ -23,7 +33,22 @@ public class Controller {
      * @param apiKey the API key used to access the AlphaVantage API
      */
     public Controller(String apiKey) {
-        this.model = new Model(apiKey); // Initializes the Model with the API key
+        this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
+        this.stockList = new LinkedList<>();
+    }
+
+    public static synchronized Controller getInstance(String apiKey) {
+        if (instance == null) {
+            instance = new Controller(apiKey);
+        }
+        return instance;
+    }
+
+    public static synchronized Controller getInstance() {
+        if (instance == null) {
+            throw new RuntimeException("Controller is not instantiated");
+        }
+        return instance;
     }
 
     /**
@@ -31,22 +56,24 @@ public class Controller {
      * the user to enter a stock symbol.
      */
     public void run() {
-        View.welcome(); // Display the welcome message
-        String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol
-                                                               // input
-        String dateOption = View
-                .getInput("Do you want to fetch data for today or a specific date? (today/date): ");
+        View view = new View();
 
-        if (dateOption.equalsIgnoreCase("today")) {
-            fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
-        } else {
-            String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a specific
-                                                                      // date
-            fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for the
-                                                           // entered date
-        }
-
-        askForMoreStocks(); // Prompt user to check more stocks
+//        View.welcome(); // Display the welcome message
+//        String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol
+//                                                               // input
+//        String dateOption = View
+//                .getInput("Do you want to fetch data for today or a specific date? (today/date): ");
+//
+//        if (dateOption.equalsIgnoreCase("today")) {
+//            fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
+//        } else {
+//            String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a specific
+//                                                                      // date
+//            fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for the
+//                                                           // entered date
+//        }
+//
+//        askForMoreStocks(); // Prompt user to check more stocks
     }
 
     /**
@@ -106,6 +133,29 @@ public class Controller {
         } else {
             View.goodbye(); // Displays a goodbye message if the user does not want to check more
                             // stocks
+        }
+    }
+
+    public Queue<String> fetchAllStock(String symbol) {
+        StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
+        if (stockUnit != null) {
+            String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
+                    stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
+            addStock(stock.toString());
+        } else {
+            return null;
+        }
+
+        return stockList;
+    }
+
+    private void addStock(String stockStr) {
+        if (this.stockList.size() < 3) {
+            stockList.offer(stockStr);
+        } else {
+            stockList.poll();
+            stockList.offer(stockStr);
         }
     }
 }

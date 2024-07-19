@@ -34,7 +34,7 @@ public class Stock {
 
     private String date;
 
-    private String symbol; // Add the symbol field
+    private static String symbol; // Add the symbol field
 
     /**
      * Constructs a Stock object with the specified open, high, low, close, volume, and date.
@@ -120,12 +120,11 @@ public class Stock {
      * Converts a TimeSeriesResponse from AlphaVantage API to a list of Stock objects.
      *
      * @param response the TimeSeriesResponse from AlphaVantage API
-     * @param symbol the stock symbol
      * @return a list of Stock objects
      */
-    public static List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response, String symbol) {
+    public static List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response) {
         List<Stock> stocks = new ArrayList<>();
-        Map<String, StockUnit> stockData = response.getStockUnits();
+        Map<String, StockUnit> stockData = (Map<String, StockUnit>) response.getStockUnits();
 
         for (Map.Entry<String, StockUnit> entry : stockData.entrySet()) {
             String date = entry.getKey();
@@ -173,8 +172,21 @@ public class Stock {
      */
     @Override
     public String toString() {
-        return "Stock{" + "open=" + open + ", high=" + high + ", low=" + low + ", close=" + close
-                + ", volume=" + volume + ", date='" + date + '\'' + ", symbol='" + symbol + '\''
-                + '}';
+        // 使用 StringBuilder 来构建完整的字符串
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Date: ").append(date).append("\n");
+        sb.append("Symbol: ").append(symbol).append("\n");
+        sb.append("Open: ").append(open).append("\n");
+        sb.append("High: ").append(high).append("\n");
+        sb.append("Low: ").append(low).append("\n");
+        sb.append("Close: ").append(close).append("\n");
+        sb.append("Volume: ").append(volume).append("\n");
+        sb.append("----").append("\n"); // Separator for each stock
+
+        // 将 StringBuilder 转换为 String
+        String result = sb.toString();
+        return result;
     }
+
 }
