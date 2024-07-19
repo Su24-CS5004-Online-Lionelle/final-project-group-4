@@ -13,7 +13,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // API key used to access the AlphaVantage API
-        String apiKey = "9WJQJ49V70I2R1VT";
+        String apiKey = "SZPBC0GPHK788VZT";
 
         Controller controller = Controller.getInstance(apiKey);
         controller.run();
