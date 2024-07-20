@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import controller.Controller;
 import model.DataMgmt.Stock;
+import model.DataMgmt.StockList;
 
 import javax.swing.*;
 
@@ -188,20 +189,8 @@ public class View {
     }
 
     private void refreshBlock(String codeInput, JLabel outputLabel) {
-        Queue<String> stocks = Controller.getInstance().fetchAllStock(codeInput);
-        if (stocks != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String stockStr : stocks) {
-                sb.append(stockStr);
-            }
-
-            outputLabel.setText("<html>" + sb.toString().replace("\n", "<br>") + "</html>");
-        } else {
-            outputLabel.setForeground(Color.RED);
-            outputLabel.setText("CONNECTION FAILED");
-        }
-
-
+        StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
+        outputLabel.setText("<html>" + stocks.toString().replace("\n", "<br>") + "</html>");
     }
 
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import model.DataMgmt.StockList;
 import model.Model;
 import model.DataMgmt.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
@@ -20,11 +21,7 @@ public class Controller {
     private Model model; // Reference to the Model component
     private static Controller instance;
 
-    private Queue<String> stockList;
-
-    public Queue<String> getStockList() {
-        return stockList;
-    }
+    private StockList stockList;
 
     /**
      * Constructs a Controller and initializes the Model with the provided API key. API key will be
@@ -34,7 +31,7 @@ public class Controller {
      */
     public Controller(String apiKey) {
         this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
-        this.stockList = new LinkedList<>();
+        this.stockList = new StockList();
     }
 
     public static synchronized Controller getInstance(String apiKey) {
@@ -136,26 +133,16 @@ public class Controller {
         }
     }
 
-    public Queue<String> fetchAllStock(String symbol) {
+    public StockList fetchAllStock(String symbol) {
         StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
         if (stockUnit != null) {
             String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
                     stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
-            addStock(stock.toString());
-        } else {
-            return null;
+            this.stockList.addStock(stock);
         }
 
         return stockList;
     }
 
-    private void addStock(String stockStr) {
-        if (this.stockList.size() < 3) {
-            stockList.offer(stockStr);
-        } else {
-            stockList.poll();
-            stockList.offer(stockStr);
-        }
-    }
 }

@@ -34,7 +34,7 @@ public class Stock {
 
     private String date;
 
-    private static String symbol; // Add the symbol field
+    private String symbol; // Add the symbol field
 
     /**
      * Constructs a Stock object with the specified open, high, low, close, volume, and date.
@@ -122,7 +122,7 @@ public class Stock {
      * @param response the TimeSeriesResponse from AlphaVantage API
      * @return a list of Stock objects
      */
-    public static List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response) {
+    public List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response) {
         List<Stock> stocks = new ArrayList<>();
         Map<String, StockUnit> stockData = (Map<String, StockUnit>) response.getStockUnits();
 
