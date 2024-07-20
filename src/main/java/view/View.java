@@ -189,8 +189,12 @@ public class View {
     }
 
     private void refreshBlock(String codeInput, JLabel outputLabel) {
-        StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
-        outputLabel.setText("<html>" + stocks.toString().replace("\n", "<br>") + "</html>");
+        try {
+            StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
+            outputLabel.setText("<html>" + stocks.toString().replace("\n", "<br>") + "</html>");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
 }

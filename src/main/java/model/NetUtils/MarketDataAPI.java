@@ -74,7 +74,7 @@ public class MarketDataAPI {
     public StockUnit fetchStockDataForToday(String symbol) {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = today.format(formatter);
+        String formattedDate = "2024-07-19";
 
         return fetchStockDataForDate(symbol, formattedDate);
     }

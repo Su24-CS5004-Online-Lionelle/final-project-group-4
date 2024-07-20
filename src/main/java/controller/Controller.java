@@ -1,11 +1,14 @@
 package controller;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import model.DataMgmt.StockList;
 import model.Model;
 import model.DataMgmt.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 import view.View;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,12 +32,14 @@ public class Controller {
      *
      * @param apiKey the API key used to access the AlphaVantage API
      */
-    public Controller(String apiKey) {
+    public Controller(String apiKey) throws IOException {
         this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
-        this.stockList = new StockList();
+        XmlMapper xmlMapper = new XmlMapper();
+        File database = new File("bin/data.xml");
+        this.stockList = xmlMapper.readValue(database, StockList.class);
     }
 
-    public static synchronized Controller getInstance(String apiKey) {
+    public static synchronized Controller getInstance(String apiKey) throws IOException {
         if (instance == null) {
             instance = new Controller(apiKey);
         }
@@ -133,13 +138,15 @@ public class Controller {
         }
     }
 
-    public StockList fetchAllStock(String symbol) {
-        StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
-        if (stockUnit != null) {
-            String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-                    stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
-            this.stockList.addStock(stock);
+    public StockList fetchAllStock(String symbol) throws IOException {
+        if (stockList.getStockFromSymbol(symbol) == null) {
+            StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
+            if (stockUnit != null) {
+                String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
+                        stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
+                this.stockList.addStock(stock);
+            }
         }
 
         return stockList;

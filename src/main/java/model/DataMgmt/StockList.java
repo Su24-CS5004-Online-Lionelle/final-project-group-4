@@ -1,15 +1,29 @@
 package model.DataMgmt;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@JacksonXmlRootElement(localName = "stockList")
 public class StockList {
 
+    @JacksonXmlElementWrapper(useWrapping = false)
+    @JacksonXmlProperty(localName = "stock")
     private List<Stock> stockList;
 
+    String database = "bin/data.xml";
+
+
+
     public StockList() {
-        this.stockList = new ArrayList<>();
+
     }
 
     public List<Stock> getStockList() {
@@ -20,14 +34,15 @@ public class StockList {
         this.stockList = stockList;
     }
 
-    public void addStock(Stock stock) {
-        for (Stock stock1 : stockList) {
-            if (Objects.equals(stock1.getSymbol(), stock.getSymbol())) {
-                return;
-            }
-        }
-
+    public void addStock(Stock stock) throws IOException {
         this.stockList.add(stock);
+        save();
+    }
+
+    private void save() throws IOException {
+        XmlMapper mapper = new XmlMapper();
+        File dataFile = new File(database);
+        mapper.writeValue(dataFile, this);
     }
 
     @Override
@@ -44,5 +59,14 @@ public class StockList {
         }
 
         return sb.toString();
+    }
+
+    public Stock getStockFromSymbol(String symbol) {
+        for (Stock stock1 : stockList) {
+            if (Objects.equals(stock1.getSymbol(), symbol)) {
+                return stock1;
+            }
+        }
+        return null;
     }
 }

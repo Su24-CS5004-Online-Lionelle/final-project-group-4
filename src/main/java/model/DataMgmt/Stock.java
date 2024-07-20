@@ -2,9 +2,12 @@ package model.DataMgmt;
 
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,25 +18,34 @@ import java.util.Map;
  * methods to convert from AlphaVantage TimeSeriesResponse to a list of Stock objects and to convert
  * Stock objects to JSON format.
  */
+@JacksonXmlRootElement(localName = "stock")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
 
     @JsonProperty("1. open")
+    @JacksonXmlProperty(localName = "open")
     private double open;
 
     @JsonProperty("2. high")
+    @JacksonXmlProperty(localName = "high")
     private double high;
 
     @JsonProperty("3. low")
+    @JacksonXmlProperty(localName = "low")
     private double low;
 
     @JsonProperty("4. close")
+    @JacksonXmlProperty(localName = "close")
     private double close;
 
     @JsonProperty("5. volume")
+    @JacksonXmlProperty(localName = "volume")
     private long volume;
 
+    @JacksonXmlProperty(localName = "date")
     private String date;
 
+    @JacksonXmlProperty(localName = "symbol")
     private String symbol; // Add the symbol field
 
     /**
@@ -56,6 +68,9 @@ public class Stock {
         this.volume = volume;
         this.date = date;
         this.symbol = symbol;
+    }
+
+    public Stock() {
     }
 
     // Getters and setters

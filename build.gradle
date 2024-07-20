@@ -32,6 +32,17 @@ dependencies {
 
     // JUnit Jupiter Engine - Test runtime for JUnit
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    // Jackson Core
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
+    // Jackson Annotations
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.0'
+    // Jackson Databind
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+    // jackson dataformat xml
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.1'
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
+    // jackson dataformat csv
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0'
 }
 
 application {
