@@ -1,11 +1,8 @@
 package view;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
 
 import controller.Controller;
@@ -154,15 +151,14 @@ public class View {
         helpButton.setBounds(370, 50, 80, 30);
         frame.add(helpButton);
 
-        // create JLabel instance
-        JLabel outputLabel = new JLabel("");
-        outputLabel.setBounds(50, 100, 300, 500);
-        outputLabel.setVerticalAlignment(SwingConstants.TOP);
-        frame.add(outputLabel);
+        // create JScrollPane and JTextArea
+        JTextArea textArea = new JTextArea(10, 20);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(50, 100, 400, 400); // 设置 JScrollPane 的位置和大小
+        frame.add(scrollPane); // 将 JScrollPane 添加到 JFrame 的内容面板上
 
         // set initial welcome text
-        outputLabel.setForeground(Color.BLACK);
-        outputLabel.setText("<html>" + welcomeMessage.replace("\n", "<br>") + "</html>");
+        textArea.setText(welcomeMessage);
 
         // add submit button's ActionListener
         submitButton.addActionListener(new ActionListener() {
@@ -171,7 +167,7 @@ public class View {
                 // get content from input field
                 String codeInput = textField.getText();
 
-                refreshBlock(codeInput, outputLabel);
+                refreshBlock(codeInput, textArea);
             }
         });
 
@@ -179,8 +175,7 @@ public class View {
         helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                outputLabel.setForeground(Color.BLACK);
-                outputLabel.setText("<html>" + helpMessage.replace("\n", "<br>") + "</html>");
+                textArea.setText(helpMessage);
             }
         });
 
@@ -188,10 +183,10 @@ public class View {
         frame.setVisible(true);
     }
 
-    private void refreshBlock(String codeInput, JLabel outputLabel) {
+    private void refreshBlock(String codeInput, JTextArea outputLabel) {
         try {
             StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
-            outputLabel.setText("<html>" + stocks.toString().replace("\n", "<br>") + "</html>");
+            outputLabel.setText(stocks.toString());
         } catch (Exception exception) {
             exception.printStackTrace();
         }
