@@ -3,7 +3,7 @@ package controller;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import model.DataMgmt.StockList;
 import model.Model;
-import model.Stock;
+import model.DataMgmt.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 import view.View;
 
@@ -60,22 +60,22 @@ public class Controller {
     public void run() {
         View view = new View();
 
-//        View.welcome(); // Display the welcome message
-//        String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol
-//                                                               // input
-//        String dateOption = View
-//                .getInput("Do you want to fetch data for today or a specific date? (today/date): ");
-//
-//        if (dateOption.equalsIgnoreCase("today")) {
-//            fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
-//        } else {
-//            String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a specific
-//                                                                      // date
-//            fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for the
-//                                                           // entered date
-//        }
-//
-//        askForMoreStocks(); // Prompt user to check more stocks
+        // View.welcome(); // Display the welcome message
+        // String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol
+        // // input
+        // String dateOption = View
+        // .getInput("Do you want to fetch data for today or a specific date? (today/date): ");
+        //
+        // if (dateOption.equalsIgnoreCase("today")) {
+        // fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
+        // } else {
+        // String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a specific
+        // // date
+        // fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for the
+        // // entered date
+        // }
+        //
+        // askForMoreStocks(); // Prompt user to check more stocks
     }
 
     /**
@@ -140,11 +140,13 @@ public class Controller {
 
     public StockList fetchAllStock(String symbol) throws IOException {
         if (stockList.getStockFromSymbol(symbol) == null) {
-            StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
+            StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for
+                                                                        // today
             if (stockUnit != null) {
                 String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-                        stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
+                Stock stock =
+                        new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
+                                stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
                 this.stockList.addStock(stock);
             }
         }
