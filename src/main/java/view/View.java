@@ -2,7 +2,7 @@ package view;
 
 import java.util.List;
 import java.util.Scanner;
-import model.DataMgmt.Stock;
+import model.Stock;
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -111,4 +111,6 @@ public class View {
     public static void displayError(String message) {
         System.err.println("Error: " + message); // Print the error message to standard error
     }
+
+    
 }

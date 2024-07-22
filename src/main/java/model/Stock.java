@@ -1,4 +1,4 @@
-package model.DataMgmt;
+package model;
 
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;

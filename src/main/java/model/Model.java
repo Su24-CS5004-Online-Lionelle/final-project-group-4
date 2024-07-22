@@ -1,6 +1,5 @@
 package model;
 
-import model.DataMgmt.Stock;
 import model.NetUtils.MarketDataAPI;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;

@@ -1,7 +1,7 @@
 package controller;
 
 import model.Model;
-import model.DataMgmt.Stock;
+import model.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 import view.View;
 
