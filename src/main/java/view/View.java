@@ -4,16 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Scanner;
-<<<<<<< HEAD
-import model.Stock;
-=======
-
 import controller.Controller;
 import model.DataMgmt.Stock;
 import model.DataMgmt.StockList;
 
 import javax.swing.*;
->>>>>>> Kangning
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -130,9 +125,6 @@ public class View {
         System.err.println("Error: " + message); // Print the error message to standard error
     }
 
-<<<<<<< HEAD
-    
-=======
     public View() {
         this.frame = new JFrame("STOCK QUERY");
         build(frame);
@@ -198,6 +190,4 @@ public class View {
             exception.printStackTrace();
         }
     }
-
->>>>>>> Kangning
 }
