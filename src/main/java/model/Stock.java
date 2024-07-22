@@ -1,0 +1,180 @@
+package model;
+
+import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
+import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The Stock class represents a stock with its open, high, low, close, volume, and date. It provides
+ * methods to convert from AlphaVantage TimeSeriesResponse to a list of Stock objects and to convert
+ * Stock objects to JSON format.
+ */
+public class Stock {
+
+    @JsonProperty("1. open")
+    private double open;
+
+    @JsonProperty("2. high")
+    private double high;
+
+    @JsonProperty("3. low")
+    private double low;
+
+    @JsonProperty("4. close")
+    private double close;
+
+    @JsonProperty("5. volume")
+    private long volume;
+
+    private String date;
+
+    private String symbol; // Add the symbol field
+
+    /**
+     * Constructs a Stock object with the specified open, high, low, close, volume, and date.
+     *
+     * @param open the stock opening price
+     * @param high the stock highest price
+     * @param low the stock lowest price
+     * @param close the stock closing price
+     * @param volume the stock trading volume
+     * @param date the date of the stock data
+     * @param symbol the stock symbol
+     */
+    public Stock(double open, double high, double low, double close, long volume, String date,
+            String symbol) {
+        this.open = open;
+        this.high = high;
+        this.low = low;
+        this.close = close;
+        this.volume = volume;
+        this.date = date;
+        this.symbol = symbol;
+    }
+
+    // Getters and setters
+
+    public double getOpen() {
+        return open;
+    }
+
+    public void setOpen(double open) {
+        this.open = open;
+    }
+
+    public double getHigh() {
+        return high;
+    }
+
+    public void setHigh(double high) {
+        this.high = high;
+    }
+
+    public double getLow() {
+        return low;
+    }
+
+    public void setLow(double low) {
+        this.low = low;
+    }
+
+    public double getClose() {
+        return close;
+    }
+
+    public void setClose(double close) {
+        this.close = close;
+    }
+
+    public long getVolume() {
+        return volume;
+    }
+
+    public void setVolume(long volume) {
+        this.volume = volume;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    /**
+     * Converts a TimeSeriesResponse from AlphaVantage API to a list of Stock objects.
+     *
+     * @param response the TimeSeriesResponse from AlphaVantage API
+     * @param symbol the stock symbol
+     * @return a list of Stock objects
+     */
+    public static List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response, String symbol) {
+        List<Stock> stocks = new ArrayList<>();
+        Map<String, StockUnit> stockData = response.getStockUnits();
+
+        for (Map.Entry<String, StockUnit> entry : stockData.entrySet()) {
+            String date = entry.getKey();
+            StockUnit unit = entry.getValue();
+            stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
+                    unit.getVolume(), date, symbol));
+        }
+
+        return stocks;
+    }
+
+    /**
+     * Converts a list of Stock objects to JSON format.
+     *
+     * @param stocks the list of Stock objects
+     * @return JSON representation of the stock data
+     */
+    public static String toJson(List<Stock> stocks) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+
+        for (Stock stock : stocks) {
+            ObjectNode stockNode = mapper.createObjectNode();
+            stockNode.put("1. open", stock.getOpen());
+            stockNode.put("2. high", stock.getHigh());
+            stockNode.put("3. low", stock.getLow());
+            stockNode.put("4. close", stock.getClose());
+            stockNode.put("5. volume", stock.getVolume());
+            stockNode.put("symbol", stock.getSymbol());
+            rootNode.set(stock.getDate(), stockNode);
+        }
+
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Returns a string representation of the Stock object.
+     *
+     * @return a string representation of the Stock object
+     */
+    @Override
+    public String toString() {
+        return "Stock{" + "open=" + open + ", high=" + high + ", low=" + low + ", close=" + close
+                + ", volume=" + volume + ", date='" + date + '\'' + ", symbol='" + symbol + '\''
+                + '}';
+    }
+}

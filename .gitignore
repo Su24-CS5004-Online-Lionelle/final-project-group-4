@@ -32,5 +32,4 @@ build
 .vscode
 idea/
 src/.DS_Store
-.gitignore
-final-project-group-4/
+

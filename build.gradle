@@ -5,44 +5,41 @@
  * Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.4.2/samples
  */
 plugins {
-    id "application"
-    id "idea"
+    id 'java'
+    id 'application'
 }
-
-apply plugin : 'java'
 
 repositories {
     mavenCentral()
-}
-
-application {
-    mainClass.set("") /** Update with your main driver app location */
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
+    // Alpha Vantage Java Wrapper - Library to interact with Alpha Vantage API
+    implementation 'com.github.crazzyghost:alphavantage-java:1.7.0'
 
-    // optional, left these in here in case you wanted to use them.
-    implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'com.opencsv:opencsv:5.8'
-    // Jackson Core
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
-    // Jackson Annotations
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.0'
-    // Jackson Databind
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
-    // jackson dataformat xml
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.1'
-    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
-    // jackson dataformat csv
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0'
-    // yahoofinance api
-    implementation 'com.yahoofinance-api:YahooFinanceAPI:3.17.0'
+    // OkHttp - HTTP client for making API requests
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+
+    // Moshi - JSON library for parsing JSON data
+    implementation 'com.squareup.moshi:moshi:1.9.2'
+
+    // Jackson Databind - JSON library for data binding
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+    // JUnit Jupiter API - Testing framework
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+
+    // JUnit Jupiter Engine - Test runtime for JUnit
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+application {
+    // Define the main class for the application
+    mainClass = 'driver.Main'
 }
 
 test {
+    // Use JUnit Platform for running tests
     useJUnitPlatform()
 }
