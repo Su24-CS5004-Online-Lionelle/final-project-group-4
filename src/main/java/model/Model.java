@@ -4,6 +4,7 @@ import model.NetUtils.MarketDataAPI;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import java.util.List;
  * the MarketDataAPI to fetch stock data and provides methods to retrieve and sort stock records.
  */
 public class Model {
+
     private MarketDataAPI marketDataAPI;
+    private static Model instance;
 
     /**
      * Constructs a Model and initializes the MarketDataAPI with the provided API key.
@@ -20,8 +23,23 @@ public class Model {
      * @param apiKey the API key used to access the AlphaVantage API
      */
     public Model(String apiKey) {
+
         this.marketDataAPI = new MarketDataAPI(apiKey);
     }
+
+    /**
+     * Returns the singleton instance of the Model class.
+     *
+     * @param apiKey the API key used to initialize the MarketDataAPI
+     * @return the singleton instance of the Model
+     */
+    public static synchronized Model getInstance(String apiKey) {
+        if (instance == null) {
+            instance = new Model(apiKey);
+        }
+        return instance;
+    }
+
 
     /**
      * Fetches the stock data for the given symbol from the MarketDataAPI.
@@ -63,27 +81,27 @@ public class Model {
      * @param order the order direction ("asc" for ascending, "desc" for descending)
      * @return a list of Stock objects sorted according to the specified order
      */
-    public List<Stock> getRecord(String query, String orderBy, String order) {
-        // Fetch the stock data for the given query symbol
-        TimeSeriesResponse response = fetchStockData(query);
-        // Convert the response to a list of Stock objects
-        List<Stock> stocks = Stock.fromTimeSeriesResponse(response);
-
-        // Add sorting logic based on orderBy and order if needed
-        if (orderBy != null && order != null) {
-            // Get the comparator based on the orderBy field
-            Comparator<Stock> comparator = getComparator(orderBy);
-            // Reverse the comparator if the order is "desc"
-            if ("desc".equalsIgnoreCase(order)) {
-                comparator = comparator.reversed();
-            }
-            // Sort the list of stocks using the comparator
-            stocks.sort(comparator);
-        }
-
-        // Return the sorted list of stocks
-        return stocks;
-    }
+//    public List<Stock> getRecord(String query, String orderBy, String order) {
+//        // Fetch the stock data for the given query symbol
+//        TimeSeriesResponse response = fetchStockData(query);
+//        // Convert the response to a list of Stock objects
+//        List<Stock> stocks = Stock.fromTimeSeriesResponse(response);
+//
+//        // Add sorting logic based on orderBy and order if needed
+//        if (orderBy != null && order != null) {
+//            // Get the comparator based on the orderBy field
+//            Comparator<Stock> comparator = getComparator(orderBy);
+//            // Reverse the comparator if the order is "desc"
+//            if ("desc".equalsIgnoreCase(order)) {
+//                comparator = comparator.reversed();
+//            }
+//            // Sort the list of stocks using the comparator
+//            stocks.sort(comparator);
+//        }
+//
+//        // Return the sorted list of stocks
+//        return stocks;
+//    }
 
     /**
      * Returns a comparator for the specified orderBy field.

@@ -1,8 +1,19 @@
 package view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Scanner;
+<<<<<<< HEAD
 import model.Stock;
+=======
+
+import controller.Controller;
+import model.DataMgmt.Stock;
+import model.DataMgmt.StockList;
+
+import javax.swing.*;
+>>>>>>> Kangning
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -10,12 +21,21 @@ import model.Stock;
  */
 public class View {
 
+    private class Slot {
+        Stock stock;
+
+        public Slot(Stock stock, Integer loc) {
+            this.stock = stock;
+        }
+    }
+
+    JFrame frame;
+
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
             Help message:
             - Enter a stock symbol to fetch and display its data.
             - You can fetch data for today or for a specific date.
-            - Type 'exit' to quit the application.
             """;
 
     // Static welcome message displayed at the start of the application
@@ -26,8 +46,6 @@ public class View {
             - Enter 'AAPL' to view data for Apple Inc.
             - Enter 'GOOGL' to view data for Alphabet Inc.
             You can fetch data for today or for a specific date.
-
-            Your input:
             """;
 
     // Scanner for reading user input from the console
@@ -112,5 +130,74 @@ public class View {
         System.err.println("Error: " + message); // Print the error message to standard error
     }
 
+<<<<<<< HEAD
     
+=======
+    public View() {
+        this.frame = new JFrame("STOCK QUERY");
+        build(frame);
+    }
+
+    private void build(JFrame frame) {
+        frame.setSize(800, 800);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(null);
+
+        // create JTextField instance
+        JTextField textField = new JTextField();
+        textField.setBounds(50, 50, 200, 30);
+        frame.add(textField);
+
+        // create Submit Button instance
+        JButton submitButton = new JButton("Submit");
+        submitButton.setBounds(270, 50, 80, 30);
+        frame.add(submitButton);
+
+        // create Help Button instance
+        JButton helpButton = new JButton("Help");
+        helpButton.setBounds(370, 50, 80, 30);
+        frame.add(helpButton);
+
+        // create JScrollPane and JTextArea
+        JTextArea textArea = new JTextArea(10, 20);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(50, 100, 400, 400); // 设置 JScrollPane 的位置和大小
+        frame.add(scrollPane); // 将 JScrollPane 添加到 JFrame 的内容面板上
+
+        // set initial welcome text
+        textArea.setText(welcomeMessage);
+
+        // add submit button's ActionListener
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // get content from input field
+                String codeInput = textField.getText();
+
+                refreshBlock(codeInput, textArea);
+            }
+        });
+
+        // add help button's ActionListener
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setText(helpMessage);
+            }
+        });
+
+        // set JFrame visible
+        frame.setVisible(true);
+    }
+
+    private void refreshBlock(String codeInput, JTextArea outputLabel) {
+        try {
+            StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
+            outputLabel.setText(stocks.toString());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+>>>>>>> Kangning
 }
