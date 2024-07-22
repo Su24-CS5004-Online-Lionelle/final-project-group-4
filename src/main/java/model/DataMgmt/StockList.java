@@ -1,8 +1,5 @@
 package model.DataMgmt;
 
-<<<<<<< HEAD
-
-=======
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -15,72 +12,70 @@ import java.util.List;
 import java.util.Objects;
 
 @JacksonXmlRootElement(localName = "stockList")
->>>>>>> Kangning
 public class StockList {
-    // SAVE STOCK WHEN CALLED TO XML FILE
-    public void saveStockToXML() {
-        // this is a place holder for the logic and implementation that needs to be done
-        // to allow the user to save the data
-        // for individual stocks and lists of stocks to an XML file. The decision on how
-        // to read, write, save and load
-        // will be done by the team member responsible for data management.
-    }
 
-<<<<<<< HEAD
-    // LOAD STOCK WHEN CALLED FROM XML FILE
-    public void loadStockFromXML() {
-        // this is a place holder for the logic and implementation that needs to be done
-        // to allow the user to save the data
-        // for individual stocks and lists of stocks to an XML file. The decision on how
-        // to read, write, save and load
-        // will be done by the team member responsible for data management.
-    }
-
-    // CREATE LIST FROM YOUR STOCKS
-    public void createList() {
-        // this is a place holder for the logic and implementation that needs to be done
-        // to allow the user to save the data
-        // for individual stocks and lists of stocks to an XML file. The decision on how
-        // to read, write, save and load
-        // will be done by the team member responsible for data management.
-=======
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "stock")
     private List<Stock> stockList;
 
     String database = "bin/data.xml";
 
-
-
+    // Default constructor
     public StockList() {
-
+        this.stockList = new ArrayList<>();
     }
 
+    // Getter for stockList
     public List<Stock> getStockList() {
         return stockList;
     }
 
+    // Setter for stockList
     public void setStockList(List<Stock> stockList) {
         this.stockList = stockList;
     }
 
+    // Method to add a stock to the list and save to XML
     public void addStock(Stock stock) throws IOException {
         this.stockList.add(stock);
         save();
     }
 
+    // Save the stock list to an XML file
     private void save() throws IOException {
         XmlMapper mapper = new XmlMapper();
         File dataFile = new File(database);
         mapper.writeValue(dataFile, this);
     }
 
+    // Load stock list from an XML file
+    public void loadStockFromXML() {
+        XmlMapper mapper = new XmlMapper();
+        File dataFile = new File(database);
+        try {
+            this.stockList = mapper.readValue(dataFile,
+                    mapper.getTypeFactory().constructCollectionType(List.class, Stock.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Get a stock by its symbol
+    public Stock getStockFromSymbol(String symbol) {
+        for (Stock stock : stockList) {
+            if (Objects.equals(stock.getSymbol(), symbol)) {
+                return stock;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         if (stockList.isEmpty()) {
-            return "Thank you for using Alpha Vantage! Our standard API rate limit is 25 requests per day. \n" +
-                    "Please subscribe to any of the premium plans at \n" +
-                    "https://www.alphavantage.co/premium/ to instantly remove all daily rate limits.\n";
+            return "Thank you for using Alpha Vantage! Our standard API rate limit is 25 requests per day. \n"
+                    + "Please subscribe to any of the premium plans at \n"
+                    + "https://www.alphavantage.co/premium/ to instantly remove all daily rate limits.\n";
         }
 
         StringBuilder sb = new StringBuilder();
@@ -89,15 +84,5 @@ public class StockList {
         }
 
         return sb.toString();
-    }
-
-    public Stock getStockFromSymbol(String symbol) {
-        for (Stock stock1 : stockList) {
-            if (Objects.equals(stock1.getSymbol(), symbol)) {
-                return stock1;
-            }
-        }
-        return null;
->>>>>>> Kangning
     }
 }
