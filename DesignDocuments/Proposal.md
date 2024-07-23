@@ -37,11 +37,14 @@ The proposal does not have to be a formal presentation. Though if that helps the
 
 * How do you plan to break up the work?
 
-  * API & Data Fetching / Data Management /      GUI        / Data Filtering
-  *     Jubal   /    Kangning    /   Jiazuo    / Aakash
+* **API & Data Fetching**: Jubal
+* **Data Management**: Kangning
+* **GUI**: Jiazuo, Aakash
+* **Data Filtering**: Aakash
 
-  * Testing       /   Documentation /   UML Diagrams
-    * All members  / All members    / Jubal
+* **Testing**: All members
+* **Documentation**: All members
+* **UML Diagrams**: Jubal
 
 * What is your teams timeline and major check-in points?
 
