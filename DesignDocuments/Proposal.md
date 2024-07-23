@@ -32,15 +32,16 @@ The proposal does not have to be a formal presentation. Though if that helps the
 * Go over your initial design.
 
   * Special emphasis should be placed on how you plan to break it up
+
   * MVC, presenter, file management, different input validation, testing, documentation, etc.
 
 * How do you plan to break up the work?
 
-  * API & Data Fetching / Data Management /   GUI     / Data Filtering
-        Jubal              Kangning         Jiazuo        Aakash
+  * API & Data Fetching / Data Management /      GUI        / Data Filtering
+  *     Jubal   /    Kangning    /   Jiazuo    / Aakash
 
   * Testing       /   Documentation /   UML Diagrams
-     All members    All members      Jubal
+    * All members  / All members    / Jubal
 
 * What is your teams timeline and major check-in points?
 
