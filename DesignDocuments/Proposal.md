@@ -40,7 +40,7 @@ The proposal does not have to be a formal presentation. Though if that helps the
 
 * **Testing**: All members
 * **Documentation**: All members
-* **UML Diagrams**: Jubal
+* **UML Diagrams**: Jubal, Jiazuo
 
 * What is your teams timeline and major check-in points?
 
