@@ -7,6 +7,7 @@ Your internship team having spent time talking about your goals and plans, now i
 The proposal does not have to be a formal presentation. Though if that helps the team keep their thoughts organized, that is fine. Every team member should be present to talk about the proposal. The proposal should include the following:
 
 * What are you building? Stock Application
+
 * What are the initial features for the application?
 
   * GUI that allows user to search for a stock by symbol
@@ -22,9 +23,9 @@ The proposal does not have to be a formal presentation. Though if that helps the
 
 * What are your stretch goals (features beyond the minimum)?
 
-* Adding graphics to the GUI for the stock symbols (company icons etc)
-* Adding a graph of the stock price over time
-* User can see the financials of the stock (stretch goal - this would be a separate API call)
+  * Adding graphics to the GUI for the stock symbols (company icons etc)
+  * Adding a graph of the stock price over time
+  * User can see the financials of the stock (stretch goal - this would be a separate API call)
 
 * Go over your initial design.
 
