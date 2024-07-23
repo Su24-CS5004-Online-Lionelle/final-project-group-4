@@ -155,6 +155,9 @@ direction TB
         +getStockFromSymbol(String symbol) Stock
     }
 
+    class StockFilter{
+    }
+
     Main --> Controller
     Controller --> Model
     Controller --> View
