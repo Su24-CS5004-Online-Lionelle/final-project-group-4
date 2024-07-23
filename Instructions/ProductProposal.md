@@ -6,11 +6,13 @@ Your internship team having spent time talking about your goals and plans, now i
 
 The proposal does not have to be a formal presentation. Though if that helps the team keep their thoughts organized, that is fine. Every team member should be present to talk about the proposal. The proposal should include the following:
 
-* What are you building? Stock Application
+* What are you building?
+
+  * Stock Application
 
 * What are the initial features for the application?
 
-  * GUI that allows user to search for a stock by symbol
+  * GUI
   * User can search for a stock by symbol
   * User can see the current price data and volume of the stock for current day
   * User can add a stock to a list (via xml storage)
@@ -34,7 +36,17 @@ The proposal does not have to be a formal presentation. Though if that helps the
 
 * How do you plan to break up the work?
 
+  * API & Data Fetching / Data Management /   GUI     / Data Filtering
+        Jubal              Kangning         Jiazuo        Aakash
+
+  * Testing       /   Documentation /   UML Diagrams
+     All members    All members      Jubal
+
 * What is your teams timeline and major check-in points?
+
+  * we will meet formally every week
+  * goals to be set by members and communication intra-group as needed for implementation and integration of components
+  * check-in points will be set by the team and will be flexible based on the progress of the project and terminal date for project
 
 ### Deliverables
 
