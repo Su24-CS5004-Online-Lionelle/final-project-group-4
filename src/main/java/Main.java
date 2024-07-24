@@ -17,12 +17,10 @@ public class Main {
         String apiKey = "SZPBC0GPHK788VZT";
 
         try {
-            Controller controller = Controller.getInstance(apiKey);
-            controller.run();
-        } catch (Exception e) {
+            // Initialize the Controller, which also initializes and shows the View
+            Controller.getInstance(apiKey);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
