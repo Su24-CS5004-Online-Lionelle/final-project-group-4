@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 import controller.Controller;
 import model.DataMgmt.Stock;
-import model.DataMgmt.StockList;
 
 import javax.swing.*;
 
@@ -130,6 +129,11 @@ public class View {
         build(frame);
     }
 
+    /**
+     * Builds the GUI frame with text fields, buttons, and text areas.
+     *
+     * @param frame The JFrame to build upon.
+     */
     private void build(JFrame frame) {
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -153,8 +157,8 @@ public class View {
         // create JScrollPane and JTextArea
         JTextArea textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(50, 100, 400, 400); // 设置 JScrollPane 的位置和大小
-        frame.add(scrollPane); // 将 JScrollPane 添加到 JFrame 的内容面板上
+        scrollPane.setBounds(50, 100, 400, 400); // set JScrollPane's position and size
+        frame.add(scrollPane); // add JScrollPane to JFrame's content pane
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
@@ -166,7 +170,7 @@ public class View {
                 // get content from input field
                 String codeInput = textField.getText();
 
-                refreshBlock(codeInput, textArea);
+                refreshBlock(codeInput, textArea); // Refresh the display area with stock data
             }
         });
 
@@ -182,12 +186,34 @@ public class View {
         frame.setVisible(true);
     }
 
+    /**
+     * Refreshes the display area with stock data for the provided stock symbol.
+     *
+     * @param codeInput The stock symbol to fetch data for.
+     * @param outputLabel The JTextArea to display the stock data.
+     */
     private void refreshBlock(String codeInput, JTextArea outputLabel) {
         try {
-            StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
-            outputLabel.setText(stocks.toString());
+            // This is the new method that fetches stock data and updates the JTextArea.
+            List<Stock> stocks = Controller.getInstance().fetchStockData(codeInput);
+            if (stocks.isEmpty()) {
+                outputLabel.setText("No records found.");
+            } else {
+                StringBuilder displayText = new StringBuilder();
+                for (Stock stock : stocks) {
+                    displayText.append("Date: ").append(stock.getDate()).append("\n");
+                    displayText.append("Symbol: ").append(stock.getSymbol()).append("\n");
+                    displayText.append("Open: ").append(stock.getOpen()).append("\n");
+                    displayText.append("High: ").append(stock.getHigh()).append("\n");
+                    displayText.append("Low: ").append(stock.getLow()).append("\n");
+                    displayText.append("Close: ").append(stock.getClose()).append("\n");
+                    displayText.append("Volume: ").append(stock.getVolume()).append("\n");
+                    displayText.append("----\n");
+                }
+                outputLabel.setText(displayText.toString());
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            outputLabel.setText("Error: " + exception.getMessage());
         }
     }
 }

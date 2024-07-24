@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import model.DataMgmt.StockList;
 import model.Model;
 import model.DataMgmt.Stock;
+import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 import view.View;
 
@@ -12,9 +13,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * The Controller class handles the interactions between the view and the model. It manages the flow
@@ -34,21 +33,38 @@ public class Controller {
      */
     public Controller(String apiKey) throws IOException {
         this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
-        XmlMapper xmlMapper = new XmlMapper();
-        File database = new File("bin/data.xml");
-        this.stockList = xmlMapper.readValue(database, StockList.class);
+        XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
+        File database = new File("bin/data.xml"); // File object pointing to the data file
+        this.stockList = xmlMapper.readValue(database, StockList.class); // Reads the StockList from
+                                                                         // the XML file
     }
 
+    /**
+     * Returns the singleton instance of the Controller, initializing it if necessary.
+     *
+     * @param apiKey the API key used to access the AlphaVantage API
+     * @return the singleton instance of the Controller
+     * @throws IOException if there is an error reading the data file
+     */
     public static synchronized Controller getInstance(String apiKey) throws IOException {
         if (instance == null) {
-            instance = new Controller(apiKey);
+            instance = new Controller(apiKey); // Initializes the singleton instance if it does not
+                                               // exist
         }
         return instance;
     }
 
+    /**
+     * Returns the singleton instance of the Controller, throwing an exception if it is not
+     * initialized.
+     *
+     * @return the singleton instance of the Controller
+     */
     public static synchronized Controller getInstance() {
         if (instance == null) {
-            throw new RuntimeException("Controller is not instantiated");
+            throw new RuntimeException("Controller is not instantiated"); // Throws an exception if
+                                                                          // the instance is not
+                                                                          // initialized
         }
         return instance;
     }
@@ -58,100 +74,82 @@ public class Controller {
      * the user to enter a stock symbol.
      */
     public void run() {
-        View view = new View();
+        View view = new View(); // Creates a new View instance
+        view.welcome(); // Displays the welcome message
 
-        // View.welcome(); // Display the welcome message
-        // String symbol = View.getInput("Enter stock symbol: "); // Prompt user for a stock symbol
-        // // input
-        // String dateOption = View
-        // .getInput("Do you want to fetch data for today or a specific date? (today/date): ");
-        //
-        // if (dateOption.equalsIgnoreCase("today")) {
-        // fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
-        // } else {
-        // String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a specific
-        // // date
-        // fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for the
-        // // entered date
-        // }
-        //
-        // askForMoreStocks(); // Prompt user to check more stocks
-    }
+        while (true) {
+            String symbol = view.getInput("Enter stock symbol: "); // Prompts the user to enter a
+                                                                   // stock symbol
+            fetchAndDisplayStockData(symbol); // Fetches and displays the stock data for the entered
+                                              // symbol
 
-    /**
-     * Fetches and displays the stock data for the given stock symbol and date.
-     *
-     * @param symbol the stock symbol to fetch data for
-     * @param date the date to fetch data for
-     */
-    public void fetchAndDisplayStockDataForDate(String symbol, String date) {
-        StockUnit stockUnit = model.fetchStockDataForDate(symbol, date); // Fetches stock data for
-                                                                         // the given date
-        if (stockUnit != null) {
-            Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-                    stockUnit.getClose(), stockUnit.getVolume(), date, symbol);
-            View.display(List.of(stock)); // Displays the stock data for the specified date
-        } else {
-            View.displayError("No data available for the specified date: " + date);
+            if (!view.askForMoreStocks()) { // Checks if the user wants to check more stocks
+                view.goodbye(); // Displays a goodbye message
+                break; // Exits the loop if the user does not want to check more stocks
+            }
         }
     }
 
     /**
-     * Fetches and displays the stock data for the given stock symbol for today.
+     * Fetches and displays the stock data for the given stock symbol.
      *
      * @param symbol the stock symbol to fetch data for
      */
-    public void fetchAndDisplayStockDataForToday(String symbol) {
-        StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for today
-        if (stockUnit != null) {
-            String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-                    stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
-            View.display(List.of(stock)); // Displays the stock data for today
+    public void fetchAndDisplayStockData(String symbol) {
+        List<Stock> stocks = fetchStockData(symbol); // Fetches stock data for the last 100 tradable
+                                                     // days
+        if (!stocks.isEmpty()) {
+            View.display(stocks); // Displays the stock data
         } else {
-            View.displayError("No data available for today.");
+            View.displayError("No data available for the specified symbol: " + symbol); // Displays
+                                                                                        // an error
+                                                                                        // message
+                                                                                        // if no
+                                                                                        // data is
+                                                                                        // available
         }
     }
 
     /**
-     * Prompts the user if they want to check more stocks and handles the response.
+     * Fetches the stock data for the given stock symbol.
+     *
+     * @param symbol the stock symbol to fetch data for
+     * @return the list of Stock objects containing the stock data
      */
-    private void askForMoreStocks() {
-        if (View.askForMoreStocks()) { // Checks if the user wants to check more stocks
-            String symbol = View.getInput("Enter another stock symbol: "); // Prompt user for
-                                                                           // another stock symbol
-            String dateOption = View.getInput(
-                    "Do you want to fetch data for today or a specific date? (today/date): ");
-
-            if (dateOption.equalsIgnoreCase("today")) {
-                fetchAndDisplayStockDataForToday(symbol); // Fetch and display stock data for today
-            } else {
-                String date = View.getInput("Enter date (yyyy-MM-dd): "); // Prompt user for a
-                                                                          // specific date
-                fetchAndDisplayStockDataForDate(symbol, date); // Fetch and display stock data for
-                                                               // the entered date
-            }
-            askForMoreStocks(); // Recursively ask if the user wants to check more stocks
-        } else {
-            View.goodbye(); // Displays a goodbye message if the user does not want to check more
-                            // stocks
-        }
-    }
-
-    public StockList fetchAllStock(String symbol) throws IOException {
-        if (stockList.getStockFromSymbol(symbol) == null) {
-            StockUnit stockUnit = model.fetchStockDataForToday(symbol); // Fetches stock data for
-                                                                        // today
-            if (stockUnit != null) {
-                String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                Stock stock =
-                        new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-                                stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
-                this.stockList.addStock(stock);
+    public List<Stock> fetchStockData(String symbol) {
+        TimeSeriesResponse response = model.fetchStockData(symbol); // Fetches stock data for the
+                                                                    // last 100 tradable days
+        List<Stock> stocks = new ArrayList<>();
+        if (response != null && response.getStockUnits() != null) {
+            for (StockUnit unit : response.getStockUnits()) {
+                stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
+                        unit.getVolume(), unit.getDate(), symbol));
             }
         }
-
-        return stockList;
+        return stocks;
     }
 
+    // /**
+    // * Fetches and returns all stock data for the given symbol.
+    // *
+    // * @param symbol the stock symbol to fetch data for
+    // * @return the StockList containing all fetched stock data
+    // * @throws IOException if there is an error reading the data file
+    // */
+    // public StockList fetchAllStock(String symbol) throws IOException {
+    // if (stockList.getStockFromSymbol(symbol) == null) {
+    // StockUnit stockUnit = model.fetchStockData(symbol); // Fetches stock data for the last 100
+    // tradable days
+    // if (stockUnit != null) {
+    // // Creates a Stock object from the fetched data and adds it to the StockList
+    // String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    // Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
+    // stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
+    // this.stockList.addStock(stock); // Adds the stock to the StockList
+    // }
+    // }
+
+    // return stockList; // Returns the updated StockList
+    // }
+    // Note: fetchAllStock method is not currently implemented in this prototype.
 }
