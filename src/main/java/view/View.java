@@ -4,9 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Scanner;
-import controller.Controller;
+
 import model.DataMgmt.Stock;
-import model.DataMgmt.StockList;
+import controller.Controller;
 
 import javax.swing.*;
 
@@ -15,6 +15,8 @@ import javax.swing.*;
  * get user input, and show stock data.
  */
 public class View {
+
+    private Controller controller; // Reference to the Controller
 
     private class Slot {
         Stock stock;
@@ -25,12 +27,12 @@ public class View {
     }
 
     JFrame frame;
+    JTextArea textArea;
 
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
             Help message:
             - Enter a stock symbol to fetch and display its data.
-            - You can fetch data for today or for a specific date.
             """;
 
     // Static welcome message displayed at the start of the application
@@ -40,7 +42,7 @@ public class View {
             Example input:
             - Enter 'AAPL' to view data for Apple Inc.
             - Enter 'GOOGL' to view data for Alphabet Inc.
-            You can fetch data for today or for a specific date.
+            You stock data will be returned based on the last 100 traded days.
             """;
 
     // Scanner for reading user input from the console
@@ -98,20 +100,20 @@ public class View {
      *
      * @param records the list of Stock objects to display
      */
-    public static void display(List<Stock> records) {
+    public void display(List<Stock> records) {
         if (records.isEmpty()) {
-            System.out.println("No records found."); // Inform the user if no records are found
+            textArea.append("No records found.\n"); // Inform the user if no records are found
         } else {
             for (Stock stock : records) {
-                // Print details of each stock
-                System.out.println("Date: " + stock.getDate());
-                System.out.println("Symbol: " + stock.getSymbol());
-                System.out.println("Open: " + stock.getOpen());
-                System.out.println("High: " + stock.getHigh());
-                System.out.println("Low: " + stock.getLow());
-                System.out.println("Close: " + stock.getClose());
-                System.out.println("Volume: " + stock.getVolume());
-                System.out.println("----"); // Separator for each stock
+                // Append details of each stock to the JTextArea
+                textArea.append("Date: " + stock.getDate() + "\n");
+                textArea.append("Symbol: " + stock.getSymbol() + "\n");
+                textArea.append("Open: " + stock.getOpen() + "\n");
+                textArea.append("High: " + stock.getHigh() + "\n");
+                textArea.append("Low: " + stock.getLow() + "\n");
+                textArea.append("Close: " + stock.getClose() + "\n");
+                textArea.append("Volume: " + stock.getVolume() + "\n");
+                textArea.append("----\n"); // Separator for each stock
             }
         }
     }
@@ -121,15 +123,26 @@ public class View {
      *
      * @param message the error message to display
      */
-    public static void displayError(String message) {
-        System.err.println("Error: " + message); // Print the error message to standard error
+    public void displayError(String message) {
+        textArea.append("Error: " + message + "\n"); // Append the error message to the JTextArea
     }
 
-    public View() {
+    /**
+     * Constructor for the View class. It initializes the JFrame and its components.
+     *
+     * @param controller the Controller instance to interact with
+     */
+    public View(Controller controller) {
+        this.controller = controller; // Initialize the controller reference
         this.frame = new JFrame("STOCK QUERY");
         build(frame);
     }
 
+    /**
+     * Builds the JFrame with its components including text fields, buttons, and text areas.
+     *
+     * @param frame the JFrame to be built
+     */
     private void build(JFrame frame) {
         frame.setSize(800, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -151,10 +164,10 @@ public class View {
         frame.add(helpButton);
 
         // create JScrollPane and JTextArea
-        JTextArea textArea = new JTextArea(10, 20);
+        textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(50, 100, 400, 400); // 设置 JScrollPane 的位置和大小
-        frame.add(scrollPane); // 将 JScrollPane 添加到 JFrame 的内容面板上
+        scrollPane.setBounds(50, 100, 400, 400); // Set the position and size of JScrollPane
+        frame.add(scrollPane); // Add JScrollPane to the JFrame's content pane
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
@@ -166,7 +179,8 @@ public class View {
                 // get content from input field
                 String codeInput = textField.getText();
 
-                refreshBlock(codeInput, textArea);
+                // Fetch and display stock data using the Controller
+                controller.fetchAndDisplayStockData(codeInput);
             }
         });
 
@@ -182,12 +196,10 @@ public class View {
         frame.setVisible(true);
     }
 
-    private void refreshBlock(String codeInput, JTextArea outputLabel) {
-        try {
-            StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
-            outputLabel.setText(stocks.toString());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    /**
+     * Makes the JFrame visible.
+     */
+    public void show() {
+        frame.setVisible(true);
     }
 }
