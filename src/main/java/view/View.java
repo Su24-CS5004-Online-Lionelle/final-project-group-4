@@ -131,7 +131,7 @@ public class View {
     }
 
     private void build(JFrame frame) {
-        frame.setSize(800, 800);
+        frame.setSize(500, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
@@ -140,10 +140,10 @@ public class View {
         textField.setBounds(50, 50, 200, 30);
         frame.add(textField);
 
-        // create Submit Button instance
-        JButton submitButton = new JButton("Submit");
-        submitButton.setBounds(270, 50, 80, 30);
-        frame.add(submitButton);
+        // create search Button instance
+        JButton searchButton = new JButton("Search");
+        searchButton.setBounds(270, 50, 80, 30);
+        frame.add(searchButton);
 
         // create Help Button instance
         JButton helpButton = new JButton("Help");
@@ -153,14 +153,14 @@ public class View {
         // create JScrollPane and JTextArea
         JTextArea textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(50, 100, 400, 400); // 设置 JScrollPane 的位置和大小
-        frame.add(scrollPane); // 将 JScrollPane 添加到 JFrame 的内容面板上
+        scrollPane.setBounds(50, 100, 400, 400); // set position and size of JScrollPane
+        frame.add(scrollPane); // put JScrollPane to JFrame
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
 
-        // add submit button's ActionListener
-        submitButton.addActionListener(new ActionListener() {
+        // add search button's ActionListener
+        searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // get content from input field
@@ -178,6 +178,8 @@ public class View {
             }
         });
 
+        // center the frame on screen
+        frame.setLocationRelativeTo(null);
         // set JFrame visible
         frame.setVisible(true);
     }
