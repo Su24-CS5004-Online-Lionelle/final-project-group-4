@@ -41,6 +41,9 @@ dependencies {
 
     // JUnit Jupiter Engine - Test runtime for JUnit
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // XChart - Library for creating charts
+    implementation 'org.knowm.xchart:xchart:3.8.0'
 }
 
 application {
