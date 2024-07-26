@@ -28,8 +28,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
  */
 public class View {
 
-    private JFrame frame;
-    private JPanel chartPanel;
+    private Controller controller; // Reference to the Controller
 
     private class Slot {
         Stock stock;
@@ -39,11 +38,14 @@ public class View {
         }
     }
 
+    JFrame frame;
+    JTextArea textArea;
+    JPanel chartPanel;
+
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
             Help message:
             - Enter a stock symbol to fetch and display its data.
-            - You can fetch data for today or for a specific date.
             """;
 
     // Static welcome message displayed at the start of the application
@@ -53,7 +55,7 @@ public class View {
             Example input:
             - Enter 'AAPL' to view data for Apple Inc.
             - Enter 'GOOGL' to view data for Alphabet Inc.
-            You can fetch data for today or for a specific date.
+            You stock data will be returned based on the last 100 traded days.
             """;
 
     // Scanner for reading user input from the console
@@ -111,20 +113,20 @@ public class View {
      *
      * @param records the list of Stock objects to display
      */
-    public static void display(List<Stock> records) {
+    public void display(List<Stock> records) {
         if (records.isEmpty()) {
-            System.out.println("No records found."); // Inform the user if no records are found
+            textArea.append("No records found.\n"); // Inform the user if no records are found
         } else {
             for (Stock stock : records) {
-                // Print details of each stock
-                System.out.println("Date: " + stock.getDate());
-                System.out.println("Symbol: " + stock.getSymbol());
-                System.out.println("Open: " + stock.getOpen());
-                System.out.println("High: " + stock.getHigh());
-                System.out.println("Low: " + stock.getLow());
-                System.out.println("Close: " + stock.getClose());
-                System.out.println("Volume: " + stock.getVolume());
-                System.out.println("----"); // Separator for each stock
+                // Append details of each stock to the JTextArea
+                textArea.append("Date: " + stock.getDate() + "\n");
+                textArea.append("Symbol: " + stock.getSymbol() + "\n");
+                textArea.append("Open: " + stock.getOpen() + "\n");
+                textArea.append("High: " + stock.getHigh() + "\n");
+                textArea.append("Low: " + stock.getLow() + "\n");
+                textArea.append("Close: " + stock.getClose() + "\n");
+                textArea.append("Volume: " + stock.getVolume() + "\n");
+                textArea.append("----\n"); // Separator for each stock
             }
         }
     }
@@ -134,22 +136,33 @@ public class View {
      *
      * @param message the error message to display
      */
-    public static void displayError(String message) {
-        System.err.println("Error: " + message); // Print the error message to standard error
+    public void displayError(String message) {
+        textArea.append("Error: " + message + "\n"); // Append the error message to the JTextArea
     }
 
-    public View() {
+    /**
+     * Constructor for the View class. It initializes the JFrame and its components.
+     *
+     * @param controller the Controller instance to interact with
+     */
+    public View(Controller controller) {
+        this.controller = controller; // Initialize the controller reference
         this.frame = new JFrame("STOCK QUERY");
         build(frame);
     }
 
+    /**
+     * Builds the JFrame with its components including text fields, buttons, and text areas.
+     *
+     * @param frame the JFrame to be built
+     */
     private void build(JFrame frame) {
-        frame.setSize(800, 600);
+        frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
         // create HintTextField instance with a hint
-        HintTextField textField = new HintTextField("Enter a stock symbol");
+        View.HintTextField textField = new View.HintTextField("Enter a stock symbol");
         textField.setBounds(50, 50, 300, 30);
         frame.add(textField);
 
@@ -160,22 +173,27 @@ public class View {
 
         // create add Button instance
         JButton addButton = new JButton("Add");
-        addButton.setBounds(280, 170, 80, 30);
+        addButton.setBounds(190, 170, 80, 30);
         frame.add(addButton);
 
         // create remove Button instance
         JButton removeButton = new JButton("Remove");
-        removeButton.setBounds(370, 170, 80, 30);
+        removeButton.setBounds(280, 170, 80, 30);
         frame.add(removeButton);
+
+        // create import Button instance
+        JButton importButton = new JButton("Import");
+        importButton.setBounds(370, 170, 80, 30);
+        frame.add(importButton);
 
         // create export Button instance
         JButton exportButton = new JButton("Export");
-        exportButton.setBounds(680, 520, 80, 30);
+        exportButton.setBounds(780, 520, 80, 30);
         frame.add(exportButton);
 
         // create help Button instance
         JButton helpButton = new JButton("Help");
-        helpButton.setBounds(600, 520, 80, 30);
+        helpButton.setBounds(700, 520, 80, 30);
         frame.add(helpButton);
 
         // create JComboBox for sort options
@@ -185,9 +203,9 @@ public class View {
         frame.add(sortByComboBox);
 
         // create JScrollPane and JTextArea
-        JTextArea textArea = new JTextArea(10, 20);
+        textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(470, 270, 280, 230); // set position and size of JScrollPane
+        scrollPane.setBounds(470, 270, 380, 230); // set position and size of JScrollPane
         frame.add(scrollPane); // put JScrollPane to JFrame
 
         // create JTable and JScrollPane for all records
@@ -206,8 +224,8 @@ public class View {
         frame.add(tableScrollPaneSingle);
 
         // create JPanel for chart
-        chartPanel = new JPanel();
-        chartPanel.setBounds(470, 50, 280, 200);
+        chartPanel = new JPanel(new BorderLayout());
+        chartPanel.setBounds(470, 50, 380, 200);
         frame.add(chartPanel);
         // Generate and display the chart
         showChart();
@@ -221,7 +239,9 @@ public class View {
             public void actionPerformed(ActionEvent e) {
                 // get content from input field
                 String codeInput = textField.getText();
-                refreshBlock(codeInput, textArea);
+
+                // Fetch and display stock data using the Controller
+                controller.fetchAndDisplayStockData(codeInput);
             }
         });
 
@@ -239,15 +259,6 @@ public class View {
         frame.setVisible(true);
         // set initial focus on searchButton to avoid focusing on textField
         searchButton.requestFocus();
-    }
-
-    private void refreshBlock(String codeInput, JTextArea outputLabel) {
-        try {
-            StockList stocks = Controller.getInstance().fetchAllStock(codeInput);
-            outputLabel.setText(stocks.toString());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
     }
 
     // custom HintTextField class
@@ -289,7 +300,7 @@ public class View {
 
     private void showChart() {
         // Example data
-        List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+        java.util.List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
         List<Double> yData = Arrays.asList(1.0, 2.4, 3.3, 4.5, 5.0, 3.5, 7.0, 6.2, 8.0, 9.0);
 
         // Create a chart
@@ -308,8 +319,8 @@ public class View {
         styler.setPlotBorderVisible(false); // Hide plot border
         styler.setChartTitleVisible(false); // Hide the title
         // Set empty axis titles
-        chart.setXAxisTitle(""); // Remove X axis title
-        chart.setYAxisTitle(""); // Remove Y axis title
+        chart.setXAxisTitle("date"); // Remove X axis title
+        chart.setYAxisTitle("price"); // Remove Y axis title
 
         // Add series to the chart
         XYSeries series = chart.addSeries("Series1", xData, yData);
@@ -330,6 +341,10 @@ public class View {
         chartPanel.repaint();
     }
 
-
-
+    /**
+     * Makes the JFrame visible.
+     */
+    public void show() {
+        frame.setVisible(true);
+    }
 }

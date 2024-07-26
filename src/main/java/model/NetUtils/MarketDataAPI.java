@@ -43,39 +43,40 @@ public class MarketDataAPI {
                 .outputSize(OutputSize.COMPACT).fetchSync();
     }
 
-    /**
-     * Fetches the stock data for a specific day.
-     *
-     * @param symbol The stock symbol to pull data for
-     * @param date The date to pull the data for in the format "yyyy-MM-dd"
-     * @return StockUnit The stock data for the specified date or null if no data is available for
-     *         that date
-     */
-    public StockUnit fetchStockDataForDate(String symbol, String date) {
-        TimeSeriesResponse response = fetchStockData(symbol);
-        List<StockUnit> stockUnits = response.getStockUnits();
+    // /**
+    // * Fetches the stock data for a specific day.
+    // *
+    // * @param symbol The stock symbol to pull data for
+    // * @param date The date to pull the data for in the format "yyyy-MM-dd"
+    // * @return StockUnit The stock data for the specified date or null if no data is available for
+    // * that date
+    // */
+    // public StockUnit fetchStockDataForDate(String symbol, String date) {
+    // TimeSeriesResponse response = fetchStockData(symbol);
+    // List<StockUnit> stockUnits = response.getStockUnits();
 
-        for (StockUnit unit : stockUnits) {
-            if (unit.getDate().equals(date)) {
-                return unit;
-            }
-        }
+    // for (StockUnit unit : stockUnits) {
+    // if (unit.getDate().equals(date)) {
+    // return unit;
+    // }
+    // }
 
-        return null;
-    }
+    // return null;
+    // }
 
-    /**
-     * Fetches the stock data for the current day.
-     *
-     * @param symbol The stock symbol to pull data for
-     * @return StockUnit The stock data for the current date or null if no data is available for the
-     *         current date
-     */
-    public StockUnit fetchStockDataForToday(String symbol) {
-        LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = "2024-07-19";
+    // /**
+    // * Fetches the stock data for the current day.
+    // *
+    // * @param symbol The stock symbol to pull data for
+    // * @return StockUnit The stock data for the current date or null if no data is available for
+    // the
+    // * current date
+    // */
+    // public StockUnit fetchStockDataForToday(String symbol) {
+    // LocalDate today = LocalDate.now();
+    // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    // String formattedDate = "2024-07-19";
 
-        return fetchStockDataForDate(symbol, formattedDate);
-    }
+    // return fetchStockDataForDate(symbol, formattedDate);
+    // }
 }

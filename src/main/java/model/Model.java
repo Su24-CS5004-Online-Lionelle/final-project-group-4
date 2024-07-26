@@ -51,26 +51,26 @@ public class Model {
         return marketDataAPI.fetchStockData(symbol);
     }
 
-    /**
-     * Fetches the stock data for the given symbol and date from the MarketDataAPI.
-     *
-     * @param symbol the stock symbol to fetch data for
-     * @param date the date to fetch data for in the format "yyyy-MM-dd"
-     * @return the StockUnit containing the stock data for the specified date
-     */
-    public StockUnit fetchStockDataForDate(String symbol, String date) {
-        return marketDataAPI.fetchStockDataForDate(symbol, date);
-    }
+    // /**
+    // * Fetches the stock data for the given symbol and date from the MarketDataAPI.
+    // *
+    // * @param symbol the stock symbol to fetch data for
+    // * @param date the date to fetch data for in the format "yyyy-MM-dd"
+    // * @return the StockUnit containing the stock data for the specified date
+    // */
+    // public StockUnit fetchStockDataForDate(String symbol, String date) {
+    // return marketDataAPI.fetchStockDataForDate(symbol, date);
+    // }
 
-    /**
-     * Fetches the stock data for the given symbol for the current date from the MarketDataAPI.
-     *
-     * @param symbol the stock symbol to fetch data for
-     * @return the StockUnit containing the stock data for the current date
-     */
-    public StockUnit fetchStockDataForToday(String symbol) {
-        return marketDataAPI.fetchStockDataForToday(symbol);
-    }
+    // /**
+    // * Fetches the stock data for the given symbol for the current date from the MarketDataAPI.
+    // *
+    // * @param symbol the stock symbol to fetch data for
+    // * @return the StockUnit containing the stock data for the current date
+    // */
+    // public StockUnit fetchStockDataForToday(String symbol) {
+    // return marketDataAPI.fetchStockDataForToday(symbol);
+    // }
 
     /**
      * Retrieves and sorts the stock records based on the query symbol, orderBy field, and order
