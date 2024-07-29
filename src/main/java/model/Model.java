@@ -3,7 +3,7 @@ package model;
 import model.NetUtils.MarketDataAPI;
 import model.DataMgmt.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
-import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
+
 
 // import java.util.Comparator;
 

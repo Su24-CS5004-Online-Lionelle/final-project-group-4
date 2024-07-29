@@ -12,7 +12,6 @@ import java.util.List;
 
 import controller.Controller;
 import model.DataMgmt.Stock;
-import model.DataMgmt.StockList;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,13 +19,9 @@ import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.knowm.xchart.*;
-import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
-import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
 
 
@@ -38,6 +33,7 @@ public class View {
 
     private Controller controller; // Reference to the Controller
 
+    // Ask Kangning about this
     private class Slot {
         Stock stock;
 
@@ -248,7 +244,7 @@ public class View {
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
         datePicker.setBounds(150, 170, 70, 30);
         frame.add(datePicker);
- 
+
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
@@ -345,17 +341,13 @@ public class View {
      */
     private void showChart() {
         // Example data
-        java.util.List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+        java.util.List<Double> xData =
+                Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
         List<Double> yData = Arrays.asList(1.0, 2.4, 3.3, 4.5, 5.0, 3.5, 7.0, 6.2, 8.0, 9.0);
 
         // Create a chart
-        XYChart chart = new XYChartBuilder()
-                .width(280)
-                .height(200)
-                .title("Sample Line Chart")
-                .xAxisTitle("X Axis")
-                .yAxisTitle("Y Axis")
-                .build();
+        XYChart chart = new XYChartBuilder().width(280).height(200).title("Sample Line Chart")
+                .xAxisTitle("X Axis").yAxisTitle("Y Axis").build();
         // Customize the chart style
         XYStyler styler = chart.getStyler();
         styler.setLegendVisible(false); // Hide the legend
