@@ -5,9 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Arrays;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
+
 import controller.Controller;
 import model.DataMgmt.Stock;
 import model.DataMgmt.StockList;
@@ -15,11 +17,17 @@ import model.DataMgmt.StockList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.UtilDateModel;
 import org.knowm.xchart.*;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 
 
 /**
@@ -173,12 +181,12 @@ public class View {
 
         // create add Button instance
         JButton addButton = new JButton("Add");
-        addButton.setBounds(190, 170, 80, 30);
+        addButton.setBounds(210, 170, 80, 30);
         frame.add(addButton);
 
         // create remove Button instance
         JButton removeButton = new JButton("Remove");
-        removeButton.setBounds(280, 170, 80, 30);
+        removeButton.setBounds(290, 170, 80, 30);
         frame.add(removeButton);
 
         // create import Button instance
@@ -197,9 +205,9 @@ public class View {
         frame.add(helpButton);
 
         // create JComboBox for sort options
-        String[] sortOptions = {"Sort by", "Date"};
+        String[] sortOptions = {"Sort by", "Date", "Open", "High", "Low", "Close", "Volume"};
         JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
-        sortByComboBox.setBounds(50, 170, 100, 30);
+        sortByComboBox.setBounds(45, 170, 100, 30);
         frame.add(sortByComboBox);
 
         // create JScrollPane and JTextArea
@@ -229,6 +237,18 @@ public class View {
         frame.add(chartPanel);
         // Generate and display the chart
         showChart();
+
+        // create and add the date picker
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.setBounds(150, 170, 70, 30);
+        frame.add(datePicker);
+ 
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
@@ -298,6 +318,31 @@ public class View {
         }
     }
 
+    // class DateLabelFormatter for the calendar date picker
+    private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+
+        private static final String DATE_PATTERN = "yyyy-MM-dd";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
+
+        @Override
+        public Object stringToValue(String text) throws ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) {
+                Calendar cal = (Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "";
+        }
+    }
+
+
+    /**
+     * Show the XChart.
+     */
     private void showChart() {
         // Example data
         java.util.List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
@@ -347,4 +392,5 @@ public class View {
     public void show() {
         frame.setVisible(true);
     }
+
 }
