@@ -45,7 +45,7 @@ dependencies {
     implementation 'org.openjfx:javafx-controls:20'
     implementation 'org.openjfx:javafx-fxml:20'
     implementation 'io.github.palexdev:materialfx:11.17.0'
-    implementation 'com.github.HanSolo:charts:11.87'  // Replace with the latest version
+
 
     // JUnit Jupiter API - Testing framework
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -73,10 +73,3 @@ test {
     // Use JUnit Platform for running tests
     useJUnitPlatform()
 }
-
-
-
-
-
-
-

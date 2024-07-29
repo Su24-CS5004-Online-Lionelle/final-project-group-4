@@ -4,11 +4,7 @@ import com.crazzyghost.alphavantage.AlphaVantage;
 import com.crazzyghost.alphavantage.Config;
 import com.crazzyghost.alphavantage.parameters.OutputSize;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
-import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * MarketDataAPI is a class that is used to pull stock data from the AlphaVantage API with the
@@ -79,8 +75,4 @@ public class MarketDataAPI {
 
     // return fetchStockDataForDate(symbol, formattedDate);
     // }
-
 }
-=======
-}
-
