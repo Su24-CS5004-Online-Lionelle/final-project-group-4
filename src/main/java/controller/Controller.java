@@ -36,11 +36,7 @@ public class Controller {
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
         File database = new File("bin/data.xml"); // File object pointing to the data file
         this.stockList = xmlMapper.readValue(database, StockList.class); // Reads the StockList from
-
         // the XML file
-=======
-                                                                         // the XML file
-
         view.show(); // Show the GUI
     }
 
@@ -54,11 +50,7 @@ public class Controller {
     public static synchronized Controller getInstance(String apiKey) throws IOException {
         if (instance == null) {
             instance = new Controller(apiKey); // Initializes the singleton instance if it does not
-
             // exist
-=======
-                                               // exist
-
         }
         return instance;
     }
@@ -72,13 +64,8 @@ public class Controller {
     public static synchronized Controller getInstance() {
         if (instance == null) {
             throw new RuntimeException("Controller is not instantiated"); // Throws an exception if
-
             // the instance is not
             // initialized
-=======
-                                                                          // the instance is not
-                                                                          // initialized
-
         }
         return instance;
     }
@@ -91,11 +78,7 @@ public class Controller {
      */
     public List<Stock> fetchStockData(String symbol) {
         TimeSeriesResponse response = model.fetchStockData(symbol); // Fetches stock data for the
-
         // last 100 tradable days
-=======
-                                                                    // last 100 tradable days
-
         List<Stock> stocks = new ArrayList<>();
         if (response != null && response.getStockUnits() != null) {
             for (StockUnit unit : response.getStockUnits()) {
@@ -113,28 +96,16 @@ public class Controller {
      */
     public void fetchAndDisplayStockData(String symbol) {
         List<Stock> stocks = fetchStockData(symbol); // Fetches stock data for the last 100 tradable
-
         // days
-=======
-                                                     // days
-
         if (!stocks.isEmpty()) {
             view.display(stocks); // Displays the stock data
         } else {
             view.displayError("No data available for the specified symbol: " + symbol); // Displays
-
             // an error
             // message
             // if no
             // data is
             // available
-=======
-                                                                                        // an error
-                                                                                        // message
-                                                                                        // if no
-                                                                                        // data is
-                                                                                        // available
-
         }
     }
 }
@@ -179,8 +150,4 @@ public class Controller {
 // }
 
 // return stockList; // Returns the updated StockList
-
 // }
-=======
-// }
-
