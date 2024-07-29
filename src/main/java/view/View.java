@@ -1,14 +1,38 @@
 package view;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
+
+import controller.Controller;
+=======
 import java.util.Scanner;
+
 
 import model.DataMgmt.Stock;
 import controller.Controller;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.UtilDateModel;
+import org.knowm.xchart.*;
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
+import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.XYStyler;
+import org.knowm.xchart.style.markers.SeriesMarkers;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
+
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -28,6 +52,10 @@ public class View {
 
     JFrame frame;
     JTextArea textArea;
+
+    JPanel chartPanel;
+=======
+
 
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
@@ -144,36 +172,100 @@ public class View {
      * @param frame the JFrame to be built
      */
     private void build(JFrame frame) {
-        frame.setSize(800, 800);
+        frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        // create JTextField instance
-        JTextField textField = new JTextField();
-        textField.setBounds(50, 50, 200, 30);
+        // create HintTextField instance with a hint
+        View.HintTextField textField = new View.HintTextField("Enter a stock symbol");
+        textField.setBounds(50, 50, 300, 30);
         frame.add(textField);
 
-        // create Submit Button instance
-        JButton submitButton = new JButton("Submit");
-        submitButton.setBounds(270, 50, 80, 30);
-        frame.add(submitButton);
+        // create search Button instance
+        JButton searchButton = new JButton("Search");
+        searchButton.setBounds(370, 50, 80, 30);
+        frame.add(searchButton);
 
-        // create Help Button instance
+        // create add Button instance
+        JButton addButton = new JButton("Add");
+        addButton.setBounds(210, 170, 80, 30);
+        frame.add(addButton);
+
+        // create remove Button instance
+        JButton removeButton = new JButton("Remove");
+        removeButton.setBounds(290, 170, 80, 30);
+        frame.add(removeButton);
+
+        // create import Button instance
+        JButton importButton = new JButton("Import");
+        importButton.setBounds(370, 170, 80, 30);
+        frame.add(importButton);
+
+        // create export Button instance
+        JButton exportButton = new JButton("Export");
+        exportButton.setBounds(780, 520, 80, 30);
+        frame.add(exportButton);
+
+        // create help Button instance
         JButton helpButton = new JButton("Help");
-        helpButton.setBounds(370, 50, 80, 30);
+        helpButton.setBounds(700, 520, 80, 30);
         frame.add(helpButton);
+
+        // create JComboBox for sort options
+        String[] sortOptions = {"Sort by", "Date", "Open", "High", "Low", "Close", "Volume"};
+        JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
+        sortByComboBox.setBounds(45, 170, 100, 30);
+        frame.add(sortByComboBox);
 
         // create JScrollPane and JTextArea
         textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
+
+        scrollPane.setBounds(470, 270, 380, 230); // set position and size of JScrollPane
+        frame.add(scrollPane); // put JScrollPane to JFrame
+
+        // create JTable and JScrollPane for all records
+        String[] columnNames = {"Date", "Symbol", "Open", "High", "Low", "Close", "Volume"};
+        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+        JTable table = new JTable(tableModel);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        tableScrollPane.setBounds(50, 220, 400, 280); // set position and size of table JScrollPane
+        frame.add(tableScrollPane); // put table JScrollPane to JFrame
+
+        // create JTable and JScrollPane for single result of search
+        DefaultTableModel tableSingle = new DefaultTableModel(columnNames, 0);
+        JTable SingleTable = new JTable(tableSingle);
+        JScrollPane tableScrollPaneSingle = new JScrollPane(SingleTable);
+        tableScrollPaneSingle.setBounds(50, 100, 400, 50);
+        frame.add(tableScrollPaneSingle);
+
+        // create JPanel for chart
+        chartPanel = new JPanel(new BorderLayout());
+        chartPanel.setBounds(470, 50, 380, 200);
+        frame.add(chartPanel);
+        // Generate and display the chart
+        showChart();
+
+        // create and add the date picker
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        datePicker.setBounds(150, 170, 70, 30);
+        frame.add(datePicker);
+ 
+=======
         scrollPane.setBounds(50, 100, 400, 400); // Set the position and size of JScrollPane
         frame.add(scrollPane); // Add JScrollPane to the JFrame's content pane
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
 
-        // add submit button's ActionListener
-        submitButton.addActionListener(new ActionListener() {
+        // add search button's ActionListener
+        searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // get content from input field
@@ -192,8 +284,125 @@ public class View {
             }
         });
 
+        // center the frame on screen
+        frame.setLocationRelativeTo(null);
         // set JFrame visible
         frame.setVisible(true);
+        // set initial focus on searchButton to avoid focusing on textField
+        searchButton.requestFocus();
+    }
+
+    // custom HintTextField class
+    private class HintTextField extends JTextField implements FocusListener {
+        private final String hint;
+        private boolean showingHint;
+
+        public HintTextField(String hint) {
+            super(hint);
+            this.hint = hint;
+            this.showingHint = true;
+            super.addFocusListener((FocusListener) this);
+            this.setForeground(Color.GRAY);
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            if (this.getText().isEmpty()) {
+                super.setText("");
+                this.setForeground(Color.BLACK);
+                showingHint = false;
+            }
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (this.getText().isEmpty()) {
+                super.setText(hint);
+                this.setForeground(Color.GRAY);
+                showingHint = true;
+            }
+        }
+
+        @Override
+        public String getText() {
+            return showingHint ? "" : super.getText();
+        }
+    }
+
+
+    // class DateLabelFormatter for the calendar date picker
+    private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+
+        private static final String DATE_PATTERN = "yyyy-MM-dd";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
+
+        @Override
+        public Object stringToValue(String text) throws ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) {
+                Calendar cal = (Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+            return "";
+        }
+=======
+    /**
+     * Makes the JFrame visible.
+     */
+    public void show() {
+        frame.setVisible(true);
+
+    }
+
+
+    /**
+     * Show the XChart.
+     */
+    private void showChart() {
+        // Example data
+        java.util.List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+        List<Double> yData = Arrays.asList(1.0, 2.4, 3.3, 4.5, 5.0, 3.5, 7.0, 6.2, 8.0, 9.0);
+
+        // Create a chart
+        XYChart chart = new XYChartBuilder()
+                .width(280)
+                .height(200)
+                .title("Sample Line Chart")
+                .xAxisTitle("X Axis")
+                .yAxisTitle("Y Axis")
+                .build();
+        // Customize the chart style
+        XYStyler styler = chart.getStyler();
+        styler.setLegendVisible(false); // Hide the legend
+        styler.setChartBackgroundColor(Color.WHITE); // Set chart background color to white
+        styler.setPlotBackgroundColor(Color.WHITE); // Set plot background color to white
+        styler.setPlotBorderVisible(false); // Hide plot border
+        styler.setChartTitleVisible(false); // Hide the title
+        // Set empty axis titles
+        chart.setXAxisTitle("date"); // Remove X axis title
+        chart.setYAxisTitle("price"); // Remove Y axis title
+
+        // Add series to the chart
+        XYSeries series = chart.addSeries("Series1", xData, yData);
+        series.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line); // Set the series to line
+        series.setMarker(SeriesMarkers.NONE); // Remove markers from the line
+        series.setLineWidth(1); // Adjust line width for better visibility
+        series.setLineColor(Color.RED); // Set the line color to red
+
+        // Create a chart panel to display the chart
+        JPanel chartPanelWrapper = new JPanel();
+        chartPanelWrapper.setLayout(new BorderLayout());
+        chartPanelWrapper.add(new XChartPanel<>(chart), BorderLayout.CENTER);
+
+        // Clear the existing content and add the new chart panel
+        chartPanel.removeAll();
+        chartPanel.add(chartPanelWrapper);
+        chartPanel.revalidate();
+        chartPanel.repaint();
     }
 
     /**
@@ -202,4 +411,5 @@ public class View {
     public void show() {
         frame.setVisible(true);
     }
+
 }
