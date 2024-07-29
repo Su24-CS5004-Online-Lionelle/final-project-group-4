@@ -11,12 +11,8 @@ import java.util.*;
 import java.util.List;
 
 import controller.Controller;
-=======
-import java.util.Scanner;
-
-
 import model.DataMgmt.Stock;
-import controller.Controller;
+import model.DataMgmt.StockList;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -52,10 +48,7 @@ public class View {
 
     JFrame frame;
     JTextArea textArea;
-
     JPanel chartPanel;
-=======
-
 
     // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
@@ -220,7 +213,6 @@ public class View {
         // create JScrollPane and JTextArea
         textArea = new JTextArea(10, 20);
         JScrollPane scrollPane = new JScrollPane(textArea);
-
         scrollPane.setBounds(470, 270, 380, 230); // set position and size of JScrollPane
         frame.add(scrollPane); // put JScrollPane to JFrame
 
@@ -257,9 +249,6 @@ public class View {
         datePicker.setBounds(150, 170, 70, 30);
         frame.add(datePicker);
  
-=======
-        scrollPane.setBounds(50, 100, 400, 400); // Set the position and size of JScrollPane
-        frame.add(scrollPane); // Add JScrollPane to the JFrame's content pane
 
         // set initial welcome text
         textArea.setText(welcomeMessage);
@@ -329,7 +318,6 @@ public class View {
         }
     }
 
-
     // class DateLabelFormatter for the calendar date picker
     private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
 
@@ -349,13 +337,6 @@ public class View {
             }
             return "";
         }
-=======
-    /**
-     * Makes the JFrame visible.
-     */
-    public void show() {
-        frame.setVisible(true);
-
     }
 
 
