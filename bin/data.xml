@@ -1,5 +1,56 @@
-<<<<<<< gui_jiazuo
-<stockList><stock><open>180.37</open><high>181.97</high><low>178.86</low><close>179.39</close><volume>14485899</volume><date>2024-07-20</date><symbol>GOOG</symbol></stock><stock><open>181.14</open><high>184.93</high><low>180.11</low><close>183.13</close><volume>43081829</volume><date>2024-07-20</date><symbol>AMZN</symbol></stock><stock><open>180.37</open><high>181.97</high><low>178.86</low><close>179.39</close><volume>14485899</volume><date>2024-07-25</date><symbol>goog</symbol></stock><stock><open>181.14</open><high>184.93</high><low>180.11</low><close>183.13</close><volume>43081829</volume><date>2024-07-25</date><symbol>amzn</symbol></stock><stock><open>224.82</open><high>226.8</high><low>223.275</low><close>224.31</close><volume>49151453</volume><date>2024-07-26</date><symbol>aapl</symbol></stock><stock><open>552.42</open><high>554.08</high><low>547.91</low><close>548.99</close><volume>65509081</volume><date>2024-07-26</date><symbol>spy</symbol></stock></stockList>
-=======
-<stockList><stock><open>180.37</open><high>181.97</high><low>178.86</low><close>179.39</close><volume>14485899</volume><date>2024-07-20</date><symbol>GOOG</symbol></stock><stock><open>181.14</open><high>184.93</high><low>180.11</low><close>183.13</close><volume>43081829</volume><date>2024-07-20</date><symbol>AMZN</symbol></stock><stock><open>433.1</open><high>441.14</high><low>432.0</low><close>437.11</close><volume>20940417</volume><date>2024-07-24</date><symbol>msft</symbol></stock></stockList>
-
+<stockList>
+    <stock>
+        <open>180.37</open>
+        <high>181.97</high>
+        <low>178.86</low>
+        <close>179.39</close>
+        <volume>14485899</volume>
+        <date>2024-07-20</date>
+        <symbol>GOOG</symbol>
+    </stock>
+    <stock>
+        <open>181.14</open>
+        <high>184.93</high>
+        <low>180.11</low>
+        <close>183.13</close>
+        <volume>43081829</volume>
+        <date>2024-07-20</date>
+        <symbol>AMZN</symbol>
+    </stock>
+    <stock>
+        <open>180.37</open>
+        <high>181.97</high>
+        <low>178.86</low>
+        <close>179.39</close>
+        <volume>14485899</volume>
+        <date>2024-07-25</date>
+        <symbol>GOOG</symbol>
+    </stock>
+    <stock>
+        <open>181.14</open>
+        <high>184.93</high>
+        <low>180.11</low>
+        <close>183.13</close>
+        <volume>43081829</volume>
+        <date>2024-07-25</date>
+        <symbol>AMZN</symbol>
+    </stock>
+    <stock>
+        <open>224.82</open>
+        <high>226.8</high>
+        <low>223.275</low>
+        <close>224.31</close>
+        <volume>49151453</volume>
+        <date>2024-07-26</date>
+        <symbol>AAPL</symbol>
+    </stock>
+    <stock>
+        <open>552.42</open>
+        <high>554.08</high>
+        <low>547.91</low>
+        <close>548.99</close>
+        <volume>65509081</volume>
+        <date>2024-07-26</date>
+        <symbol>SPY</symbol>
+    </stock>
+</stockList>
