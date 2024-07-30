@@ -9,21 +9,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-
-import controller.Controller;
-import model.DataMgmt.Stock;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
+import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.Styler.LegendPosition;
 import org.jdatepicker.impl.JDatePickerImpl;
-
-
+import controller.Controller;
+import model.DataMgmt.Stock;
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
@@ -33,12 +30,11 @@ public class View {
 
     private Controller controller; // Reference to the Controller
 
-    // Ask Kangning about this
-    private class Slot {
-        Stock stock;
+    private class Slot<T> {
+        T data;
 
-        public Slot(Stock stock, Integer loc) {
-            this.stock = stock;
+        public Slot(T data) {
+            this.data = data;
         }
     }
 
@@ -46,83 +42,51 @@ public class View {
     JTextArea textArea;
     JPanel chartPanel;
 
-    // Static help message displayed when an exception occurs or help is needed
     private static final String helpMessage = """
-            Help message:
-            - Enter a stock symbol to fetch and display its data.
-            """;
+        Help message:
+        - Enter a stock symbol to fetch and display its data.
+        """;
 
-    // Static welcome message displayed at the start of the application
     private static final String welcomeMessage = """
-            Welcome to the Stock Data Viewer!
-            You can fetch and view stock data by entering stock symbols.
-            Example input:
-            - Enter 'AAPL' to view data for Apple Inc.
-            - Enter 'GOOGL' to view data for Alphabet Inc.
-            You stock data will be returned based on the last 100 traded days.
-            """;
+        Welcome to the Stock Data Viewer!
+        You can fetch and view stock data by entering stock symbols.
+        Example input:
+        - Enter 'AAPL' to view data for Apple Inc.
+        - Enter 'GOOGL' to view data for Alphabet Inc.
+        You stock data will be returned based on the last 100 traded days.
+        """;
 
-    // Scanner for reading user input from the console
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * Prints the help message along with the exception message.
-     *
-     * @param e the exception that triggered the help message
-     */
     public static void printHelp(Exception e) {
-        System.err.println(e.getMessage()); // Print the exception message to standard error
-        System.out.println(helpMessage); // Print the help message to standard output
+        System.err.println(e.getMessage());
+        System.out.println(helpMessage);
     }
 
-    /**
-     * Displays the welcome message at the start of the application.
-     */
     public static void welcome() {
-        System.out.println(welcomeMessage); // Print the welcome message
+        System.out.println(welcomeMessage);
     }
 
-    /**
-     * Prompts the user with a message and returns their input.
-     *
-     * @param prompt the message to display to the user
-     * @return the user's input as a String
-     */
     public static String getInput(String prompt) {
-        System.out.print(prompt); // Display the prompt message
-        return scanner.nextLine(); // Read and return the user's input
+        System.out.print(prompt);
+        return scanner.nextLine();
     }
 
-    /**
-     * Prompts the user if they want to check more stocks.
-     *
-     * @return true if the user wants to check more stocks, false otherwise
-     */
     public static boolean askForMoreStocks() {
         System.out.print("Do you want to check more stocks? (yes/no): ");
         String input = scanner.nextLine().trim().toLowerCase();
         return input.equals("yes") || input.equals("y");
     }
 
-    /**
-     * Displays a farewell message to the user. Prints "Goodbye! Have a great day." to the standard
-     * output.
-     */
     public static void goodbye() {
         System.out.println("Goodbye! Have a great day.");
     }
 
-    /**
-     * Displays a list of stock records.
-     *
-     * @param records the list of Stock objects to display
-     */
     public void display(List<Stock> records) {
         if (records.isEmpty()) {
-            textArea.append("No records found.\n"); // Inform the user if no records are found
+            textArea.append("No records found.\n");
         } else {
             for (Stock stock : records) {
-                // Append details of each stock to the JTextArea
                 textArea.append("Date: " + stock.getDate() + "\n");
                 textArea.append("Symbol: " + stock.getSymbol() + "\n");
                 textArea.append("Open: " + stock.getOpen() + "\n");
@@ -130,111 +94,60 @@ public class View {
                 textArea.append("Low: " + stock.getLow() + "\n");
                 textArea.append("Close: " + stock.getClose() + "\n");
                 textArea.append("Volume: " + stock.getVolume() + "\n");
-                textArea.append("----\n"); // Separator for each stock
+                textArea.append("----\n");
             }
         }
     }
 
-    /**
-     * Displays an error message.
-     *
-     * @param message the error message to display
-     */
     public void displayError(String message) {
-        textArea.append("Error: " + message + "\n"); // Append the error message to the JTextArea
+        textArea.append("Error: " + message + "\n");
     }
 
-    /**
-     * Constructor for the View class. It initializes the JFrame and its components.
-     *
-     * @param controller the Controller instance to interact with
-     */
     public View(Controller controller) {
-        this.controller = controller; // Initialize the controller reference
+        this.controller = controller;
         this.frame = new JFrame("STOCK QUERY");
         build(frame);
     }
 
-    /**
-     * Builds the JFrame with its components including text fields, buttons, and text areas.
-     *
-     * @param frame the JFrame to be built
-     */
     private void build(JFrame frame) {
         frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(null);
+        frame.setLayout(new BorderLayout());
 
-        // create HintTextField instance with a hint
-        View.HintTextField textField = new View.HintTextField("Enter a stock symbol");
-        textField.setBounds(50, 50, 300, 30);
-        frame.add(textField);
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
 
-        // create search Button instance
+        HintTextField textField = new HintTextField("Enter a stock symbol");
+        inputPanel.add(textField);
+
         JButton searchButton = new JButton("Search");
-        searchButton.setBounds(370, 50, 80, 30);
-        frame.add(searchButton);
+        inputPanel.add(searchButton);
 
-        // create add Button instance
         JButton addButton = new JButton("Add");
-        addButton.setBounds(210, 170, 80, 30);
-        frame.add(addButton);
+        inputPanel.add(addButton);
 
-        // create remove Button instance
         JButton removeButton = new JButton("Remove");
-        removeButton.setBounds(290, 170, 80, 30);
-        frame.add(removeButton);
+        inputPanel.add(removeButton);
 
-        // create import Button instance
         JButton importButton = new JButton("Import");
-        importButton.setBounds(370, 170, 80, 30);
-        frame.add(importButton);
+        inputPanel.add(importButton);
 
-        // create export Button instance
         JButton exportButton = new JButton("Export");
-        exportButton.setBounds(780, 520, 80, 30);
-        frame.add(exportButton);
+        inputPanel.add(exportButton);
 
-        // create help Button instance
         JButton helpButton = new JButton("Help");
-        helpButton.setBounds(700, 520, 80, 30);
-        frame.add(helpButton);
+        inputPanel.add(helpButton);
 
-        // create JComboBox for sort options
+        JButton showBarChartButton = new JButton("Show Bar Chart");
+        inputPanel.add(showBarChartButton);
+
+        JButton showLineAreaChartButton = new JButton("Show Line & Area Chart");
+        inputPanel.add(showLineAreaChartButton);
+
         String[] sortOptions = {"Sort by", "Date", "Open", "High", "Low", "Close", "Volume"};
         JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
-        sortByComboBox.setBounds(45, 170, 100, 30);
-        frame.add(sortByComboBox);
+        inputPanel.add(sortByComboBox);
 
-        // create JScrollPane and JTextArea
-        textArea = new JTextArea(10, 20);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBounds(470, 270, 380, 230); // set position and size of JScrollPane
-        frame.add(scrollPane); // put JScrollPane to JFrame
-
-        // create JTable and JScrollPane for all records
-        String[] columnNames = {"Date", "Symbol", "Open", "High", "Low", "Close", "Volume"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        JTable table = new JTable(tableModel);
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        tableScrollPane.setBounds(50, 220, 400, 280); // set position and size of table JScrollPane
-        frame.add(tableScrollPane); // put table JScrollPane to JFrame
-
-        // create JTable and JScrollPane for single result of search
-        DefaultTableModel tableSingle = new DefaultTableModel(columnNames, 0);
-        JTable SingleTable = new JTable(tableSingle);
-        JScrollPane tableScrollPaneSingle = new JScrollPane(SingleTable);
-        tableScrollPaneSingle.setBounds(50, 100, 400, 50);
-        frame.add(tableScrollPaneSingle);
-
-        // create JPanel for chart
-        chartPanel = new JPanel(new BorderLayout());
-        chartPanel.setBounds(470, 50, 380, 200);
-        frame.add(chartPanel);
-        // Generate and display the chart
-        showChart();
-
-        // create and add the date picker
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
@@ -242,42 +155,34 @@ public class View {
         p.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        datePicker.setBounds(150, 170, 70, 30);
-        frame.add(datePicker);
+        inputPanel.add(datePicker);
 
+        frame.add(inputPanel, BorderLayout.NORTH);
 
-        // set initial welcome text
-        textArea.setText(welcomeMessage);
+        textArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        frame.add(scrollPane, BorderLayout.CENTER);
 
-        // add search button's ActionListener
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // get content from input field
-                String codeInput = textField.getText();
+        chartPanel = new JPanel(new BorderLayout());
+        frame.add(chartPanel, BorderLayout.EAST);
 
-                // Fetch and display stock data using the Controller
-                controller.fetchAndDisplayStockData(codeInput);
-            }
+        showChart("default");
+
+        searchButton.addActionListener(e -> {
+            String codeInput = textField.getText();
+            controller.fetchAndDisplayStockData(codeInput);
         });
 
-        // add help button's ActionListener
-        helpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setText(helpMessage);
-            }
-        });
+        helpButton.addActionListener(e -> textArea.setText(helpMessage));
 
-        // center the frame on screen
+        showBarChartButton.addActionListener(e -> showChart("bar"));
+
+        showLineAreaChartButton.addActionListener(e -> showChart("line_area"));
+
         frame.setLocationRelativeTo(null);
-        // set JFrame visible
         frame.setVisible(true);
-        // set initial focus on searchButton to avoid focusing on textField
-        searchButton.requestFocus();
     }
 
-    // custom HintTextField class
     private class HintTextField extends JTextField implements FocusListener {
         private final String hint;
         private boolean showingHint;
@@ -286,8 +191,8 @@ public class View {
             super(hint);
             this.hint = hint;
             this.showingHint = true;
-            super.addFocusListener((FocusListener) this);
             this.setForeground(Color.GRAY);
+            this.addFocusListener(this);
         }
 
         @Override
@@ -314,7 +219,6 @@ public class View {
         }
     }
 
-    // class DateLabelFormatter for the calendar date picker
     private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
 
         private static final String DATE_PATTERN = "yyyy-MM-dd";
@@ -335,54 +239,98 @@ public class View {
         }
     }
 
+    private void showChart(String chartType) {
+        JPanel chartPanelWrapper = new JPanel(new BorderLayout());
 
-    /**
-     * Show the XChart.
-     */
-    private void showChart() {
-        // Example data
-        java.util.List<Double> xData =
-                Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
-        List<Double> yData = Arrays.asList(1.0, 2.4, 3.3, 4.5, 5.0, 3.5, 7.0, 6.2, 8.0, 9.0);
+        if (chartType.equals("bar")) {
+            chartPanelWrapper.add(new XChartPanel<>(getBarChart()), BorderLayout.CENTER);
+        } else if (chartType.equals("line_area")) {
+            chartPanelWrapper.add(new XChartPanel<>(getLineAreaChart()), BorderLayout.CENTER);
+        } else {
+            chartPanelWrapper.add(new XChartPanel<>(getSampleLineChart()), BorderLayout.CENTER);
+        }
 
-        // Create a chart
-        XYChart chart = new XYChartBuilder().width(280).height(200).title("Sample Line Chart")
-                .xAxisTitle("X Axis").yAxisTitle("Y Axis").build();
-        // Customize the chart style
-        XYStyler styler = chart.getStyler();
-        styler.setLegendVisible(false); // Hide the legend
-        styler.setChartBackgroundColor(Color.WHITE); // Set chart background color to white
-        styler.setPlotBackgroundColor(Color.WHITE); // Set plot background color to white
-        styler.setPlotBorderVisible(false); // Hide plot border
-        styler.setChartTitleVisible(false); // Hide the title
-        // Set empty axis titles
-        chart.setXAxisTitle("date"); // Remove X axis title
-        chart.setYAxisTitle("price"); // Remove Y axis title
-
-        // Add series to the chart
-        XYSeries series = chart.addSeries("Series1", xData, yData);
-        series.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line); // Set the series to line
-        series.setMarker(SeriesMarkers.NONE); // Remove markers from the line
-        series.setLineWidth(1); // Adjust line width for better visibility
-        series.setLineColor(Color.RED); // Set the line color to red
-
-        // Create a chart panel to display the chart
-        JPanel chartPanelWrapper = new JPanel();
-        chartPanelWrapper.setLayout(new BorderLayout());
-        chartPanelWrapper.add(new XChartPanel<>(chart), BorderLayout.CENTER);
-
-        // Clear the existing content and add the new chart panel
         chartPanel.removeAll();
         chartPanel.add(chartPanelWrapper);
         chartPanel.revalidate();
         chartPanel.repaint();
     }
 
-    /**
-     * Makes the JFrame visible.
-     */
+    private XYChart getSampleLineChart() {
+        List<Double> xData = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
+        List<Double> yData = Arrays.asList(1.0, 2.4, 3.3, 4.5, 5.0, 3.5, 7.0, 6.2, 8.0, 9.0);
+
+        XYChart chart = new XYChartBuilder().width(280).height(200).title("Sample Line Chart")
+                .xAxisTitle("date").yAxisTitle("price").build();
+
+        XYStyler styler = chart.getStyler();
+        styler.setLegendVisible(false);
+        styler.setChartBackgroundColor(Color.WHITE);
+        styler.setPlotBackgroundColor(Color.WHITE);
+        styler.setPlotBorderVisible(false);
+        styler.setChartTitleVisible(false);
+
+        XYSeries series = chart.addSeries("Series1", xData, yData);
+        series.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        series.setMarker(SeriesMarkers.NONE);
+        series.setLineWidth(1);
+        series.setLineColor(Color.RED);
+
+        return chart;
+    }
+
+    private CategoryChart getBarChart() {
+        CategoryChart chart = new CategoryChartBuilder().width(800).height(600).title("Score Histogram").xAxisTitle("Score").yAxisTitle("Number").build();
+
+        chart.getStyler().setLegendPosition(LegendPosition.InsideNW);
+        chart.getStyler().setHasAnnotations(true);
+
+        chart.addSeries("test 1", Arrays.asList(0, 1, 2, 3, 4), Arrays.asList(4, 5, 9, 6, 5));
+
+        return chart;
+    }
+
+    private XYChart getLineAreaChart() {
+        XYChart chart = new XYChartBuilder().width(800).height(600).title("Line & Area Chart").xAxisTitle("Age").yAxisTitle("Amount").build();
+
+        chart.getStyler().setLegendPosition(LegendPosition.InsideNW);
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        //chart.getStyler().setYAxisLabelAlignment(Styler.TextAlignment.Right);
+        chart.getStyler().setYAxisDecimalPattern("$ #,###.##");
+        chart.getStyler().setPlotMargin(0);
+        chart.getStyler().setPlotContentSize(.95);
+
+        double[] xAges = new double[] {60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87,
+                88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100};
+
+        double[] yLiability = new double[] {672234, 691729, 711789, 732431, 753671, 775528, 798018, 821160, 844974, 869478, 907735, 887139, 865486,
+                843023, 819621, 795398, 770426, 744749, 719011, 693176, 667342, 641609, 616078, 590846, 565385, 540002, 514620, 489380, 465149, 441817,
+                419513, 398465, 377991, 358784, 340920, 323724, 308114, 293097, 279356, 267008, 254873};
+
+        double[] yPercentile75th = new double[] {800000, 878736, 945583, 1004209, 1083964, 1156332, 1248041, 1340801, 1440138, 1550005, 1647728,
+                1705046, 1705032, 1710672, 1700847, 1683418, 1686522, 1674901, 1680456, 1679164, 1668514, 1672860, 1673988, 1646597, 1641842, 1653758,
+                1636317, 1620725, 1589985, 1586451, 1559507, 1544234, 1529700, 1507496, 1474907, 1422169, 1415079, 1346929, 1311689, 1256114, 1221034};
+
+        double[] yPercentile50th = new double[] {800000, 835286, 873456, 927048, 969305, 1030749, 1101102, 1171396, 1246486, 1329076, 1424666, 1424173,
+                1421853, 1397093, 1381882, 1364562, 1360050, 1336885, 1340431, 1312217, 1288274, 1271615, 1262682, 1237287, 1211335, 1191953, 1159689,
+                1117412, 1078875, 1021020, 974933, 910189, 869154, 798476, 744934, 674501, 609237, 524516, 442234, 343960, 257025};
+
+        double[] yPercentile25th = new double[] {800000, 791439, 809744, 837020, 871166, 914836, 958257, 1002955, 1054094, 1118934, 1194071, 1185041,
+                1175401, 1156578, 1132121, 1094879, 1066202, 1054411, 1028619, 987730, 944977, 914929, 880687, 809330, 783318, 739751, 696201, 638242,
+                565197, 496959, 421280, 358113, 276518, 195571, 109514, 13876, 29, 0, 0, 0, 0};
+
+        XYSeries seriesLiability = chart.addSeries("Liability", xAges, yLiability);
+        seriesLiability.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
+        seriesLiability.setMarker(SeriesMarkers.NONE);
+
+        chart.addSeries("75th Percentile", xAges, yPercentile75th);
+        chart.addSeries("50th Percentile", xAges, yPercentile50th);
+        chart.addSeries("25th Percentile", xAges, yPercentile25th);
+
+        return chart;
+    }
+
     public void show() {
         frame.setVisible(true);
     }
-
 }
