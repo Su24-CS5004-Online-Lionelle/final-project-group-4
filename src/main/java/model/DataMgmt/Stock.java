@@ -11,7 +11,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The Stock class represents a stock with its open, high, low, close, volume, and date. It provides
@@ -70,8 +69,7 @@ public class Stock {
         this.symbol = symbol;
     }
 
-    public Stock() {
-    }
+    public Stock() {}
 
     // Getters and setters
 
@@ -138,17 +136,19 @@ public class Stock {
      * @return a list of Stock objects
      */
     public List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response) {
-        List<Stock> stocks = new ArrayList<>();
-        Map<String, StockUnit> stockData = (Map<String, StockUnit>) response.getStockUnits();
+        List<Stock> stocks = new ArrayList<>(); // List to hold the converted Stock objects
+        List<StockUnit> stockUnits = response.getStockUnits(); // Retrieve the list of StockUnit
+                                                               // objects from the response
 
-        for (Map.Entry<String, StockUnit> entry : stockData.entrySet()) {
-            String date = entry.getKey();
-            StockUnit unit = entry.getValue();
+        // Iterate through each StockUnit in the list
+        for (StockUnit unit : stockUnits) {
+            String date = unit.getDate(); // Get the date of the stock data
+            // Create a new Stock object and add it to the stocks list
             stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
                     unit.getVolume(), date, symbol));
         }
 
-        return stocks;
+        return stocks; // Return the list of Stock objects
     }
 
     /**

@@ -34,9 +34,48 @@ public class Controller {
         this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
         this.view = new View(this); // Initializes the View with this Controller
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
+
         File database = new File("bin/data.xml"); // File object pointing to the data file
-        this.stockList = xmlMapper.readValue(database, StockList.class); // Reads the StockList from
-        // the XML file
+
+        // Debug prints to verify file reading, added to verify the database exists and what
+        // formatted correctly which
+        // it is Kangning but I left these there for you to see and also adjust why the terminal is
+        // throwing an error
+        // the program still runs as needed but it is something we need to have fixed.
+        System.out.println("Database file exists: " + database.exists());
+        System.out.println("Database file path: " + database.getAbsolutePath());
+        System.out.println("Database file length: " + database.length());
+
+        // Added error handling for reading the data file -- Kangning please adjust this to your
+        // preference
+        // I added some error handling to the file reading in the Controller class. I used a
+        // try-catch block to catch
+        // any IOExceptions that may occur when reading the file. If an IOException occurs, the
+        // catch block will print
+        // the stack trace of the exception. This will help you identify the cause of the error and
+        // fix it. You can adjust
+        // the error handling to your preference, such as displaying an error message to the user or
+        // logging the error to a file.
+        if (!database.exists() || database.length() == 0) {
+            // If the file does not exist or is empty, create an empty StockList
+            this.stockList = new StockList();
+        } else {
+            try {
+                // Print the content of the XML file for debugging, last debug that goes with the
+                // above to verify
+                // the xml contents and formatting
+                String xmlContent = new String(java.nio.file.Files.readAllBytes(database.toPath()));
+                System.out.println("XML content:\n" + xmlContent);
+
+                // Attempt to read the StockList from the XML file
+                this.stockList = xmlMapper.readValue(database, StockList.class);
+            } catch (IOException e) {
+                // If there's an error parsing the file, log the error and create an empty StockList
+                e.printStackTrace();
+                this.stockList = new StockList();
+            }
+        }
+
         view.show(); // Show the GUI
     }
 
@@ -106,6 +145,26 @@ public class Controller {
             // if no
             // data is
             // available
+        }
+    }
+
+    /**
+     * Fetches and displays the most recent stock data for the given stock symbol.
+     *
+     * @param symbol the stock symbol to fetch data for
+     */
+    public void fetchAndDisplayMostRecentStockData(String symbol) {
+        Stock mostRecentStock = model.fetchMostRecentStockData(symbol); // Fetches the most recent
+                                                                        // stock data
+        if (mostRecentStock != null) {
+            view.display(List.of(mostRecentStock)); // Displays the most recent stock data
+        } else {
+            view.displayError("No data available for the specified symbol: " + symbol); // Displays
+                                                                                        // an error
+                                                                                        // message
+                                                                                        // if no
+                                                                                        // data is
+                                                                                        // available
         }
     }
 }

@@ -38,7 +38,6 @@ public class MarketDataAPI {
         return AlphaVantage.api().timeSeries().daily().forSymbol(symbol)
                 .outputSize(OutputSize.COMPACT).fetchSync();
     }
-
     // /**
     // * Fetches the stock data for a specific day.
     // *
