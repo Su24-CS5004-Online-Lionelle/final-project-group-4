@@ -34,7 +34,7 @@ public class View {
 
     private Controller controller; // Reference to the Controller
 
-    // Ask Kangning about this
+    // will use for semi-permance and line graph
     private class Slot {
         Stock stock;
 
@@ -279,28 +279,16 @@ public class View {
 
                 // Add all stock data to tableModel
                 for (Stock stock : stockData) {
-                    Object[] rowData = {
-                            stock.getDate(),
-                            stock.getSymbol(),
-                            stock.getOpen(),
-                            stock.getHigh(),
-                            stock.getLow(),
-                            stock.getClose(),
-                            stock.getVolume()
-                    };
+                    Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+                            stock.getHigh(), stock.getLow(), stock.getClose(), stock.getVolume()};
                     tableModel.addRow(rowData);
                 }
 
                 // Add the most recent stock data to tableSingle
-                Object[] recentRowData = {
-                        mostRecentStock.getDate(),
-                        mostRecentStock.getSymbol(),
-                        mostRecentStock.getOpen(),
-                        mostRecentStock.getHigh(),
-                        mostRecentStock.getLow(),
-                        mostRecentStock.getClose(),
-                        mostRecentStock.getVolume()
-                };
+                Object[] recentRowData = {mostRecentStock.getDate(), mostRecentStock.getSymbol(),
+                        mostRecentStock.getOpen(), mostRecentStock.getHigh(),
+                        mostRecentStock.getLow(), mostRecentStock.getClose(),
+                        mostRecentStock.getVolume()};
                 tableSingle.addRow(recentRowData);
             }
         });
@@ -333,7 +321,7 @@ public class View {
             super.addFocusListener((FocusListener) this);
             this.setForeground(Color.GRAY);
             this.setBorder(new RoundedBorder(10)); // Apply the rounded border with a radius of 15
-            //this.setOpaque(false); // Ensure background is not opaque
+            // this.setOpaque(false); // Ensure background is not opaque
         }
 
         @Override
