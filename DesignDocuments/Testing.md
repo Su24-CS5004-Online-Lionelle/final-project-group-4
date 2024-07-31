@@ -9,8 +9,9 @@ The Stock Data Viewer Application is designed to provide users with updated stoc
 Our testing strategy includes unit testing and integration testing. The primary goal is to ensure all components of the application function correctly and integrate seamlessly. We aim to cover the following areas:
 
 1. **API Testing**: Validate the MarketDataAPI class interactions with the Alpha Vantage API.
-2. **Backend Testing**: Verify the core logic and data management within the Model and Controller classes.
-3. **Frontend Testing**: Ensure the View class correctly displays data and handles user interactions.
+2. **Model Testing**: Verify the core logic and data management within the Model class.
+3. **Controller Testing**: Ensure the Controller class correctly manages interactions between the View and the Model.
+4. **View Testing**: Ensure the View class correctly displays data and handles user interactions.
 
 ## Testing Tools
 
@@ -45,9 +46,9 @@ The MarketDataAPI class is responsible for fetching stock data from the Alpha Va
    - **Input**: Non-existent stock symbol.
    - **Expected Result**: Error message indicating invalid symbol.
 
-## Backend Testing
+## Model Testing
 
-Backend testing focuses on the core logic and data management in the Model and Controller classes. The goal is to ensure that data is correctly fetched, processed, and passed between components.
+Model testing focuses on the core logic and data management within the Model class. The goal is to ensure that data is correctly fetched, processed, and stored.
 
 ### Test Cases
 
@@ -67,9 +68,27 @@ Backend testing focuses on the core logic and data management in the Model and C
    - **Input**: None (invoke load method).
    - **Expected Result**: Correct list of stocks is loaded from the database or file system.
 
-## Frontend Testing
+## Controller Testing
 
-Frontend testing ensures that the View class correctly displays data and handles user interactions. We will mock the backend interactions to focus on the frontend logic.
+Controller testing ensures that the Controller class correctly manages interactions between the View and the Model. We need to verify that the Controller processes data and commands accurately.
+
+### Test Cases
+
+1. **Handle Stock Data Request**
+   - **Input**: Valid stock symbol.
+   - **Expected Result**: Data is fetched from the Model and passed to the View.
+
+2. **Handle Invalid Stock Data Request**
+   - **Input**: Invalid stock symbol.
+   - **Expected Result**: Error is handled and an error message is passed to the View.
+
+3. **Manage Watchlist**
+   - **Input**: Add and remove stocks.
+   - **Expected Result**: Watchlist is correctly updated and displayed in the View.
+
+## View Testing
+
+View testing ensures that the View class correctly displays data and handles user interactions. We will mock the Controller interactions to focus on the View logic.
 
 ### Test Cases
 
