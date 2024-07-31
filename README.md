@@ -1,22 +1,42 @@
-# Final Project for CS 5004 - Finance Application (Placeholder Name)
+# Final Project for CS 5004 - Stock Market Data Viewer Application
 
-(remove this and add your sections/elements)
-This readme should contain the following information:
+## Group Members
 
-* The group member's names and link to their personal githubs
+- **Jubal Bewick** - [GitHub](https://github.com/Darkknight-86)
+- **Jiazuo He** - [GitHub](https://github.com/JZZhang04)
+- **Kangning Li** - [GitHub](https://github.com/ShakyVertex)
+- **Aakash Sharma** - [GitHub](https://github.com/sharma-aak)
 
-## Jubal Bewick - <https://github.com/Darkknight-86>
+## Application Overview
 
-## Jiazuo He - <https://github.com/JZZhang04>
+**Stock Data View** is an application that leverages the Alpha Vantage API to provide daily updated stock data and historical data for the last 100 trading days. Users can query stock information, create custom watchlists of stocks, and visualize individual stock performance through detailed line charts. Additionally, the application includes a calendar section that allows users to select individual days and search through historical data visually.
 
-## Kangning Li - <https://github.com/ShakyVertex>
+## Design Documents and Manuals
 
-## Aakash Sharma - <https://github.com/sharma-aak>
+- [Manual/README](./Manual/README.md)
+- [GUI Instructions](./Manual/GUI_Instructions.md)
+- [Proposal](./DesignDocuments/Proposal.md)
+- [Design](./DesignDocuments/Design.md)
+- [Testing](./DesignDocuments/Testing.md)
 
-* The application name and a brief description of the application
+## Instructions to Run the Application
 
-* Links to design documents and manuals
+1. **Clone the repository:**
+   git clone <repository-url>git clone <https://github.com/Su24-CS5004-Online-Lionelle/final-project-group-4.git>
+2. Open the project in the IDE of your choice. IntelliJ IDEA or Visual Studio Code is recommended.
+3. Ensure all dependencies are installed by running the appropriate build commands for your IDE via the terminal. Use one of the following commands:
 
-* Instructions on how to run the application
+   ```sh
+   ./gradlew clean build
+   ```
 
-Ask yourself, if you started here in the readme, would you have what you need to work on this project and/or use the application?
+   or
+
+   ```sh
+   gradlew clean build
+   ```
+
+4. Locate the `Main` class in the `src` folder.
+5. Run the `Main` class to start the application.
+6. The application will open in a new window.
+7. For visual instructions on using the GUI, see [GUI Instructions](./Manual/GUI_Instructions.md).

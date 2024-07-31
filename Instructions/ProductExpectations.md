@@ -21,7 +21,7 @@ All projects must have the following documentation:
   * A brief description of the project
   * How to compile and run the project
   * Any other information you think is relevant
-    * Essentially, if we can read the README.md file, can we figure out where everything is stored. So you probably want links to the manual and design documents.
+  * Essentially, if we can read the README.md file, can we figure out where everything is stored. So you probably want links to the manual and design documents.
   * The README.md file should be stored in the root directory of the project.
 
 ## Testing and Style Requirements
@@ -37,53 +37,24 @@ All projects must have the following documentation:
 A bare minimum, all projects need to have some aspect of the following components:
 
 * Graphical User Interface (Can be a website or java swing/awt)
-
-    MaterialFx/JavaFx
-
 * Be able to view all items in the collection - in a logical order
-
-  Brainstorming
-
-  This will be in the form of a list of saved stocks? How else would we want to view
-  a collection of 100 days of stock data for each stock in a collection of stocks?
-
-  Or do we want to have a preset amount of stocks in the collection that can is saved in a XML that the user can access and call that a collection?
-
-  Or is the API Query itself the collection and we pull from the API and show the user the data?
-
 * Be able to build a list of items from the collection
-
-  This will be in the form of a list of saved stocks to create a custom list?
-
 * Be able to save out that list using a file format we covered in the course such as .xml, .json, or .csv.
-
-    We will use .xml currently. Do we want to consider JSON?
 
 ### Additional/Optional Features
 
 With that said, there are a number of other features you may want to add to your project. Here are some ideas (You  may have others)
 
 * Be able to load in lists of items / previously saved lists, and modify them.
-
-> yes we will have this feature
-
 * Be able to search for items in the collection
 * Be able to sort items in the collection
 * Be able to filter items in the collection
 * Have your original item list come from an online API/online access
-
-> yes we will have this feature
-
 * Include images for your items
 * Have the ability to modify a local copy of an item, and those modifications remain persistent across sessions.
-
-> yes we will have this feature
-
 * If your items have geographic data, be able to display them on a map.
 * If your items have temporal data, be able to display them on a timeline.
 * If your items have numeric data, be able to display them in a graph.
-
-> yes we will have this feature
 
 > [!TIP]
 > The extra features can vary greatly depending on the project you select! We encourage you to think and plan in cycles. Give yourself goals on which features you are going to implement, and then work together on making the system works with the added feature before the next feature is added. This will help you keep on track and not get overwhelmed by the project.

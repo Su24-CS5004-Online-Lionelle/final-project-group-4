@@ -1,2 +1,0 @@
-## LAUNDRY LIST
-- [ ] 

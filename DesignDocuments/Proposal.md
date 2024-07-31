@@ -1,29 +1,39 @@
 ## Proposal
 
-The proposal does not have to be a formal presentation. Though if that helps the team keep their thoughts organized, that is fine. Every team member should be present to talk about the proposal. The proposal should include the following:
+### Team Members
+
+* Jubal Bewick
+* Jiazuo Zhang
+* Kangning Li
+* Aakash Sharma
+
+----------------
 
 * What are you building?
 
-  * Stock Application
+  * Stock Data View Application
 
 * What are the initial features for the application?
 
   * GUI
-  * User can search for a stock by symbol
-  * User can see the current price data and volume of the stock for current day
-  * User can add a stock to a list (via xml storage)
+  * Collection/database of stock data
+  * User can search for a stock by symbol and add these stocks a to list
+  * User can see the current price data and volume of the stock for current day and the last 100 tradding days
+  * Data will be saved to in xml file format. We will have semi-persistent data storage and persistent data storage
 
 * What are the *minimum* additional features you plan to implement?
 
-  * User can sort a created stock lists via different criteria (symbol, price, volume, etc)
+  * Users will be able to sort custom watchlists by stock symbol, prices, and volume
   * User can delete a stock from a list
+  * Users can save those custom watchlists with custom names and load them later for viewing or editing
   * Using an API to get the stock data
+  * Users can view the 100 trading days of stock data as a line graph
 
 * What are your stretch goals (features beyond the minimum)?
 
-  * Adding graphics to the GUI for the stock symbols (company icons etc)
-  * Adding a graph of the stock price over time
-  * User can see the financials of the stock (stretch goal - this would be a separate API call)
+  * Users can view the stock data for a specific day within the last 100 trading days by using a calendar to select desired date that is valid
+  * Adding visual background to the GUI
+  * Adding a feature to compare two stocks
 
 * Go over your initial design.
 
@@ -50,9 +60,12 @@ The proposal does not have to be a formal presentation. Though if that helps the
 
 ### Deliverables
 
-Most of the information you are presented needs to be documented as a deliverable. This could be a powerpoint, a word document, or even a markdown file in your repository (use the DesignDocuments directory). The key is that it is a living document that can be updated as you learn more about your project.
-
-You should also have an **Initial** UML diagram to present. It will still be pretty sparse, and that is fine. However, it should be enough where team members have an idea of which part they are expanding on and working on.
+ • Project Plan Document:
+ • Overview of the project, goals, and team roles.
+ • Detailed timeline with milestones and check-in points.
+ • Description of the initial and minimum viable features.
+ • Stretch goals and how they will enhance the application.
+ • Initial design diagram (UML).
 
 # Initial Design - Stock Application
 
@@ -166,19 +179,3 @@ direction TB
     View --> Stock
     StockList --> Stock
 ```
-
-### Grading
-
-The grading for this assignment will be based on the following criteria:
-
-#### Group Grade
-
-* 4 points - Proposal is well thought out and covers all the major points. Documentation is clear.
-* 3 points - Proposal is missing some key points, but is well thought out. Documentation exists, but not clear.
-* 2 points - Proposal is missing some key points and missing documentation.
-* 1 point - Proposal is missing key points, documentation is missing or not clear, there isn't a plan going into the proposal.
-
-#### Individual Grade
-
-* 2 points - Student is present and contributes to the proposal, their camera is on (unless they have a good reason for it not to be), and they are able to answer questions about the proposal.
-* 1 point - Student attends the meeting.
