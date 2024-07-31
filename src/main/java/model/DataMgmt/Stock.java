@@ -9,7 +9,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +23,21 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "stock")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
+
+
+
+    // Add a method to parse the date string
+    public Date getDateAsDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 
     @JsonProperty("1. open")
     @JacksonXmlProperty(localName = "open")

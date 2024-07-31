@@ -24,6 +24,8 @@ import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import org.jdatepicker.impl.JDatePickerImpl;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -31,6 +33,55 @@ import java.awt.geom.RoundRectangle2D;
  * get user input, and show stock data.
  */
 public class View {
+
+    private void showChart(List<Stock> stockData) {
+        if (stockData == null || stockData.isEmpty()) {
+            return; // No data to display
+        }
+
+        // Extract dates and close prices from the stock data
+        List<Date> xData = stockData.stream()
+                .map(Stock::getDateAsDate)
+                .collect(Collectors.toList());
+        List<Double> yData = stockData.stream()
+                .map(Stock::getClose)
+                .collect(Collectors.toList());
+
+        // Create a chart
+        XYChart chart = new XYChartBuilder()
+                .width(800)
+                .height(400)
+                .title("Stock Prices")
+                .xAxisTitle("Date")
+                .yAxisTitle("Close Price")
+                .build();
+
+        // Customize the chart style
+        XYStyler styler = chart.getStyler();
+        styler.setLegendVisible(false); // Hide the legend
+        styler.setChartBackgroundColor(Color.WHITE); // Set chart background color to white
+        styler.setPlotBackgroundColor(Color.WHITE); // Set plot background color to white
+        styler.setPlotBorderVisible(false); // Hide plot border
+        styler.setDatePattern("yyyy-MM-dd"); // Set date format on the x-axis
+
+        // Add series to the chart
+        XYSeries series = chart.addSeries("Stock Prices", xData, yData);
+        series.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line); // Set the series to line
+        series.setMarker(SeriesMarkers.NONE); // Remove markers from the line
+        series.setLineWidth(1); // Adjust line width for better visibility
+        series.setLineColor(Color.BLUE); // Set the line color to blue
+
+        // Create a chart panel to display the chart
+        JPanel chartPanelWrapper = new JPanel();
+        chartPanelWrapper.setLayout(new BorderLayout());
+        chartPanelWrapper.add(new XChartPanel<>(chart), BorderLayout.CENTER);
+
+        // Clear the existing content and add the new chart panel
+        chartPanel.removeAll();
+        chartPanel.add(chartPanelWrapper);
+        chartPanel.revalidate();
+        chartPanel.repaint();
+    }
 
     private Controller controller; // Reference to the Controller
 
@@ -268,6 +319,9 @@ public class View {
                 controller.fetchAndDisplayStockData(codeInput);
                 // Fetch stock data using the Controller
                 List<Stock> stockData = controller.fetchStockData(codeInput);
+
+                // Update the chart with the fetched stock data
+                showChart(stockData);
 
                 // Update table, clear existing rows
                 tableModel.setRowCount(0);
