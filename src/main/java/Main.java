@@ -14,12 +14,11 @@ public class Main {
      */
     public static void main(String[] args) {
         // API key used to access the AlphaVantage API
-        String apiKey = "SZPBC0GPHK788VZT";
 
         try {
             // Initialize the Controller, which also initializes and shows the View
-            Controller.getInstance(apiKey);
-        } catch (IOException e) {
+            Controller.getInstance();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

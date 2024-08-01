@@ -8,8 +8,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @JacksonXmlRootElement(localName = "stockList")
 public class StockList {
@@ -30,44 +30,18 @@ public class StockList {
         return stockList;
     }
 
-    // Setter for stockList
-    public void setStockList(List<Stock> stockList) {
-        this.stockList = stockList;
-    }
-
     // Method to add a stock to the list and save to XML
-    public void addStock(Stock stock) throws IOException {
+    public void addStock(Stock stock) {
+        if (this.stockList.contains(stock)) {
+            return;
+        }
         this.stockList.add(stock);
-        save();
-    }
 
-    // Save the stock list to an XML file
-    private void save() throws IOException {
-        XmlMapper mapper = new XmlMapper();
-        File dataFile = new File(database);
-        mapper.writeValue(dataFile, this);
-    }
-
-    // Load stock list from an XML file
-    public void loadStockFromXML() {
-        XmlMapper mapper = new XmlMapper();
-        File dataFile = new File(database);
         try {
-            this.stockList = mapper.readValue(dataFile,
-                    mapper.getTypeFactory().constructCollectionType(List.class, Stock.class));
+            save();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-    }
-
-    // Get a stock by its symbol
-    public Stock getStockFromSymbol(String symbol) {
-        for (Stock stock : stockList) {
-            if (Objects.equals(stock.getSymbol(), symbol)) {
-                return stock;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -84,5 +58,55 @@ public class StockList {
         }
 
         return sb.toString();
+    }
+
+    public void removeById(int selectedRow) {
+        this.stockList.remove(selectedRow);
+        try {
+            save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sortBy(String selectedOption) {
+        if (selectedOption.equals("Open")) {
+            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getOpen(), s2.getOpen()));
+        } else if (selectedOption.equals("Close")) {
+            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getClose(), s2.getClose()));
+        } else if (selectedOption.equals("High")) {
+            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getHigh(), s2.getHigh()));
+        } else if (selectedOption.equals("Low")) {
+            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getLow(), s2.getLow()));
+        } else if (selectedOption.equals("Volume")) {
+            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getVolume(), s2.getVolume()));
+        }
+
+        try {
+            save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void clearAll() {
+        this.stockList.clear();
+        try {
+            save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Save the stock list to an XML file
+    private void save() throws IOException {
+        XmlMapper mapper = new XmlMapper();
+        File dataFile = new File(database);
+        mapper.writeValue(dataFile, this);
+    }
+
+    public void output(File outputFile) throws IOException {
+        XmlMapper mapper = new XmlMapper();
+        mapper.writeValue(outputFile, this);
     }
 }

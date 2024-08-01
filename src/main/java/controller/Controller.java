@@ -7,7 +7,10 @@ import model.DataMgmt.Stock;
 import view.View;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,12 +27,15 @@ public class Controller {
     /**
      * Constructs a Controller and initializes the Model with the provided API key. API key will be
      * supplied by the main driver.
-     *
-     * @param apiKey the API key used to access the AlphaVantage API
      */
-    private Controller(String apiKey) throws IOException {
-        this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
+    private Controller() {
+        this.model = Model.getInstance(); // Initializes the Model with the API key
         this.view = new View(this); // Initializes the View with this Controller
+        loadDataFromDB();
+        view.show(); // Show the GUI
+    }
+
+    public void loadDataFromDB() {
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
 
         File database = new File("bin/data.xml"); // File object pointing to the data file
@@ -44,36 +50,25 @@ public class Controller {
                 this.stockList = new StockList();
             }
         }
-
-        view.show(); // Show the GUI
     }
 
     /**
      * Returns the singleton instance of the Controller, initializing it if necessary.
      *
-     * @param apiKey the API key used to access the AlphaVantage API
      * @return the singleton instance of the Controller
      * @throws IOException if there is an error reading the data file
      */
-    public static synchronized Controller getInstance(String apiKey) throws IOException {
+    public static synchronized Controller getInstance() {
         if (instance == null) {
-            instance = new Controller(apiKey);
+            instance = new Controller();
         }
         return instance;
     }
 
-    /**
-     * Returns the singleton instance of the Controller, throwing an exception if it is not
-     * initialized.
-     *
-     * @return the singleton instance of the Controller
-     */
-    public static synchronized Controller getInstance() {
-        if (instance == null) {
-            throw new RuntimeException("Controller is not instantiated");
-        }
-        return instance;
+    public StockList getStockList() {
+        return stockList;
     }
+
 
     /**
      * Fetches the stock data for the given stock symbol and returns it to the view.
@@ -88,11 +83,18 @@ public class Controller {
     /**
      * Fetches and returns the most recent stock data for the given stock symbol.
      *
-     * @param symbol the stock symbol to fetch data for
      * @return the most recent Stock object
      */
-    public Stock fetchMostRecentStockData(String symbol) {
-        return model.fetchMostRecentStockData(symbol);
+    public Stock fetchMostRecentStockData() {
+        return model.fetchMostRecentStockData();
+    }
+
+    public void cleanCache() {
+        model.cleanCache();
+    }
+
+    public Stock fetchSpecificStockDate(Date value) {
+        return model.fetchSpecificStockDate(value);
     }
 }
 

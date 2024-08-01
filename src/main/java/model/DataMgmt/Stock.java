@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The Stock class represents a stock with its open, high, low, close, volume, and date. It provides
@@ -23,7 +24,6 @@ import java.util.List;
 @JacksonXmlRootElement(localName = "stock")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
-
 
 
     // Add a method to parse the date string
@@ -222,4 +222,19 @@ public class Stock {
         return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Stock stock = (Stock) obj;
+
+        return symbol.equals(stock.getSymbol()) && date.equals(stock.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol, date);
+    }
 }

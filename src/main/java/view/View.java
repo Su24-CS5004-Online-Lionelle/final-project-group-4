@@ -23,6 +23,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
  */
 public class View {
 
+
     public void showChart(List<Stock> stockData) {
         if (stockData == null || stockData.isEmpty()) {
             return; // No data to display
@@ -153,8 +154,6 @@ public class View {
 
     /**
      * Constructor for the View class. It initializes the JFrame and its components.
-     *
-     * @param controller the Controller instance to interact with
      */
     public View(Controller controller) {
         this.textArea = new JTextArea(10, 20);

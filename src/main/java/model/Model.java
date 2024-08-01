@@ -1,13 +1,18 @@
 package model;
 
+import controller.Controller;
 import model.NetUtils.MarketDataAPI;
 import model.DataMgmt.Stock;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
-import java.util.List;
-import java.util.Comparator;
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.Console;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * The Model class represents the core data management logic of the application. It interacts with
@@ -18,26 +23,42 @@ public class Model {
     private MarketDataAPI marketDataAPI;
     private static Model instance;
 
+    private final String apiKey = "SZPBC0GPHK788VZT";
+
+    private List<Stock> stocks;
+
     /**
      * Constructs a Model and initializes the MarketDataAPI with the provided API key.
-     *
-     * @param apiKey the API key used to access the AlphaVantage API
      */
-    private Model(String apiKey) {
+    private Model() {
+
         this.marketDataAPI = new MarketDataAPI(apiKey);
+        this.stocks = new ArrayList<>();
     }
 
     /**
      * Returns the singleton instance of the Model class.
-     *
-     * @param apiKey the API key used to initialize the MarketDataAPI
      * @return the singleton instance of the Model
      */
-    public static synchronized Model getInstance(String apiKey) {
+    public static synchronized Model getInstance() {
         if (instance == null) {
-            instance = new Model(apiKey);
+            instance = new Model();
         }
         return instance;
+    }
+
+    public static Stock getRandomStock() {
+        Stock randomStock = new Stock();
+        Random rand = new Random();
+
+        randomStock.setDate(LocalDate.now().toString());
+        randomStock.setHigh(rand.nextInt(300));
+        randomStock.setLow(rand.nextInt(300));
+        randomStock.setClose(rand.nextInt(300));
+        randomStock.setOpen(rand.nextInt(300));
+        randomStock.setSymbol("Rand\s" + UUID.randomUUID().toString());
+        randomStock.setVolume(rand.nextLong(3000));
+        return randomStock;
     }
 
     /**
@@ -48,7 +69,6 @@ public class Model {
      */
     public List<Stock> fetchStockData(String symbol) {
         TimeSeriesResponse response = marketDataAPI.fetchStockData(symbol);
-        List<Stock> stocks = new ArrayList<>();
         if (response != null && response.getStockUnits() != null) {
             for (StockUnit unit : response.getStockUnits()) {
                 stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
@@ -62,12 +82,34 @@ public class Model {
      * Fetches and filters the stock data for the given symbol to return the most recent date's
      * data.
      *
-     * @param symbol the stock symbol to fetch data for
      * @return the most recent Stock object
      */
-    public Stock fetchMostRecentStockData(String symbol) {
-        List<Stock> stocks = fetchStockData(symbol);
+    public Stock fetchMostRecentStockData() {
         return stocks.stream().max(Comparator.comparing(Stock::getDate)).orElse(null);
+    }
+
+    public void cleanCache() {
+        stocks.clear();
+    }
+
+    public void writeDataToDB(String content) {
+        String filePath = "bin/data.xml";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Controller.getInstance().loadDataFromDB();
+    }
+
+    public Stock fetchSpecificStockDate(Date specificDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String specificDateString = dateFormat.format(specificDate);
+        Optional<Stock> opStock =  stocks.stream()
+                .filter(stock -> stock.getDate().equals(specificDateString)).findFirst();
+        return opStock.get();
     }
 }
 // /**

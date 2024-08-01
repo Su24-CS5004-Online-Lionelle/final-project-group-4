@@ -3,13 +3,26 @@ package view.helpers;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import controller.Controller;
 import model.DataMgmt.Stock;
+import model.Model;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -19,8 +32,16 @@ import view.View;
 
 public class ViewBuilderHelper {
 
+    private static Stock mostRecentStock;
+    private static DefaultTableModel tableSingle;
+    private static DefaultTableModel tableModel;
+
+    private static LocalDate today = LocalDate.now();
+    private static JTable table;
+    private static String lastSelected;
+
     public static void build(JFrame frame, Controller controller, final JTextArea textArea,
-            final JPanel chartPanel, final View view) {
+                             final JPanel chartPanel, final View view) {
         frame.setSize(1000, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
@@ -43,12 +64,12 @@ public class ViewBuilderHelper {
         frame.add(searchButton);
 
         // create add Button instance
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("ADD");
         addButton.setBounds(310, 170, 80, 30);
         frame.add(addButton);
 
         // create remove Button instance
-        JButton removeButton = new JButton("Remove");
+        JButton removeButton = new JButton("DEL");
         removeButton.setBounds(390, 170, 80, 30);
         frame.add(removeButton);
 
@@ -64,8 +85,18 @@ public class ViewBuilderHelper {
 
         // create help Button instance
         JButton helpButton = new JButton("Help");
-        helpButton.setBounds(800, 520, 80, 30);
+        helpButton.setBounds(210, 520, 80, 30);
         frame.add(helpButton);
+
+        // create clear Button instance
+        JButton clearButton = new JButton("Clear");
+        clearButton.setBounds(130, 520, 80, 30);
+        frame.add(clearButton);
+
+        // create help Button instance
+        JButton pushButton = new JButton("Rand");
+        pushButton.setBounds(50, 520, 80, 30);
+        frame.add(pushButton);
 
         // create JComboBox for sort options
         String[] sortOptions = {"Sort by", "Open", "High", "Low", "Close", "Volume"};
@@ -78,16 +109,16 @@ public class ViewBuilderHelper {
         scrollPane.setBounds(570, 270, 380, 230); // set position and size of JScrollPane
         frame.add(scrollPane); // put JScrollPane to JFrame
 
-        // create JTable and JScrollPane for all records
+        // create JTable and JScrollPane for multiple records
         String[] columnNames = {"Date", "Symbol", "Open", "High", "Low", "Close", "Volume"};
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        JTable table = new JTable(tableModel);
+        tableModel = new DefaultTableModel(columnNames, 0);
+        table = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(table);
         tableScrollPane.setBounds(50, 220, 500, 280); // set position and size of table JScrollPane
         frame.add(tableScrollPane); // put table JScrollPane to JFrame
 
         // create JTable and JScrollPane for single result of search
-        DefaultTableModel tableSingle = new DefaultTableModel(columnNames, 0);
+        tableSingle = new DefaultTableModel(columnNames, 0);
         JTable SingleTable = new JTable(tableSingle);
         JScrollPane tableScrollPaneSingle = new JScrollPane(SingleTable);
         tableScrollPaneSingle.setBounds(50, 100, 500, 50);
@@ -119,39 +150,89 @@ public class ViewBuilderHelper {
                 // Get content from input field
                 String codeInput = textField.getText();
 
+                // checkIf the date is valid
+                if (model.getValue() != null && !isDateValid(model.getValue(), today)) {
+                    // Optionally, you can display a message if no row is selected
+                    JOptionPane.showMessageDialog(frame, "Date is not Valid",
+                            "InValid Date", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 // Fetch stock data using the Controller
+                controller.cleanCache();
                 List<Stock> stockData = controller.fetchStockData(codeInput);
+                if (model.getValue() != null) {
+                    mostRecentStock = controller.fetchSpecificStockDate(model.getValue());
+                } else {
+                    mostRecentStock = controller.fetchMostRecentStockData();
+                }
 
                 // Check if data is available and update the chart
                 if (stockData != null && !stockData.isEmpty()) {
                     // Update the chart with the fetched stock data
                     view.showChart(stockData);
 
-                    // Update table, clear existing rows
-                    tableModel.setRowCount(0);
-                    tableSingle.setRowCount(0);
-
-                    // Add all stock data to tableModel
-                    for (Stock stock : stockData) {
-                        Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
-                                stock.getHigh(), stock.getLow(), stock.getClose(),
-                                stock.getVolume()};
-                        tableModel.addRow(rowData);
-                    }
-
-                    // Add the most recent stock data to tableSingle
-                    Stock mostRecentStock = stockData.stream()
-                            .max(Comparator.comparing(Stock::getDate)).orElse(null);
-                    if (mostRecentStock != null) {
-                        Object[] recentRowData = {mostRecentStock.getDate(),
-                                mostRecentStock.getSymbol(), mostRecentStock.getOpen(),
-                                mostRecentStock.getHigh(), mostRecentStock.getLow(),
-                                mostRecentStock.getClose(), mostRecentStock.getVolume()};
-                        tableSingle.addRow(recentRowData);
-                    }
+                    // update single table
+                    updateModelSingle(mostRecentStock, tableSingle);
                 } else {
                     // Display an error message if no data is available
                     view.displayError("No data available for the specified symbol: " + codeInput);
+                }
+            }
+
+        });
+
+        importButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int returnValue = fileChooser.showOpenDialog(frame);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String content = readFile(selectedFile);
+                    Model.getInstance().writeDataToDB(content);
+                    updateTableModel();
+                }
+            }
+
+            private String readFile(File file) {
+                StringBuilder fileContent = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        fileContent.append(line).append("\n");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return fileContent.toString();
+            }
+        });
+
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                fileChooser.setDialogTitle("Export List");
+                fileChooser.setFileFilter(new FileNameExtensionFilter("XML (*.xml)", "xml"));
+
+                int userSelection = fileChooser.showSaveDialog(textArea);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    String fileName = selectedFile.getName();
+                    FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+                    String extension = selectedFilter.getExtensions()[0];
+                    String newFileName = fileName.split("\\.")[0] + "." + extension;
+
+                    File outputFile = new File(selectedFile.getParent(), newFileName);
+                    try {
+                        Controller.getInstance().getStockList().output(outputFile);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         });
@@ -161,20 +242,35 @@ public class ViewBuilderHelper {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Get the table model of SingleTable
-                DefaultTableModel singleTableModel = (DefaultTableModel) SingleTable.getModel();
-                // Get the table model of table
-                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
-
-                // Loop through the rows of the single table
-                for (int row = 0; row < singleTableModel.getRowCount(); row++) {
-                    Vector<Object> rowData = new Vector<>();
-                    for (int col = 0; col < singleTableModel.getColumnCount(); col++) {
-                        rowData.add(singleTableModel.getValueAt(row, col));
-                    }
-                    // Add the row data to the main table model
-                    multipleTableModel.addRow(rowData);
+                // save the latest one to the database
+                if (mostRecentStock != null) {
+                    Controller.getInstance().getStockList().addStock(mostRecentStock);
+                    updateTableModel();
+                } else {
+                    // Optionally, you can display a message if no row is selected
+                    JOptionPane.showMessageDialog(frame, "You have to search Stock first",
+                            "No Search Exception", JOptionPane.WARNING_MESSAGE);
                 }
+            }
+        });
+
+        // Add the ActionListener to the "Clear" button
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Controller.getInstance().getStockList().clearAll();
+                updateTableModel();
+            }
+        });
+
+        // Add the ActionListener to the "Push" button
+        pushButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                Stock randomTestStock = Model.getRandomStock();
+                Controller.getInstance().getStockList().addStock(randomTestStock);
+                updateTableModel();
             }
         });
 
@@ -182,8 +278,6 @@ public class ViewBuilderHelper {
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Get the table model of tableMultiple
-                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
 
                 // Get the selected row index
                 int selectedRow = table.getSelectedRow();
@@ -191,7 +285,9 @@ public class ViewBuilderHelper {
                 // Check if a row is selected
                 if (selectedRow != -1) {
                     // Remove the selected row from the table model
-                    multipleTableModel.removeRow(selectedRow);
+                    tableModel.removeRow(selectedRow);
+                    Controller.getInstance().getStockList().removeById(selectedRow);
+                    updateTableModel();
                 } else {
                     // Optionally, you can display a message if no row is selected
                     JOptionPane.showMessageDialog(frame, "Select a row to remove.",
@@ -205,45 +301,12 @@ public class ViewBuilderHelper {
             public void actionPerformed(ActionEvent e) {
                 // Get the selected sorting option
                 String selectedOption = (String) sortByComboBox.getSelectedItem();
-                // Get the table model
-                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
-                // Create a list to store the table rows
-                List<Object[]> rows = new ArrayList<>();
-
-                // Copy rows from table model to the list
-                for (int i = 0; i < multipleTableModel.getRowCount(); i++) {
-                    Object[] row = new Object[multipleTableModel.getColumnCount()];
-                    for (int j = 0; j < multipleTableModel.getColumnCount(); j++) {
-                        row[j] = multipleTableModel.getValueAt(i, j);
-                    }
-                    rows.add(row);
-                }
-
-                // Sort the list based on the selected option
-                rows.sort(new Comparator<Object[]>() {
-                    @Override
-                    public int compare(Object[] row1, Object[] row2) {
-                        switch (selectedOption) {
-                            case "Open":
-                                return ((Comparable) row1[2]).compareTo(row2[2]);
-                            case "High":
-                                return ((Comparable) row1[3]).compareTo(row2[3]);
-                            case "Low":
-                                return ((Comparable) row1[4]).compareTo(row2[4]);
-                            case "Close":
-                                return ((Comparable) row1[5]).compareTo(row2[5]);
-                            case "Volume":
-                                return ((Comparable) row1[6]).compareTo(row2[6]);
-                            default:
-                                return 0;
-                        }
-                    }
-                });
-                // Clear the table model
-                multipleTableModel.setRowCount(0);
-                // Add the sorted rows back to the table model
-                for (Object[] row : rows) {
-                    multipleTableModel.addRow(row);
+                if (selectedOption.equals("Sort by")) {
+                    view.displayError("Sort by Nothing");
+                } else {
+                    Controller.getInstance().getStockList().sortBy(selectedOption);
+                    highLightSelected(selectedOption, table);
+                    updateTableModel();
                 }
             }
         });
@@ -262,5 +325,83 @@ public class ViewBuilderHelper {
         frame.setVisible(true);
         // set initial focus on searchButton to avoid focusing on textField
         searchButton.requestFocus();
+
+        updateTableModel(1);
+    }
+
+    private static void highLightSelected(String selectedOption, JTable table) {
+        if (lastSelected != null) {
+            table.getColumn(lastSelected).setCellRenderer(table.getDefaultRenderer(Object.class));
+        }
+        lastSelected = selectedOption;
+
+        table.getColumn(selectedOption).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(Color.YELLOW); // 设置背景色为黄色
+                }
+                return c;
+            }
+        });
+    }
+
+
+    private static boolean isDateValid(Date value, LocalDate today) {
+        Instant instant = value.toInstant();
+
+        LocalDate inputAsLocalDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+        return inputAsLocalDate.isBefore(today) || inputAsLocalDate.isEqual(today);
+    }
+
+    public static void updateTableModel() {
+        // Update table, clear existing rows
+        tableModel.setRowCount(0);
+
+        List<Stock> stockData = Controller.getInstance().getStockList().getStockList();
+
+        // update large panel
+        for (Stock stock : stockData) {
+            Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+                    stock.getHigh(), stock.getLow(), stock.getClose(),
+                    stock.getVolume()};
+
+            tableModel.addRow(rowData);
+        }
+    }
+
+    public static void updateTableModel(int delay) {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+        Runnable updateTask = () -> {
+            tableModel.setRowCount(0);
+
+            List<Stock> stockData = Controller.getInstance().getStockList().getStockList();
+
+            for (Stock stock : stockData) {
+                Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+                        stock.getHigh(), stock.getLow(), stock.getClose(),
+                        stock.getVolume()};
+
+                tableModel.addRow(rowData);
+            }
+        };
+
+        executor.schedule(updateTask, delay, TimeUnit.SECONDS);
+    }
+
+    private static void updateModelSingle(Stock mostRecentStock, DefaultTableModel tableSingle) {
+        tableSingle.setRowCount(0);
+
+        // Add the most recent stock data to tableSingle
+        if (mostRecentStock != null) {
+            Object[] recentRowData = {mostRecentStock.getDate(),
+                    mostRecentStock.getSymbol(), mostRecentStock.getOpen(),
+                    mostRecentStock.getHigh(), mostRecentStock.getLow(),
+                    mostRecentStock.getClose(), mostRecentStock.getVolume()};
+            tableSingle.addRow(recentRowData);
+        }
     }
 }
