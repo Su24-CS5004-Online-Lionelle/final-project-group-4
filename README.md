@@ -3,7 +3,7 @@
 ## Group Members
 
 - **Jubal Bewick** - [GitHub](https://github.com/Darkknight-86)
-- **Jiazuo He** - [GitHub](https://github.com/JZZhang04)
+- **Jiazuo Zhang** - [GitHub](https://github.com/JZZhang04)
 - **Kangning Li** - [GitHub](https://github.com/ShakyVertex)
 - **Aakash Sharma** - [GitHub](https://github.com/sharma-aak)
 
