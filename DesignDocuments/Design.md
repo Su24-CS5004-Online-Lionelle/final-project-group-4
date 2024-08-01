@@ -170,11 +170,11 @@ direction TB
         +goodbye()
         +display(List<Stock> records)
         +displayError(String message)
-        -refreshBlock(String codeInput, JTextArea outputLabel)
         -build(JFrame frame)
-        -show()
+        +show()
         -class Slot
-        -showChart()
+        -showChart(List<Stock> stockData)
+        -showChart() void
     }
 
     class Model {
@@ -183,7 +183,7 @@ direction TB
         +Model(String apiKey)
         +static getInstance(String apiKey) Model
         +static getInstance() Model
-        +fetchStockData(String symbol) TimeSeriesResponse
+        +fetchStockData(String symbol) List<Stock>
         +fetchMostRecentStockData(String symbol) Stock
         -getComparator(String orderBy) Comparator<Stock>
     }
@@ -202,8 +202,7 @@ direction TB
         +static getInstance(String apiKey) Controller
         +static getInstance() Controller
         +fetchStockData(String symbol) List<Stock>
-        +fetchAndDisplayStockData(String symbol)
-        +fetchAndDisplayMostRecentStockData(String symbol)
+        +fetchMostRecentStockData(String symbol) Stock
     }
 
     class Stock {
@@ -270,7 +269,7 @@ The final UML illustrates the actual implementation of the Stock Data Viewer App
 
 **View Class:**
 
-- **Added Methods: `show()`, `showChart()`**
+- **Added Methods: `show()`, `showChart(List<Stock> stockData)`**
   - **Reason:** These methods were added to enhance the user interface by providing functionality to display the main window and to show stock data charts. This improves user experience by allowing visualization of stock data.
   - **Design Impact:** The View class now handles more comprehensive GUI operations, ensuring that the interface is responsive and user-friendly.
 
@@ -282,7 +281,7 @@ The final UML illustrates the actual implementation of the Stock Data Viewer App
 
 **Controller Class:**
 
-- **Added Methods: `fetchStockData(String symbol)`, `fetchAndDisplayStockData(String symbol)`, `fetchAndDisplayMostRecentStockData(String symbol)`**
+- **Added Methods: `fetchStockData(String symbol)`, `fetchMostRecentStockData(String symbol)`**
   - **Reason:** These methods were added to manage the flow of data between the model and the view, specifically for fetching and displaying stock data. This ensures that the Controller can handle various data display scenarios, providing flexibility in how data is presented to the user.
   - **Design Impact:** The Controller class now has a more comprehensive role in coordinating data retrieval and presentation, ensuring that the application remains consistent and responsive.
 

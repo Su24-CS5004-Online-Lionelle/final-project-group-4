@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import controller.Controller;
 import model.DataMgmt.Stock;
@@ -19,13 +20,12 @@ import javax.swing.table.DefaultTableModel;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import org.jdatepicker.impl.JDatePickerImpl;
 import org.knowm.xchart.*;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import org.jdatepicker.impl.JDatePickerImpl;
+
 import java.awt.geom.RoundRectangle2D;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -40,21 +40,13 @@ public class View {
         }
 
         // Extract dates and close prices from the stock data
-        List<Date> xData = stockData.stream()
-                .map(Stock::getDateAsDate)
-                .collect(Collectors.toList());
-        List<Double> yData = stockData.stream()
-                .map(Stock::getClose)
-                .collect(Collectors.toList());
+        List<Date> xData =
+                stockData.stream().map(Stock::getDateAsDate).collect(Collectors.toList());
+        List<Double> yData = stockData.stream().map(Stock::getClose).collect(Collectors.toList());
 
         // Create a chart
-        XYChart chart = new XYChartBuilder()
-                .width(800)
-                .height(400)
-                .title("Stock Prices")
-                .xAxisTitle("Date")
-                .yAxisTitle("Close Price")
-                .build();
+        XYChart chart = new XYChartBuilder().width(800).height(400).title("Stock Prices")
+                .xAxisTitle("Date").yAxisTitle("Close Price").build();
 
         // Customize the chart style
         XYStyler styler = chart.getStyler();
@@ -312,38 +304,43 @@ public class View {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // get content from input field
+                // Get content from input field
                 String codeInput = textField.getText();
 
-                // Fetch and display stock data using the Controller
-                controller.fetchAndDisplayStockData(codeInput);
                 // Fetch stock data using the Controller
                 List<Stock> stockData = controller.fetchStockData(codeInput);
 
-                // Update the chart with the fetched stock data
-                showChart(stockData);
+                // Check if data is available and update the chart
+                if (stockData != null && !stockData.isEmpty()) {
+                    // Update the chart with the fetched stock data
+                    showChart(stockData);
 
-                // Update table, clear existing rows
-                tableModel.setRowCount(0);
-                tableSingle.setRowCount(0);
+                    // Update table, clear existing rows
+                    tableModel.setRowCount(0);
+                    tableSingle.setRowCount(0);
 
+                    // Add all stock data to tableModel
+                    for (Stock stock : stockData) {
+                        Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+                                stock.getHigh(), stock.getLow(), stock.getClose(),
+                                stock.getVolume()};
+                        tableModel.addRow(rowData);
+                    }
 
-                // Find the most recent stock data entry (assuming the list is sorted by date)
-                Stock mostRecentStock = stockData.get(0);
-
-                // Add all stock data to tableModel
-                for (Stock stock : stockData) {
-                    Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
-                            stock.getHigh(), stock.getLow(), stock.getClose(), stock.getVolume()};
-                    tableModel.addRow(rowData);
+                    // Add the most recent stock data to tableSingle
+                    Stock mostRecentStock = stockData.stream()
+                            .max(Comparator.comparing(Stock::getDate)).orElse(null);
+                    if (mostRecentStock != null) {
+                        Object[] recentRowData = {mostRecentStock.getDate(),
+                                mostRecentStock.getSymbol(), mostRecentStock.getOpen(),
+                                mostRecentStock.getHigh(), mostRecentStock.getLow(),
+                                mostRecentStock.getClose(), mostRecentStock.getVolume()};
+                        tableSingle.addRow(recentRowData);
+                    }
+                } else {
+                    // Display an error message if no data is available
+                    displayError("No data available for the specified symbol: " + codeInput);
                 }
-
-                // Add the most recent stock data to tableSingle
-                Object[] recentRowData = {mostRecentStock.getDate(), mostRecentStock.getSymbol(),
-                        mostRecentStock.getOpen(), mostRecentStock.getHigh(),
-                        mostRecentStock.getLow(), mostRecentStock.getClose(),
-                        mostRecentStock.getVolume()};
-                tableSingle.addRow(recentRowData);
             }
         });
 

@@ -4,13 +4,10 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import model.DataMgmt.StockList;
 import model.Model;
 import model.DataMgmt.Stock;
-import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
-import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 import view.View;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,47 +27,19 @@ public class Controller {
      *
      * @param apiKey the API key used to access the AlphaVantage API
      */
-    public Controller(String apiKey) throws IOException {
+    private Controller(String apiKey) throws IOException {
         this.model = Model.getInstance(apiKey); // Initializes the Model with the API key
         this.view = new View(this); // Initializes the View with this Controller
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
 
         File database = new File("bin/data.xml"); // File object pointing to the data file
 
-        // Debug prints to verify file reading, added to verify the database exists and what
-        // formatted correctly which
-        // it is Kangning but I left these there for you to see and also adjust why the terminal is
-        // throwing an error
-        // the program still runs as needed but it is something we need to have fixed.
-        System.out.println("Database file exists: " + database.exists());
-        System.out.println("Database file path: " + database.getAbsolutePath());
-        System.out.println("Database file length: " + database.length());
-
-        // Added error handling for reading the data file -- Kangning please adjust this to your
-        // preference
-        // I added some error handling to the file reading in the Controller class. I used a
-        // try-catch block to catch
-        // any IOExceptions that may occur when reading the file. If an IOException occurs, the
-        // catch block will print
-        // the stack trace of the exception. This will help you identify the cause of the error and
-        // fix it. You can adjust
-        // the error handling to your preference, such as displaying an error message to the user or
-        // logging the error to a file.
         if (!database.exists() || database.length() == 0) {
-            // If the file does not exist or is empty, create an empty StockList
             this.stockList = new StockList();
         } else {
             try {
-                // Print the content of the XML file for debugging, last debug that goes with the
-                // above to verify
-                // the xml contents and formatting
-                String xmlContent = new String(java.nio.file.Files.readAllBytes(database.toPath()));
-                System.out.println("XML content:\n" + xmlContent);
-
-                // Attempt to read the StockList from the XML file
                 this.stockList = xmlMapper.readValue(database, StockList.class);
             } catch (IOException e) {
-                // If there's an error parsing the file, log the error and create an empty StockList
                 e.printStackTrace();
                 this.stockList = new StockList();
             }
@@ -88,8 +57,7 @@ public class Controller {
      */
     public static synchronized Controller getInstance(String apiKey) throws IOException {
         if (instance == null) {
-            instance = new Controller(apiKey); // Initializes the singleton instance if it does not
-            // exist
+            instance = new Controller(apiKey);
         }
         return instance;
     }
@@ -102,70 +70,29 @@ public class Controller {
      */
     public static synchronized Controller getInstance() {
         if (instance == null) {
-            throw new RuntimeException("Controller is not instantiated"); // Throws an exception if
-            // the instance is not
-            // initialized
+            throw new RuntimeException("Controller is not instantiated");
         }
         return instance;
     }
 
     /**
-     * Fetches the stock data for the given stock symbol.
+     * Fetches the stock data for the given stock symbol and returns it to the view.
      *
      * @param symbol the stock symbol to fetch data for
      * @return the list of Stock objects containing the stock data
      */
     public List<Stock> fetchStockData(String symbol) {
-        TimeSeriesResponse response = model.fetchStockData(symbol); // Fetches stock data for the
-        // last 100 tradable days
-        List<Stock> stocks = new ArrayList<>();
-        if (response != null && response.getStockUnits() != null) {
-            for (StockUnit unit : response.getStockUnits()) {
-                stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
-                        unit.getVolume(), unit.getDate(), symbol));
-            }
-        }
-        return stocks;
+        return model.fetchStockData(symbol);
     }
 
     /**
-     * Fetches and displays the stock data for the given stock symbol.
+     * Fetches and returns the most recent stock data for the given stock symbol.
      *
      * @param symbol the stock symbol to fetch data for
+     * @return the most recent Stock object
      */
-    public void fetchAndDisplayStockData(String symbol) {
-        List<Stock> stocks = fetchStockData(symbol); // Fetches stock data for the last 100 tradable
-        // days
-        if (!stocks.isEmpty()) {
-            view.display(stocks); // Displays the stock data
-        } else {
-            view.displayError("No data available for the specified symbol: " + symbol); // Displays
-            // an error
-            // message
-            // if no
-            // data is
-            // available
-        }
-    }
-
-    /**
-     * Fetches and displays the most recent stock data for the given stock symbol.
-     *
-     * @param symbol the stock symbol to fetch data for
-     */
-    public void fetchAndDisplayMostRecentStockData(String symbol) {
-        Stock mostRecentStock = model.fetchMostRecentStockData(symbol); // Fetches the most recent
-                                                                        // stock data
-        if (mostRecentStock != null) {
-            view.display(List.of(mostRecentStock)); // Displays the most recent stock data
-        } else {
-            view.displayError("No data available for the specified symbol: " + symbol); // Displays
-                                                                                        // an error
-                                                                                        // message
-                                                                                        // if no
-                                                                                        // data is
-                                                                                        // available
-        }
+    public Stock fetchMostRecentStockData(String symbol) {
+        return model.fetchMostRecentStockData(symbol);
     }
 }
 

@@ -2,11 +2,11 @@ package model;
 
 import model.NetUtils.MarketDataAPI;
 import model.DataMgmt.Stock;
-import java.util.List;
-import java.util.Comparator;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
+import java.util.List;
+import java.util.Comparator;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +23,7 @@ public class Model {
      *
      * @param apiKey the API key used to access the AlphaVantage API
      */
-    public Model(String apiKey) {
+    private Model(String apiKey) {
         this.marketDataAPI = new MarketDataAPI(apiKey);
     }
 
@@ -44,10 +44,18 @@ public class Model {
      * Fetches the stock data for the given symbol from the MarketDataAPI.
      *
      * @param symbol the stock symbol to fetch data for
-     * @return the TimeSeriesResponse containing the stock data
+     * @return the list of Stock objects containing the stock data
      */
-    public TimeSeriesResponse fetchStockData(String symbol) {
-        return marketDataAPI.fetchStockData(symbol);
+    public List<Stock> fetchStockData(String symbol) {
+        TimeSeriesResponse response = marketDataAPI.fetchStockData(symbol);
+        List<Stock> stocks = new ArrayList<>();
+        if (response != null && response.getStockUnits() != null) {
+            for (StockUnit unit : response.getStockUnits()) {
+                stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
+                        unit.getVolume(), unit.getDate(), symbol));
+            }
+        }
+        return stocks;
     }
 
     /**
@@ -58,17 +66,8 @@ public class Model {
      * @return the most recent Stock object
      */
     public Stock fetchMostRecentStockData(String symbol) {
-        // Assuming fetchStockData returns a TimeSeriesResponse
-        TimeSeriesResponse response = fetchStockData(symbol);
-
-        // Create an instance of Stock to use the non-static method
-        Stock stockInstance = new Stock();
-
-        // Convert TimeSeriesResponse to a list of Stock objects
-        List<Stock> stockData = stockInstance.fromTimeSeriesResponse(response);
-
-        // Find the most recent stock data
-        return stockData.stream().max(Comparator.comparing(Stock::getDate)).orElse(null);
+        List<Stock> stocks = fetchStockData(symbol);
+        return stocks.stream().max(Comparator.comparing(Stock::getDate)).orElse(null);
     }
 }
 // /**
