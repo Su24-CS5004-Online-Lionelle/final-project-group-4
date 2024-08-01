@@ -161,6 +161,11 @@ public class ViewBuilderHelper {
                 // Fetch stock data using the Controller
                 controller.cleanCache();
                 List<Stock> stockData = controller.fetchStockData(codeInput);
+                if (stockData.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "You have reach the 25 times daily limit, please Paypal $50 to Jubal",
+                            "No Money Exception", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
                 if (model.getValue() != null) {
                     mostRecentStock = controller.fetchSpecificStockDate(model.getValue());
                 } else {
