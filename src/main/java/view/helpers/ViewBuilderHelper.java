@@ -162,7 +162,7 @@ public class ViewBuilderHelper {
                 controller.cleanCache();
                 List<Stock> stockData = controller.fetchStockData(codeInput);
                 if (stockData.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "You have reach the 25 times daily limit, please Paypal $50 to Jubal",
+                    JOptionPane.showMessageDialog(frame, "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
                             "No Money Exception", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -345,7 +345,7 @@ public class ViewBuilderHelper {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (!isSelected) {
-                    c.setBackground(Color.YELLOW); // 设置背景色为黄色
+                    c.setBackground(Color.YELLOW); // set column color to yellow
                 }
                 return c;
             }

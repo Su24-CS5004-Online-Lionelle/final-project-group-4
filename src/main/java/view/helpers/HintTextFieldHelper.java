@@ -1,14 +1,10 @@
 package view.helpers;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.AbstractBorder;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.BasicStroke;
 import java.awt.geom.RoundRectangle2D;
 
 public class HintTextFieldHelper {
@@ -23,7 +19,13 @@ public class HintTextFieldHelper {
             this.showingHint = true;
             super.addFocusListener((FocusListener) this);
             this.setForeground(Color.GRAY);
+            // Set a round border
             this.setBorder(new RoundedBorder(10));
+            // Add padding to top, left, bottom, right
+            this.setBorder(BorderFactory.createCompoundBorder(
+                    this.getBorder(),
+                    BorderFactory.createEmptyBorder(0, 10, 0, 0)
+            ));
         }
 
         @Override
