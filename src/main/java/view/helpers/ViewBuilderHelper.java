@@ -3,9 +3,8 @@ package view.helpers;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,7 +26,7 @@ public class ViewBuilderHelper {
         frame.setLayout(null);
 
         // Load the background image
-        ImageIcon backgroundImage = new ImageIcon("src/background_test2.png");
+        ImageIcon backgroundImage = new ImageIcon("libs/images/background.png");
         Image image = backgroundImage.getImage();
         BackgroundPanel backgroundPanel = new BackgroundPanel(image);
         backgroundPanel.setLayout(null);
@@ -96,6 +95,7 @@ public class ViewBuilderHelper {
 
         // create JPanel for chart
         chartPanel.setBounds(570, 50, 380, 200);
+        chartPanel.setBackground(Color.WHITE);
         frame.add(chartPanel);
 
         // create and add the date picker
@@ -152,6 +152,98 @@ public class ViewBuilderHelper {
                 } else {
                     // Display an error message if no data is available
                     view.displayError("No data available for the specified symbol: " + codeInput);
+                }
+            }
+        });
+
+
+        // Add the ActionListener to the "Add" button
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the table model of SingleTable
+                DefaultTableModel singleTableModel = (DefaultTableModel) SingleTable.getModel();
+                // Get the table model of table
+                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
+
+                // Loop through the rows of the single table
+                for (int row = 0; row < singleTableModel.getRowCount(); row++) {
+                    Vector<Object> rowData = new Vector<>();
+                    for (int col = 0; col < singleTableModel.getColumnCount(); col++) {
+                        rowData.add(singleTableModel.getValueAt(row, col));
+                    }
+                    // Add the row data to the main table model
+                    multipleTableModel.addRow(rowData);
+                }
+            }
+        });
+
+        // Add the ActionListener to the "Remove" button
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the table model of tableMultiple
+                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
+
+                // Get the selected row index
+                int selectedRow = table.getSelectedRow();
+
+                // Check if a row is selected
+                if (selectedRow != -1) {
+                    // Remove the selected row from the table model
+                    multipleTableModel.removeRow(selectedRow);
+                } else {
+                    // Optionally, you can display a message if no row is selected
+                    JOptionPane.showMessageDialog(frame, "Select a row to remove.",
+                            "No selection", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        sortByComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the selected sorting option
+                String selectedOption = (String) sortByComboBox.getSelectedItem();
+                // Get the table model
+                DefaultTableModel multipleTableModel = (DefaultTableModel) table.getModel();
+                // Create a list to store the table rows
+                List<Object[]> rows = new ArrayList<>();
+
+                // Copy rows from table model to the list
+                for (int i = 0; i < multipleTableModel.getRowCount(); i++) {
+                    Object[] row = new Object[multipleTableModel.getColumnCount()];
+                    for (int j = 0; j < multipleTableModel.getColumnCount(); j++) {
+                        row[j] = multipleTableModel.getValueAt(i, j);
+                    }
+                    rows.add(row);
+                }
+
+                // Sort the list based on the selected option
+                rows.sort(new Comparator<Object[]>() {
+                    @Override
+                    public int compare(Object[] row1, Object[] row2) {
+                        switch (selectedOption) {
+                            case "Open":
+                                return ((Comparable) row1[2]).compareTo(row2[2]);
+                            case "High":
+                                return ((Comparable) row1[3]).compareTo(row2[3]);
+                            case "Low":
+                                return ((Comparable) row1[4]).compareTo(row2[4]);
+                            case "Close":
+                                return ((Comparable) row1[5]).compareTo(row2[5]);
+                            case "Volume":
+                                return ((Comparable) row1[6]).compareTo(row2[6]);
+                            default:
+                                return 0;
+                        }
+                    }
+                });
+                // Clear the table model
+                multipleTableModel.setRowCount(0);
+                // Add the sorted rows back to the table model
+                for (Object[] row : rows) {
+                    multipleTableModel.addRow(row);
                 }
             }
         });
