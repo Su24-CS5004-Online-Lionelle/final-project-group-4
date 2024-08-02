@@ -82,8 +82,10 @@ public class StockList {
             Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getLow(), s2.getLow()));
         } else if (selectedOption.equals("Volume")) {
             Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getVolume(), s2.getVolume()));
-        } else {
+        } else if (selectedOption.equals("Date")) {
             Collections.sort(stockList, (s1, s2) -> -String.CASE_INSENSITIVE_ORDER.compare(s1.getDate(), s2.getDate()));
+        } else {
+            Collections.sort(stockList, (s1, s2) -> String.CASE_INSENSITIVE_ORDER.compare(s1.getSymbol(), s2.getSymbol()));
         }
 
         try {

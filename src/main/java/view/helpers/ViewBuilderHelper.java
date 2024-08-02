@@ -99,7 +99,7 @@ public class ViewBuilderHelper {
         frame.add(pushButton);
 
         // create JComboBox for sort options
-        String[] sortOptions = {"Sort by", "Open", "High", "Low", "Close", "Volume"};
+        String[] sortOptions = {"Sort by", "Date", "Open", "High", "Low", "Close", "Volume"};
         JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
         sortByComboBox.setBounds(45, 170, 100, 30);
         frame.add(sortByComboBox);
@@ -110,7 +110,7 @@ public class ViewBuilderHelper {
         frame.add(scrollPane); // put JScrollPane to JFrame
 
         // create JTable and JScrollPane for multiple records
-        String[] columnNames = {"Date", "Symbol", "Open", "High", "Low", "Close", "Volume"};
+        String[] columnNames = { "Symbol", "Date", "Open", "High", "Low", "Close", "Volume"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(table);
@@ -314,7 +314,7 @@ public class ViewBuilderHelper {
                 // Get the selected sorting option
                 String selectedOption = (String) sortByComboBox.getSelectedItem();
                 if (selectedOption.equals("Sort by")) {
-                    Controller.getInstance().getStockList().sortBy("Date");
+                    Controller.getInstance().getStockList().sortBy("Sort By");
                     clearLastHighLight(table);
                     updateTableModel();
                 } else {
@@ -384,7 +384,7 @@ public class ViewBuilderHelper {
 
         // update large panel
         for (Stock stock : stockData) {
-            Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+            Object[] rowData = {stock.getSymbol(), stock.getDate(), stock.getOpen(),
                     stock.getHigh(), stock.getLow(), stock.getClose(),
                     stock.getVolume()};
 
@@ -401,7 +401,7 @@ public class ViewBuilderHelper {
             List<Stock> stockData = Controller.getInstance().getStockList().getStockList();
 
             for (Stock stock : stockData) {
-                Object[] rowData = {stock.getDate(), stock.getSymbol(), stock.getOpen(),
+                Object[] rowData = {stock.getSymbol(), stock.getDate(), stock.getOpen(),
                         stock.getHigh(), stock.getLow(), stock.getClose(),
                         stock.getVolume()};
 
@@ -417,8 +417,8 @@ public class ViewBuilderHelper {
 
         // Add the most recent stock data to tableSingle
         if (mostRecentStock != null) {
-            Object[] recentRowData = {mostRecentStock.getDate(),
-                    mostRecentStock.getSymbol(), mostRecentStock.getOpen(),
+            Object[] recentRowData = {
+                    mostRecentStock.getSymbol(), mostRecentStock.getDate(), mostRecentStock.getOpen(),
                     mostRecentStock.getHigh(), mostRecentStock.getLow(),
                     mostRecentStock.getClose(), mostRecentStock.getVolume()};
             tableSingle.addRow(recentRowData);
