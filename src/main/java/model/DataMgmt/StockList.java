@@ -32,6 +32,8 @@ public class StockList {
 
     // Method to add a stock to the list and save to XML
     public void addStock(Stock stock) {
+        // Make sure all stock symbol stores as uppercase
+        stock.setSymbol(stock.getSymbol().toUpperCase());
         if (this.stockList.contains(stock)) {
             return;
         }
