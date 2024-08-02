@@ -55,7 +55,7 @@ public class ViewBuilderHelper {
 
         // create HintTextField instance with a hint
         HintTextField textField = new HintTextField(" Enter a stock symbol");
-        textField.setBounds(50, 50, 400, 30);
+        textField.setBounds(50, 50, 250, 30);
         frame.add(textField);
 
         // create search Button instance
@@ -64,33 +64,33 @@ public class ViewBuilderHelper {
         frame.add(searchButton);
 
         // create add Button instance
-        JButton addButton = new JButton("ADD");
+        JButton addButton = new JButton("Add");
         addButton.setBounds(310, 170, 80, 30);
         frame.add(addButton);
 
         // create remove Button instance
-        JButton removeButton = new JButton("DEL");
+        JButton removeButton = new JButton("Delete");
         removeButton.setBounds(390, 170, 80, 30);
         frame.add(removeButton);
 
         // create import Button instance
         JButton importButton = new JButton("Import");
-        importButton.setBounds(470, 170, 80, 30);
+        importButton.setBounds(390, 520, 80, 30);
         frame.add(importButton);
 
         // create export Button instance
         JButton exportButton = new JButton("Export");
-        exportButton.setBounds(880, 520, 80, 30);
+        exportButton.setBounds(470, 520, 80, 30);
         frame.add(exportButton);
 
         // create help Button instance
         JButton helpButton = new JButton("Help");
-        helpButton.setBounds(210, 520, 80, 30);
+        helpButton.setBounds(880, 520, 80, 30);
         frame.add(helpButton);
 
         // create clear Button instance
         JButton clearButton = new JButton("Clear");
-        clearButton.setBounds(130, 520, 80, 30);
+        clearButton.setBounds(470, 170, 80, 30);
         frame.add(clearButton);
 
         // create help Button instance
@@ -136,8 +136,8 @@ public class ViewBuilderHelper {
         p.put("text.month", "Month");
         p.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        datePicker.setBounds(150, 170, 150, 30);
+        JDatePickerImpl datePicker = new PromptDatePicker(datePanel, new DateLabelFormatter(), " Select a date");
+        datePicker.setBounds(310, 50, 150, 30);
         frame.add(datePicker);
 
         // set initial welcome text
