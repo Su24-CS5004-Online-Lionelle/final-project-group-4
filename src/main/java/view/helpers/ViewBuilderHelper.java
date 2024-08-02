@@ -161,16 +161,23 @@ public class ViewBuilderHelper {
                 // Fetch stock data using the Controller
                 controller.cleanCache();
                 List<Stock> stockData = controller.fetchStockData(codeInput);
+
+                // handle 25 times exception
                 if (stockData.isEmpty()) {
                     JOptionPane.showMessageDialog(frame, "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
                             "No Money Exception", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+
+                // get the most recent data / specific date data
                 if (model.getValue() != null) {
                     mostRecentStock = controller.fetchSpecificStockDate(model.getValue());
                 } else {
                     mostRecentStock = controller.fetchMostRecentStockData();
                 }
+
+                // uppercase mostRecentStock
+                mostRecentStock.setSymbol(mostRecentStock.getSymbol().toUpperCase());
 
                 // Check if data is available and update the chart
                 if (stockData != null && !stockData.isEmpty()) {
