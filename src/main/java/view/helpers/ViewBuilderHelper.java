@@ -314,7 +314,9 @@ public class ViewBuilderHelper {
                 // Get the selected sorting option
                 String selectedOption = (String) sortByComboBox.getSelectedItem();
                 if (selectedOption.equals("Sort by")) {
-                    view.displayError("Sort by Nothing");
+                    Controller.getInstance().getStockList().sortBy("Date");
+                    clearLastHighLight(table);
+                    updateTableModel();
                 } else {
                     Controller.getInstance().getStockList().sortBy(selectedOption);
                     highLightSelected(selectedOption, table);
@@ -339,6 +341,12 @@ public class ViewBuilderHelper {
         searchButton.requestFocus();
 
         updateTableModel(1);
+    }
+
+    private static void clearLastHighLight(JTable table) {
+        if (lastSelected != null) {
+            table.getColumn(lastSelected).setCellRenderer(table.getDefaultRenderer(Object.class));
+        }
     }
 
     private static void highLightSelected(String selectedOption, JTable table) {

@@ -13,7 +13,6 @@ public class Main {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        // API key used to access the AlphaVantage API
 
         try {
             // Initialize the Controller, which also initializes and shows the View

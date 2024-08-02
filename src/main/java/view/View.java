@@ -35,7 +35,7 @@ public class View {
         List<Double> yData = stockData.stream().map(Stock::getClose).collect(Collectors.toList());
 
         // Create a chart
-        XYChart chart = new XYChartBuilder().width(800).height(400).title("Stock Prices")
+        XYChart chart = new XYChartBuilder().width(800).height(400).title(stockData.get(0).getSymbol().toUpperCase())
                 .xAxisTitle("Date").yAxisTitle("Close Price").build();
 
         // Customize the chart style
