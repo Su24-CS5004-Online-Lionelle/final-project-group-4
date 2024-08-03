@@ -88,8 +88,7 @@ public class ViewBuilderHelper {
                 frame.add(pushButton);
 
                 // Create JComboBox for sort options
-                String[] sortOptions =
-                                {"Sort by", "Date", "Open", "High", "Low", "Close", "Volume"};
+                String[] sortOptions = {"Name", "Date", "Open", "High", "Low", "Close", "Volume"};
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
                 sortByComboBox.setBounds(45, 170, 100, 30);
                 frame.add(sortByComboBox);

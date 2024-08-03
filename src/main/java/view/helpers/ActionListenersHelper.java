@@ -10,7 +10,6 @@ import java.time.ZoneId;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import controller.Controller;
 
 import model.DataMgmt.Stock;
@@ -307,10 +306,10 @@ public class ActionListenersHelper {
             public void actionPerformed(ActionEvent e) {
                 // Get the selected sorting option
                 String selectedOption = (String) sortByComboBox.getSelectedItem();
-                if (selectedOption.equals("Sort by")) {
+                if (selectedOption.equals("Name")) {
                     // If the default option is selected, clear the highlight and update the table
                     // model
-                    Controller.getInstance().getStockList().sortBy("Sort By");
+                    Controller.getInstance().getStockList().sortBy("Name");
                     TableHelper.clearLastHighLight(table);
                     TableHelper.updateTableModel(tableModel);
                 } else {
