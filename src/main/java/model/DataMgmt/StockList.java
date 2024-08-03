@@ -18,7 +18,7 @@ public class StockList {
     @JacksonXmlProperty(localName = "stock")
     private List<Stock> stockList;
 
-    String database = "bin/data.xml";
+    String database = "bin/data/data.xml";
 
     // Default constructor
     public StockList() {
@@ -81,11 +81,14 @@ public class StockList {
         } else if (selectedOption.equals("Low")) {
             Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getLow(), s2.getLow()));
         } else if (selectedOption.equals("Volume")) {
-            Collections.sort(stockList, (s1, s2) -> -Double.compare(s1.getVolume(), s2.getVolume()));
+            Collections.sort(stockList,
+                    (s1, s2) -> -Double.compare(s1.getVolume(), s2.getVolume()));
         } else if (selectedOption.equals("Date")) {
-            Collections.sort(stockList, (s1, s2) -> -String.CASE_INSENSITIVE_ORDER.compare(s1.getDate(), s2.getDate()));
+            Collections.sort(stockList,
+                    (s1, s2) -> -String.CASE_INSENSITIVE_ORDER.compare(s1.getDate(), s2.getDate()));
         } else {
-            Collections.sort(stockList, (s1, s2) -> String.CASE_INSENSITIVE_ORDER.compare(s1.getSymbol(), s2.getSymbol()));
+            Collections.sort(stockList, (s1, s2) -> String.CASE_INSENSITIVE_ORDER
+                    .compare(s1.getSymbol(), s2.getSymbol()));
         }
 
         try {
