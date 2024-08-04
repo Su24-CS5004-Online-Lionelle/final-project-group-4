@@ -129,7 +129,25 @@ public class TableHelper {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected,
                         hasFocus, row, column);
                 if (!isSelected) {
-                    c.setBackground(Color.YELLOW); // Set column color to yellow
+                    c.setBackground(Color.LIGHT_GRAY); // Set column color to light Gray
+                }
+                return c;
+            }
+        });
+    }
+
+    public static void setFirstColumnGray(JTable table) {
+        lastSelected = "Symbol";
+
+        // Set the cell renderer for the default Column to highlight it
+        table.getColumn(lastSelected).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected,
+                        hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(Color.LIGHT_GRAY); // Set column color to light Gray
                 }
                 return c;
             }

@@ -104,7 +104,7 @@ public class ViewBuilderHelper {
                 frame.add(helpButton);
 
                 // Create JComboBox for sort options
-                String[] sortOptions = {"Name", "Date", "Open", "High", "Low", "Close", "Volume"};
+                String[] sortOptions = {"Symbol", "Date", "Open", "High", "Low", "Close", "Volume"};
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
                 sortByComboBox.setBounds(45, 270, 120, 30);
                 sortByComboBox.setFont(font);
@@ -195,5 +195,8 @@ public class ViewBuilderHelper {
 
                 // Update the table model with a delay
                 TableHelper.updateTableModel(1, tableModel);
+
+                // set the first column default to gray
+                TableHelper.setFirstColumnGray(table);
         }
 }

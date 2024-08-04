@@ -342,18 +342,12 @@ public class ActionListenersHelper {
             public void actionPerformed(ActionEvent e) {
                 // Get the selected sorting option
                 String selectedOption = (String) sortByComboBox.getSelectedItem();
-                if (selectedOption.equals("Name")) {
-                    // If the default option is selected, clear the highlight and update the table
-                    // model
-                    Controller.getInstance().getStockList().sortBy("Name");
-                    TableHelper.clearLastHighLight(table);
-                    TableHelper.updateTableModel(tableModel);
-                } else {
-                    // Sort the stock list by the selected option and update the table model
-                    Controller.getInstance().getStockList().sortBy(selectedOption);
-                    TableHelper.highLightSelected(selectedOption, table);
-                    TableHelper.updateTableModel(tableModel);
-                }
+
+                // Sort the stock list by the selected option and update the table model
+                Controller.getInstance().getStockList().sortBy(selectedOption);
+                TableHelper.highLightSelected(selectedOption, table);
+                TableHelper.updateTableModel(tableModel);
+
             }
         });
     }
