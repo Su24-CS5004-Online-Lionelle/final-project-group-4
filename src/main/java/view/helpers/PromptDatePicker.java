@@ -44,6 +44,9 @@ public class PromptDatePicker extends JDatePickerImpl {
     /** The controller used for fetching stock data. */
     private final Controller controller;
 
+    /** Indicates if the search query has been used. */
+    private static boolean isSearchQueryUsed = false;
+
     /**
      * Constructor for PromptDatePicker.
      *
@@ -83,8 +86,39 @@ public class PromptDatePicker extends JDatePickerImpl {
         // Adding mouse listener to handle prompt text behavior on click
         getJFormattedTextField().addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {}
+            public void mouseClicked(MouseEvent e) {
+                if (!isSearchQueryUsed) {
+                    DialogHelper.showSingleDialog("Please use the search query first.",
+                            "Action Required", DialogHelper.DialogState.ACTION_REQUIRED);
+                }
+            }
         });
+
+        // Adding action listener to disable date selection until search is used
+        datePanel.addActionListener(e -> {
+            if (!isSearchQueryUsed) {
+                DialogHelper.showSingleDialog("Please perform a search query first.",
+                        "Action Required", DialogHelper.DialogState.ACTION_REQUIRED);
+            }
+        });
+    }
+
+    /**
+     * Sets the flag to indicate if the search query has been used.
+     *
+     * @param used true if the search query has been used, false otherwise
+     */
+    public static void setSearchQueryUsed(boolean used) {
+        isSearchQueryUsed = used;
+    }
+
+    /**
+     * Checks if the search query has been used.
+     *
+     * @return true if the search query has been used, false otherwise
+     */
+    public static boolean isSearchQueryUsed() {
+        return isSearchQueryUsed;
     }
 
     /**

@@ -1,5 +1,10 @@
 package view.helpers;
 
+import controller.Controller;
+import model.DataMgmt.Stock;
+
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -12,22 +17,15 @@ import java.time.ZoneId;
 import java.time.Instant;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import java.io.File;
 import java.io.IOException;
 
-import controller.Controller;
-import model.DataMgmt.Stock;
 import model.Exceptions.InvalidStockSymbolException;
 import model.Exceptions.ApiLimitReachedException;
 import model.Model;
 import view.View;
-
-import org.jdatepicker.impl.UtilDateModel;
-
 
 
 /**
@@ -40,10 +38,11 @@ public class ActionListenersHelper {
      */
     private static Stock mostRecentStock;
 
+
     /**
-     * Set to track displayed messages to prevent duplicate dialogs.
+     * Indicates if the search query has been used.
      */
-    private static final Set<String> displayedMessages = new HashSet<>();
+    public static boolean isSearchQueryUsed = false;
 
     /**
      * The directory where preset custom lists are stored.
@@ -78,12 +77,16 @@ public class ActionListenersHelper {
             JTextArea textArea, DefaultTableModel tableSingle, PromptDatePicker datePicker) {
 
         searchButton.addActionListener(e -> {
+            // Set the flag to true when search is used
+            ActionListenersHelper.isSearchQueryUsed = true;
+
             // Get content from input field
             String codeInput = textField.getText();
 
             // Validate stock symbol
             if (codeInput.isEmpty()) {
-                showDialog("Please enter a stock symbol.", "Invalid Input");
+                DialogHelper.showSingleDialog("Please enter a stock symbol.", "Invalid Input",
+                        DialogHelper.DialogState.INVALID_INPUT);
                 TableHelper.updateModelSingle(null, tableSingle);
                 return;
             }
@@ -95,9 +98,9 @@ public class ActionListenersHelper {
 
                 // Handle API limit exception
                 if (stockData.isEmpty()) {
-                    showDialog(
+                    DialogHelper.showSingleDialog(
                             "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
-                            "API Limit Reached");
+                            "API Limit Reached", DialogHelper.DialogState.API_LIMIT_REACHED);
                     TableHelper.updateModelSingle(null, tableSingle);
                     return;
                 }
@@ -113,7 +116,7 @@ public class ActionListenersHelper {
 
                 // Check if mostRecentStock is null before accessing it
                 if (mostRecentStock == null) {
-                    throw new InvalidStockSymbolException("Invalid stock symbol provided.");
+                    throw new InvalidStockSymbolException("Invalid stock symbol: " + codeInput);
                 }
 
                 // Uppercase mostRecentStock symbol
@@ -133,12 +136,14 @@ public class ActionListenersHelper {
                 }
             } catch (InvalidStockSymbolException ex) {
                 // Handle invalid stock symbol exception
-                showDialog(ex.getMessage(), "Invalid Stock Symbol");
+                DialogHelper.showSingleDialog(ex.getMessage(), "Invalid Stock Symbol",
+                        DialogHelper.DialogState.INVALID_INPUT);
                 TableHelper.updateModelSingle(null, tableSingle); // Clear the table
             } catch (ApiLimitReachedException ex) {
                 // Handle API limit reached exception
-                showDialog("You have reached the 25 times daily limit, please Paypal $50 to Jubal",
-                        "API Limit Reached");
+                DialogHelper.showSingleDialog(
+                        "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
+                        "API Limit Reached", DialogHelper.DialogState.API_LIMIT_REACHED);
                 TableHelper.updateModelSingle(null, tableSingle); // Clear the table
             } catch (Exception ex) {
                 // Handle any other unexpected exceptions
@@ -167,14 +172,59 @@ public class ActionListenersHelper {
     }
 
     /**
-     * Shows a dialog with the specified message and title.
+     * Adds an action listener to the date picker to handle date selection and update the table
+     * model.
      *
-     * @param message the message to display
-     * @param title the title of the dialog
+     * @param datePicker the PromptDatePicker component
+     * @param controller the Controller to handle data fetching
+     * @param tableSingle the table model for displaying single stock data
      */
-    private static void showDialog(String message, String title) {
-        SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+    public static void addDatePickerListener(PromptDatePicker datePicker, Controller controller,
+            DefaultTableModel tableSingle) {
+        datePicker.getModel().addChangeListener(e -> {
+            if (!PromptDatePicker.isSearchQueryUsed()) {
+                return;
+            }
+
+            // Introduce a delay before processing the date selection
+            Timer timer = new Timer(400, new ActionListener() { // 400 milliseconds delay
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    LocalDate selectedDate = datePicker.getSelectedDate();
+                    if (selectedDate != null) {
+                        if (!datePicker.isDateWithinRange(selectedDate)) {
+                            DialogHelper.showSingleDialog(
+                                    "Selected date is outside the valid range: " + selectedDate,
+                                    "Date Out of Range",
+                                    DialogHelper.DialogState.DATE_OUT_OF_RANGE);
+                            TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
+                                                                              // table
+                        } else {
+                            Stock specificStock = controller
+                                    .fetchSpecificStockDate(java.sql.Date.valueOf(selectedDate));
+                            if (specificStock != null) {
+                                TableHelper.updateModelSingle(specificStock, tableSingle);
+                            } else {
+                                DialogHelper.showSingleDialog(
+                                        "No stock data available for the selected date: "
+                                                + selectedDate,
+                                        "Data Not Found", DialogHelper.DialogState.DATA_NOT_FOUND);
+                                TableHelper.updateModelSingle(null, tableSingle); // Clear or reset
+                                                                                  // the table
+                            }
+                        }
+                    } else {
+                        DialogHelper.showSingleDialog(
+                                "Selected date is invalid. Please select a valid date.",
+                                "Invalid Date", DialogHelper.DialogState.INVALID_DATE);
+                        TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
+                                                                          // table
+                    }
+                    ((Timer) evt.getSource()).stop(); // Stop the timer after execution
+                }
+            });
+            timer.setRepeats(false); // Ensure the timer only runs once
+            timer.start(); // Start the timer
         });
     }
 
@@ -407,87 +457,6 @@ public class ActionListenersHelper {
                 }
             }
         });
-    }
-
-    /**
-     * Adds an action listener to the date picker to handle date selection and update the table
-     * model.
-     *
-     * @param datePicker the PromptDatePicker component
-     * @param controller the Controller to handle data fetching
-     * @param tableSingle the table model for displaying single stock data
-     */
-    public static void addDatePickerListener(PromptDatePicker datePicker, Controller controller,
-            DefaultTableModel tableSingle) {
-        datePicker.getModel().addChangeListener(e -> {
-            // Introduce a delay before processing the date selection
-            Timer timer = new Timer(400, new ActionListener() { // 400 milliseconds delay
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    LocalDate selectedDate = datePicker.getSelectedDate();
-                    boolean dialogShown = false;
-                    if (selectedDate != null) {
-                        if (!datePicker.isDateWithinRange(selectedDate)) {
-                            if (!dialogShown) {
-                                showSingleDialog(
-                                        "Selected date is outside the valid range: " + selectedDate,
-                                        "Date Out of Range");
-                                dialogShown = true;
-                            }
-                            TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
-                                                                              // table
-                        } else {
-                            Stock specificStock = controller
-                                    .fetchSpecificStockDate(java.sql.Date.valueOf(selectedDate));
-                            if (specificStock != null) {
-                                TableHelper.updateModelSingle(specificStock, tableSingle);
-                            } else {
-                                if (!dialogShown) {
-                                    showSingleDialog(
-                                            "No stock data available for the selected date: "
-                                                    + selectedDate,
-                                            "Data Not Found");
-                                    dialogShown = true;
-                                }
-                                TableHelper.updateModelSingle(null, tableSingle); // Clear or reset
-                                                                                  // the table
-                            }
-                        }
-                    } else {
-                        if (!dialogShown) {
-                            showSingleDialog(
-                                    "Selected date is invalid. Please select a valid date.",
-                                    "Invalid Date");
-                            dialogShown = true;
-                        }
-                        TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
-                                                                          // table
-                    }
-                    ((Timer) evt.getSource()).stop(); // Stop the timer after execution
-                }
-            });
-            timer.setRepeats(false); // Ensure the timer only runs once
-            timer.start(); // Start the timer
-        });
-    }
-
-    /**
-     * Shows a single dialog box with the specified message and title. Ensures that each message is
-     * displayed only once.
-     *
-     * @param message the message to display
-     * @param title the title of the dialog box
-     */
-    private static void showSingleDialog(String message, String title) {
-        String key = title + ": " + message;
-        if (!displayedMessages.contains(key)) {
-            displayedMessages.add(key);
-            SwingUtilities.invokeLater(() -> {
-                JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
-                // Remove the message from the set after displaying
-                displayedMessages.remove(key);
-            });
-        }
     }
 
     /**
