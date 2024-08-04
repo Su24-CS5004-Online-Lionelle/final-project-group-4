@@ -59,13 +59,13 @@ public class ViewBuilderHelper {
 
                 // Create HintTextField instance with a hint
                 HintTextField textField = new HintTextField(" Enter a stock symbol");
-                textField.setBounds(50, 148, 400, 34);
+                textField.setBounds(50, 148, 510, 34);
                 textField.setFont(font);
                 frame.add(textField);
 
                 // Create search Button instance
                 CustomButton searchButton = new CustomButton("Search");
-                searchButton.setBounds(650, 150, 100, 30);
+                searchButton.setBounds(580, 150, 100, 30);
                 frame.add(searchButton);
 
                 // Create add Button instance
@@ -163,8 +163,8 @@ public class ViewBuilderHelper {
                 p.put("text.year", "Year");
                 JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
                 PromptDatePicker datePicker = new PromptDatePicker(datePanel,
-                                new DateLabelFormatter(), "Select a date", controller);
-                datePicker.setBounds(460, 150, 170, 30);
+                                new DateLabelFormatter(), controller);
+                datePicker.setBounds(700, 150, 50, 30);
                 datePicker.getJFormattedTextField().setFont(font);
                 frame.add(datePicker);
 
