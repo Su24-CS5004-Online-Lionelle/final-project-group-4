@@ -1,75 +1,42 @@
 package view;
 
 import java.awt.*;
-import java.util.Date;
+
+import javax.swing.*;
+
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Scanner;
+
 
 import controller.Controller;
 import model.DataMgmt.Stock;
 import view.helpers.ViewBuilderHelper;
 import view.helpers.Messages;
-
-import javax.swing.*;
-
-import org.knowm.xchart.*;
-import org.knowm.xchart.style.XYStyler;
-import org.knowm.xchart.style.markers.SeriesMarkers;
+import view.helpers.ChartHelper;
 
 /**
  * The View class handles the user interface interactions. It provides methods to display messages,
  * get user input, and show stock data.
  */
 public class View {
+    /**
+     * The main application frame.
+     */
+    private JFrame frame;
 
+    /**
+     * The text area for displaying messages.
+     */
+    private JTextArea textArea;
 
-    public void showChart(List<Stock> stockData) {
-        if (stockData == null || stockData.isEmpty()) {
-            return; // No data to display
-        }
+    /**
+     * The panel for displaying charts.
+     */
+    private JPanel chartPanel;
 
-        // Extract dates and close prices from the stock data
-        List<Date> xData =
-                stockData.stream().map(Stock::getDateAsDate).collect(Collectors.toList());
-        List<Double> yData = stockData.stream().map(Stock::getClose).collect(Collectors.toList());
-
-        // Create a chart
-        XYChart chart = new XYChartBuilder().width(800).height(400).title(stockData.get(0).getSymbol().toUpperCase())
-                .xAxisTitle("Date").yAxisTitle("Close Price").build();
-
-        // Customize the chart style
-        XYStyler styler = chart.getStyler();
-        styler.setLegendVisible(false); // Hide the legend
-        styler.setChartBackgroundColor(Color.WHITE); // Set chart background color to white
-        styler.setPlotBackgroundColor(Color.WHITE); // Set plot background color to white
-        styler.setPlotBorderVisible(false); // Hide plot border
-        styler.setDatePattern("yyyy-MM-dd"); // Set date format on the x-axis
-
-        // Add series to the chart
-        XYSeries series = chart.addSeries("Stock Prices", xData, yData);
-        series.setXYSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line); // Set the series to line
-        series.setMarker(SeriesMarkers.NONE); // Remove markers from the line
-        series.setLineWidth(1); // Adjust line width for better visibility
-        series.setLineColor(Color.BLUE); // Set the line color to blue
-
-        // Create a chart panel to display the chart
-        JPanel chartPanelWrapper = new JPanel();
-        chartPanelWrapper.setLayout(new BorderLayout());
-        chartPanelWrapper.add(new XChartPanel<>(chart), BorderLayout.CENTER);
-
-        // Clear the existing content and add the new chart panel
-        chartPanel.removeAll();
-        chartPanel.add(chartPanelWrapper);
-        chartPanel.revalidate();
-        chartPanel.repaint();
-    }
-
-    JFrame frame;
-    JTextArea textArea;
-    JPanel chartPanel;
-
-    // Scanner for reading user input from the console
+    /**
+     * Scanner for reading user input from the console.
+     */
     private static Scanner scanner = new Scanner(System.in);
 
     /**
@@ -102,22 +69,12 @@ public class View {
     }
 
     /**
-     * Prompts the user if they want to check more stocks.
-     *
-     * @return true if the user wants to check more stocks, false otherwise
-     */
-    public static boolean askForMoreStocks() {
-        System.out.print("Do you want to check more stocks? (yes/no): ");
-        String input = scanner.nextLine().trim().toLowerCase();
-        return input.equals("yes") || input.equals("y");
-    }
-
-    /**
-     * Displays a farewell message to the user. Prints "Goodbye! Have a great day." to the standard
-     * output.
+     * Displays a thank-you message to the user. Shows a dialog box when the program closes.
      */
     public static void goodbye() {
-        System.out.println("Goodbye! Have a great day.");
+        JOptionPane.showMessageDialog(null,
+                "Thank you for using the Stock Data Viewer. May the price forever be in your favor",
+                "Goodbye", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -154,12 +111,22 @@ public class View {
 
     /**
      * Constructor for the View class. It initializes the JFrame and its components.
+     *
+     * @param controller the controller to handle interactions
      */
     public View(Controller controller) {
         this.textArea = new JTextArea(10, 20);
         this.chartPanel = new JPanel(new BorderLayout());
-        this.frame = new JFrame("STOCK QUERY");
+        this.frame = new JFrame("STOCK DATA VIEWER");
         ViewBuilderHelper.build(frame, controller, textArea, chartPanel, this);
+
+        // Add a window listener to show goodbye message when the frame is closed
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                goodbye();
+            }
+        });
     }
 
     /**
@@ -167,5 +134,29 @@ public class View {
      */
     public void show() {
         frame.setVisible(true);
+    }
+
+    /**
+     * Displays a chart with the provided stock data.
+     *
+     * @param stockData the list of Stock objects to display in the chart
+     */
+    public void showChart(List<Stock> stockData) {
+        JPanel chartPanelWrapper = ChartHelper.createChartPanel(stockData);
+
+        // Clear the existing content and add the new chart panel
+        chartPanel.removeAll();
+        chartPanel.add(chartPanelWrapper);
+        chartPanel.revalidate();
+        chartPanel.repaint();
+    }
+
+    /**
+     * The main method to start the application.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new View(Controller.getInstance()).show());
     }
 }

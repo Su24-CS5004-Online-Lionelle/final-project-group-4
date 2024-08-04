@@ -1,15 +1,20 @@
 package controller;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import model.DataMgmt.Stock;
 import model.DataMgmt.StockList;
 import model.Model;
-import model.DataMgmt.Stock;
+import model.Exceptions.ApiLimitReachedException;
+import model.Exceptions.InvalidStockSymbolException;
 import view.View;
+import view.helpers.TableHelper;
+
+import javax.swing.table.DefaultTableModel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.List;
 
@@ -18,32 +23,62 @@ import java.util.List;
  * of data and updates between the user interface and the backend logic.
  */
 public class Controller {
-    private Model model; // Reference to the Model component
-    private static Controller instance;
-
-    private StockList stockList;
-    private View view; // Reference to the View component
 
     /**
-     * Constructs a Controller and initializes the Model with the provided API key. API key will be
-     * supplied by the main driver.
+     * Reference to the Model component.
+     */
+    private Model model;
+
+    /**
+     * Singleton instance of the Controller class.
+     */
+    private static Controller instance;
+
+    /**
+     * StockList to manage the list of stocks.
+     */
+    private StockList stockList;
+
+    /**
+     * Reference to the View component.
+     */
+    private View view;
+
+    /**
+     * Constructs a Controller and initializes the Model.
      */
     private Controller() {
-        this.model = Model.getInstance(); // Initializes the Model with the API key
+        this.model = Model.getInstance(); // Initializes the Model
         this.view = new View(this); // Initializes the View with this Controller
-        loadDataFromDB();
+        this.stockList = new StockList(); // Initialize a new StockList to ensure it's empty
         view.show(); // Show the GUI
     }
 
+    /**
+     * Returns the singleton instance of the Controller, initializing it if necessary.
+     *
+     * @return the singleton instance of the Controller
+     */
+    public static synchronized Controller getInstance() {
+        if (instance == null) {
+            instance = new Controller();
+        }
+        return instance;
+    }
+
+    /**
+     * Loads stock data from the database (XML file).
+     */
     public void loadDataFromDB() {
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
+        File database = new File("bin/data/data.xml"); // File object pointing to the data file
 
-        File database = new File("bin/data.xml"); // File object pointing to the data file
-
+        // If the database file does not exist or is empty, initialize a new StockList
         if (!database.exists() || database.length() == 0) {
             this.stockList = new StockList();
         } else {
             try {
+                // Read the stock data from the XML file and initialize StockList
                 this.stockList = xmlMapper.readValue(database, StockList.class);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -53,30 +88,24 @@ public class Controller {
     }
 
     /**
-     * Returns the singleton instance of the Controller, initializing it if necessary.
+     * Gets the StockList managed by the Controller.
      *
-     * @return the singleton instance of the Controller
-     * @throws IOException if there is an error reading the data file
+     * @return the StockList
      */
-    public static synchronized Controller getInstance() {
-        if (instance == null) {
-            instance = new Controller();
-        }
-        return instance;
-    }
-
     public StockList getStockList() {
         return stockList;
     }
-
 
     /**
      * Fetches the stock data for the given stock symbol and returns it to the view.
      *
      * @param symbol the stock symbol to fetch data for
      * @return the list of Stock objects containing the stock data
+     * @throws InvalidStockSymbolException if the stock symbol is invalid
+     * @throws ApiLimitReachedException if the API limit is reached
      */
-    public List<Stock> fetchStockData(String symbol) {
+    public List<Stock> fetchStockData(String symbol)
+            throws InvalidStockSymbolException, ApiLimitReachedException {
         return model.fetchStockData(symbol);
     }
 
@@ -89,53 +118,54 @@ public class Controller {
         return model.fetchMostRecentStockData();
     }
 
+    /**
+     * Fetches the stock data for a specific date.
+     *
+     * @param value the date to fetch data for
+     * @return the Stock object for the specified date, or null if not found
+     */
+    public Stock fetchSpecificStockDate(Date value) {
+        return model.fetchSpecificStockDate(value);
+    }
+
+    /**
+     * Clears the cache by removing all stored stock data.
+     */
     public void cleanCache() {
         model.cleanCache();
     }
 
-    public Stock fetchSpecificStockDate(Date value) {
-        return model.fetchSpecificStockDate(value);
+    /**
+     * Imports stock data from a file and updates the database.
+     *
+     * @param selectedFile the file to import
+     * @param tableModel the table model to update the table
+     */
+    public void importStockDataFromFile(File selectedFile, DefaultTableModel tableModel) {
+        try {
+            model.importStockDataFromFile(selectedFile);
+            loadDataFromDB(); // Reload the data after importing
+            TableHelper.updateTableModel(tableModel); // Update the table model
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Writes the stock data to a temporary XML file for parsing by the PromptDatePicker.
+     *
+     * @param stockData the list of stock data to write
+     */
+    public void writeTempStockDataToXML(List<Stock> stockData) {
+        model.writeTempStockDataToXML(stockData);
+    }
+
+    /**
+     * Reads the temporary stock data XML file and returns the list of stock data.
+     *
+     * @return the list of Stock objects read from the XML file
+     */
+    public List<Stock> readTempStockDataFromXML() {
+        return model.readTempStockDataFromXML();
     }
 }
-
-// Remove this entire method
-// public void run() {
-// View view = new View(); // Creates a new View instance
-// view.welcome(); // Displays the welcome message
-
-// while (true) {
-// String symbol = view.getInput("Enter stock symbol: "); // Prompts the user to enter a
-// // stock symbol
-// fetchAndDisplayStockData(symbol); // Fetches and displays the stock data for the entered
-// // symbol
-
-// if (!view.askForMoreStocks()) { // Checks if the user wants to check more stocks
-// view.goodbye(); // Displays a goodbye message
-// break; // Exits the loop if the user does not want to check more stocks
-// }
-// }
-// }
-
-// Note: fetchAllStock method is not currently implemented in this prototype.
-// /**
-// * Fetches and returns all stock data for the given symbol.
-// *
-// * @param symbol the stock symbol to fetch data for
-// * @return the StockList containing all fetched stock data
-// * @throws IOException if there is an error reading the data file
-// */
-// public StockList fetchAllStock(String symbol) throws IOException {
-// if (stockList.getStockFromSymbol(symbol) == null) {
-// StockUnit stockUnit = model.fetchStockData(symbol); // Fetches stock data for the last 100
-// tradable days
-// if (stockUnit != null) {
-// // Creates a Stock object from the fetched data and adds it to the StockList
-// String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-// Stock stock = new Stock(stockUnit.getOpen(), stockUnit.getHigh(), stockUnit.getLow(),
-// stockUnit.getClose(), stockUnit.getVolume(), today, symbol);
-// this.stockList.addStock(stock); // Adds the stock to the StockList
-// }
-// }
-
-// return stockList; // Returns the updated StockList
-// }

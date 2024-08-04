@@ -2,6 +2,7 @@ package model.DataMgmt;
 
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,20 +26,6 @@ import java.util.Objects;
 @JacksonXmlRootElement(localName = "stock")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Stock {
-
-
-    // Add a method to parse the date string
-    public Date getDateAsDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            return sdf.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
 
     @JsonProperty("1. open")
     @JacksonXmlProperty(localName = "open")
@@ -63,10 +51,11 @@ public class Stock {
     private String date;
 
     @JacksonXmlProperty(localName = "symbol")
-    private String symbol; // Add the symbol field
+    private String symbol;
 
     /**
-     * Constructs a Stock object with the specified open, high, low, close, volume, and date.
+     * Constructs a Stock object with the specified open, high, low, close, volume, date, and
+     * symbol.
      *
      * @param open the stock opening price
      * @param high the stock highest price
@@ -87,64 +76,150 @@ public class Stock {
         this.symbol = symbol;
     }
 
+    /**
+     * Default constructor for the Stock class.
+     */
     public Stock() {}
 
-    // Getters and setters
-
+    /**
+     * Gets the stock opening price.
+     *
+     * @return the opening price
+     */
     public double getOpen() {
         return open;
     }
 
+    /**
+     * Sets the stock opening price.
+     *
+     * @param open the opening price
+     */
     public void setOpen(double open) {
         this.open = open;
     }
 
+    /**
+     * Gets the stock highest price.
+     *
+     * @return the highest price
+     */
     public double getHigh() {
         return high;
     }
 
+    /**
+     * Sets the stock highest price.
+     *
+     * @param high the highest price
+     */
     public void setHigh(double high) {
         this.high = high;
     }
 
+    /**
+     * Gets the stock lowest price.
+     *
+     * @return the lowest price
+     */
     public double getLow() {
         return low;
     }
 
+    /**
+     * Sets the stock lowest price.
+     *
+     * @param low the lowest price
+     */
     public void setLow(double low) {
         this.low = low;
     }
 
+    /**
+     * Gets the stock closing price.
+     *
+     * @return the closing price
+     */
     public double getClose() {
         return close;
     }
 
+    /**
+     * Sets the stock closing price.
+     *
+     * @param close the closing price
+     */
     public void setClose(double close) {
         this.close = close;
     }
 
+    /**
+     * Gets the stock trading volume.
+     *
+     * @return the trading volume
+     */
     public long getVolume() {
         return volume;
     }
 
+    /**
+     * Sets the stock trading volume.
+     *
+     * @param volume the trading volume
+     */
     public void setVolume(long volume) {
         this.volume = volume;
     }
 
+    /**
+     * Gets the date of the stock data.
+     *
+     * @return the date
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     * Sets the date of the stock data.
+     *
+     * @param date the date
+     */
     public void setDate(String date) {
         this.date = date;
     }
 
+    /**
+     * Gets the stock symbol.
+     *
+     * @return the stock symbol
+     */
     public String getSymbol() {
         return symbol;
     }
 
+    /**
+     * Sets the stock symbol.
+     *
+     * @param symbol the stock symbol
+     */
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    /**
+     * Parses the date string to a Date object.
+     *
+     * @return the Date object parsed from the date string
+     */
+    public Date getDateAsDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -154,19 +229,16 @@ public class Stock {
      * @return a list of Stock objects
      */
     public List<Stock> fromTimeSeriesResponse(TimeSeriesResponse response) {
-        List<Stock> stocks = new ArrayList<>(); // List to hold the converted Stock objects
-        List<StockUnit> stockUnits = response.getStockUnits(); // Retrieve the list of StockUnit
-                                                               // objects from the response
+        List<Stock> stocks = new ArrayList<>();
+        List<StockUnit> stockUnits = response.getStockUnits();
 
-        // Iterate through each StockUnit in the list
         for (StockUnit unit : stockUnits) {
-            String date = unit.getDate(); // Get the date of the stock data
-            // Create a new Stock object and add it to the stocks list
+            String date = unit.getDate();
             stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
                     unit.getVolume(), date, symbol));
         }
 
-        return stocks; // Return the list of Stock objects
+        return stocks;
     }
 
     /**
@@ -205,9 +277,7 @@ public class Stock {
      */
     @Override
     public String toString() {
-        // 使用 StringBuilder 来构建完整的字符串
         StringBuilder sb = new StringBuilder();
-
         sb.append("Date: ").append(date).append("\n");
         sb.append("Symbol: ").append(symbol).append("\n");
         sb.append("Open: ").append(open).append("\n");
@@ -215,24 +285,32 @@ public class Stock {
         sb.append("Low: ").append(low).append("\n");
         sb.append("Close: ").append(close).append("\n");
         sb.append("Volume: ").append(volume).append("\n");
-        sb.append("----").append("\n"); // Separator for each stock
-
-        // 将 StringBuilder 转换为 String
-        String result = sb.toString();
-        return result;
+        sb.append("----").append("\n");
+        return sb.toString();
     }
 
+    /**
+     * Compares this Stock object to the specified object. The result is true if and only if the
+     * argument is not null and is a Stock object that has the same symbol and date as this object.
+     *
+     * @param obj the object to compare this Stock against
+     * @return true if the given object represents a Stock equivalent to this stock, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-
-        if (obj == null || getClass() != obj.getClass()) return false;
-
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
         Stock stock = (Stock) obj;
-
         return symbol.equals(stock.getSymbol()) && date.equals(stock.getDate());
     }
 
+    /**
+     * Returns a hash code value for this Stock object.
+     *
+     * @return a hash code value for this stock
+     */
     @Override
     public int hashCode() {
         return Objects.hash(symbol, date);

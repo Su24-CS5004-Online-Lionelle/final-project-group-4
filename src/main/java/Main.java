@@ -1,7 +1,5 @@
 import controller.Controller;
 
-import java.io.IOException;
-
 /**
  * The Main class serves as the entry point for the application. It initializes the Controller with
  * the API key and starts the application logic.
