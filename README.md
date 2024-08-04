@@ -17,13 +17,18 @@
 - [GUI Instructions](./Manual/GUI_Instructions.md)
 - [Proposal](./DesignDocuments/Proposal.md)
 - [Design](./DesignDocuments/Design.md)
+- [Features](./DesignDocuments/Features.md)
 - [Testing](./DesignDocuments/Testing.md)
 - [View Javadoc Documentation](./build/docs/javadoc/index.html)
 
 ## Instructions to Run the Application
 
 1. **Clone the repository:**
-   git clone <repository-url>git clone <https://github.com/Su24-CS5004-Online-Lionelle/final-project-group-4.git>
+
+   ```sh
+   git clone https://github.com/Su24-CS5004-Online-Lionelle/final-project-group-4.git
+   ```
+
 2. Open the project in the IDE of your choice. IntelliJ IDEA or Visual Studio Code is recommended.
 3. Ensure all dependencies are installed by running the appropriate build commands for your IDE via the terminal. Use one of the following commands:
 
