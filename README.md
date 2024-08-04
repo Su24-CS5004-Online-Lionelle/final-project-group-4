@@ -18,6 +18,7 @@
 - [Proposal](./DesignDocuments/Proposal.md)
 - [Design](./DesignDocuments/Design.md)
 - [Testing](./DesignDocuments/Testing.md)
+- [View Javadoc Documentation](./build/docs/javadoc/index.html)
 
 ## Instructions to Run the Application
 
@@ -40,3 +41,33 @@
 5. Run the `Main` class to start the application.
 6. The application will open in a new window.
 7. For visual instructions on using the GUI, see [GUI Instructions](./Manual/GUI_Instructions.md).
+
+## Generating Javadoc Documentation
+
+To generate the Javadoc documentation for this project, follow these steps:
+
+1. **Open the terminal in VS Code:**
+
+   You can open the terminal by going to `View -> Terminal` or by pressing `Ctrl+` ``.
+
+2. **Navigate to the project root directory:**
+
+   ```sh
+   cd /path/to/final-project-group-4
+   ```
+
+3. **Run the Javadoc generation command:**
+
+   ```sh
+   gradle generateJavadoc
+   ```
+
+4. **The generated Javadoc documentation will be located in the `build/docs/javadoc` directory.
+
+5. **To view the Javadoc documentation:**
+   - Open the `build/docs/javadoc` directory in your file explorer.
+   - Open the `index.html` file in your web browser.
+
+Alternatively, you can view the documentation directly from this README by clicking the link below after completing the previous steps:
+
+- [View Javadoc Documentation](./build/docs/javadoc/index.html)

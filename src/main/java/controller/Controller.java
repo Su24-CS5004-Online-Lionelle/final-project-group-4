@@ -1,17 +1,20 @@
 package controller;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import model.DataMgmt.Stock;
 import model.DataMgmt.StockList;
 import model.Model;
-import model.DataMgmt.Stock;
-import model.Model.InvalidStockSymbolException;
-import model.Model.ApiLimitReachedException;
+import model.Exceptions.ApiLimitReachedException;
+import model.Exceptions.InvalidStockSymbolException;
 import view.View;
 import view.helpers.TableHelper;
 
 import javax.swing.table.DefaultTableModel;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +23,7 @@ import java.util.List;
  * of data and updates between the user interface and the backend logic.
  */
 public class Controller {
+
     /**
      * Reference to the Model component.
      */
@@ -51,11 +55,22 @@ public class Controller {
     }
 
     /**
+     * Returns the singleton instance of the Controller, initializing it if necessary.
+     *
+     * @return the singleton instance of the Controller
+     */
+    public static synchronized Controller getInstance() {
+        if (instance == null) {
+            instance = new Controller();
+        }
+        return instance;
+    }
+
+    /**
      * Loads stock data from the database (XML file).
      */
     public void loadDataFromDB() {
         XmlMapper xmlMapper = new XmlMapper(); // Creates an XmlMapper instance for XML processing
-
         File database = new File("bin/data/data.xml"); // File object pointing to the data file
 
         // If the database file does not exist or is empty, initialize a new StockList
@@ -70,18 +85,6 @@ public class Controller {
                 this.stockList = new StockList();
             }
         }
-    }
-
-    /**
-     * Returns the singleton instance of the Controller, initializing it if necessary.
-     *
-     * @return the singleton instance of the Controller
-     */
-    public static synchronized Controller getInstance() {
-        if (instance == null) {
-            instance = new Controller();
-        }
-        return instance;
     }
 
     /**
@@ -116,6 +119,23 @@ public class Controller {
     }
 
     /**
+     * Fetches the stock data for a specific date.
+     *
+     * @param value the date to fetch data for
+     * @return the Stock object for the specified date, or null if not found
+     */
+    public Stock fetchSpecificStockDate(Date value) {
+        return model.fetchSpecificStockDate(value);
+    }
+
+    /**
+     * Clears the cache by removing all stored stock data.
+     */
+    public void cleanCache() {
+        model.cleanCache();
+    }
+
+    /**
      * Imports stock data from a file and updates the database.
      *
      * @param selectedFile the file to import
@@ -129,23 +149,6 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Clears the cache by removing all stored stock data.
-     */
-    public void cleanCache() {
-        model.cleanCache();
-    }
-
-    /**
-     * Fetches the stock data for a specific date.
-     *
-     * @param value the date to fetch data for
-     * @return the Stock object for the specified date, or null if not found
-     */
-    public Stock fetchSpecificStockDate(Date value) {
-        return model.fetchSpecificStockDate(value);
     }
 
     /**

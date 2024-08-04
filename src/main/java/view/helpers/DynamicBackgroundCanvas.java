@@ -2,18 +2,43 @@ package view.helpers;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
 import java.util.Random;
 
+/**
+ * Custom JPanel for rendering a dynamic background with animated price action.
+ */
 public class DynamicBackgroundCanvas extends JPanel implements Runnable {
+    /**
+     * The background image to be displayed.
+     */
     private BufferedImage backgroundImage;
+
+    /**
+     * The thread responsible for running the animation.
+     */
     private Thread thread;
+
+    /**
+     * Array representing the price action data for animation.
+     */
     private float[] priceAction;
+
+    /**
+     * Random number generator for simulating price action changes.
+     */
     private Random random;
 
+    /**
+     * Constructor for DynamicBackgroundCanvas. Initializes the background image, price action data,
+     * and starts the animation thread.
+     */
     public DynamicBackgroundCanvas() {
         try {
             // Load the background image using the absolute path
@@ -34,6 +59,9 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
         thread.start();
     }
 
+    /**
+     * Generates the initial price action data using a random walk algorithm.
+     */
     private void generateInitialPriceAction() {
         float price = 300; // Starting price
         for (int i = 0; i < priceAction.length; i++) {
@@ -42,6 +70,11 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Overrides the paintComponent method to draw the background image and dynamic content.
+     *
+     * @param g the Graphics context in which to paint
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -53,6 +86,11 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
         drawPriceAction(g);
     }
 
+    /**
+     * Draws the dynamic price action on the panel.
+     *
+     * @param g the Graphics context in which to draw
+     */
     private void drawPriceAction(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(2));
@@ -78,6 +116,9 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Animates the price action by shifting the data and repainting the panel.
+     */
     private void animate() {
         while (true) {
             // Update price action for animation
@@ -89,13 +130,16 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
 
             repaint();
             try {
-                Thread.sleep(30);
+                Thread.sleep(30); // Pause for 30 milliseconds
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * The run method for the animation thread. Starts the animation loop.
+     */
     @Override
     public void run() {
         animate();

@@ -1,9 +1,12 @@
 package view;
 
 import java.awt.*;
+
+import javax.swing.*;
+
 import java.util.List;
 import java.util.Scanner;
-import javax.swing.*;
+
 
 import controller.Controller;
 import model.DataMgmt.Stock;
@@ -16,11 +19,24 @@ import view.helpers.ChartHelper;
  * get user input, and show stock data.
  */
 public class View {
+    /**
+     * The main application frame.
+     */
     private JFrame frame;
+
+    /**
+     * The text area for displaying messages.
+     */
     private JTextArea textArea;
+
+    /**
+     * The panel for displaying charts.
+     */
     private JPanel chartPanel;
 
-    // Scanner for reading user input from the console
+    /**
+     * Scanner for reading user input from the console.
+     */
     private static Scanner scanner = new Scanner(System.in);
 
     /**
@@ -53,22 +69,12 @@ public class View {
     }
 
     /**
-     * Prompts the user if they want to check more stocks.
-     *
-     * @return true if the user wants to check more stocks, false otherwise
-     */
-    public static boolean askForMoreStocks() {
-        System.out.print("Do you want to check more stocks? (yes/no): ");
-        String input = scanner.nextLine().trim().toLowerCase();
-        return input.equals("yes") || input.equals("y");
-    }
-
-    /**
-     * Displays a farewell message to the user. Prints "Goodbye! Have a great day." to the standard
-     * output.
+     * Displays a thank-you message to the user. Shows a dialog box when the program closes.
      */
     public static void goodbye() {
-        System.out.println("Goodbye! Have a great day.");
+        JOptionPane.showMessageDialog(null,
+                "Thank you for using the Stock Data Viewer. May the price forever be in your favor",
+                "Goodbye", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -105,12 +111,22 @@ public class View {
 
     /**
      * Constructor for the View class. It initializes the JFrame and its components.
+     *
+     * @param controller the controller to handle interactions
      */
     public View(Controller controller) {
         this.textArea = new JTextArea(10, 20);
         this.chartPanel = new JPanel(new BorderLayout());
-        this.frame = new JFrame("STOCK QUERY");
+        this.frame = new JFrame("STOCK DATA VIEWER");
         ViewBuilderHelper.build(frame, controller, textArea, chartPanel, this);
+
+        // Add a window listener to show goodbye message when the frame is closed
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                goodbye();
+            }
+        });
     }
 
     /**
@@ -135,6 +151,11 @@ public class View {
         chartPanel.repaint();
     }
 
+    /**
+     * The main method to start the application.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new View(Controller.getInstance()).show());
     }

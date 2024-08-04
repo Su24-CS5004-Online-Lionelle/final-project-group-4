@@ -1,8 +1,11 @@
 package view.helpers;
 
 import java.awt.*;
+
 import java.time.LocalDate;
+
 import java.util.Properties;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -10,6 +13,7 @@ import javax.swing.table.JTableHeader;
 import controller.Controller;
 import view.View;
 import view.helpers.HintTextFieldHelper.HintTextField;
+
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
@@ -34,6 +38,7 @@ public class ViewBuilderHelper {
          */
         public static void build(JFrame frame, Controller controller, final JTextArea textArea,
                         final JPanel chartPanel, final View view) {
+                // Set frame size and default close operation
                 frame.setSize(1400, 840);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setLayout(null);
@@ -43,7 +48,7 @@ public class ViewBuilderHelper {
                 canvas.setLayout(null);
                 frame.setContentPane(canvas);
 
-                // Define larger fonts foe text and headers
+                // Define larger fonts for text and headers
                 Font font = new Font("Arial", Font.PLAIN, 16);
                 Font headerFont = new Font("Arial", Font.BOLD, 16);
 
@@ -123,7 +128,8 @@ public class ViewBuilderHelper {
                 tableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPane = new JScrollPane(table);
                 tableScrollPane.setBounds(50, 320, 700, 400); // Set position and size of table
-                tableScrollPane.getViewport().setBackground(Color.WHITE); // Set viewport background color
+                tableScrollPane.getViewport().setBackground(Color.WHITE); // Set viewport background
+                                                                          // color
                 frame.add(tableScrollPane); // Add table JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for single result of search
@@ -137,7 +143,8 @@ public class ViewBuilderHelper {
                 singleTableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPaneSingle = new JScrollPane(singleTable);
                 tableScrollPaneSingle.setBounds(50, 200, 700, 50); // Set position and size of table
-                tableScrollPaneSingle.getViewport().setBackground(Color.WHITE); // Set viewport background color
+                tableScrollPaneSingle.getViewport().setBackground(Color.WHITE); // Set viewport
+                                                                                // background color
                 frame.add(tableScrollPaneSingle);
 
                 // Clear any existing rows from the table model to ensure it starts empty
@@ -186,6 +193,7 @@ public class ViewBuilderHelper {
                 // Set initial focus on searchButton to avoid focusing on textField
                 searchButton.requestFocus();
 
+                // Update the table model with a delay
                 TableHelper.updateTableModel(1, tableModel);
         }
 }

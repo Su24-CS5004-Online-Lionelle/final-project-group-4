@@ -9,44 +9,30 @@ repositories {
 }
 
 dependencies {
-    // Alpha Vantage Java Wrapper - Library to interact with Alpha Vantage API
+    // Libraries for interacting with Alpha Vantage API
     implementation 'com.github.crazzyghost:alphavantage-java:1.7.0'
-
-    // OkHttp - HTTP client for making API requests
     implementation 'com.squareup.okhttp3:okhttp:4.5.0'
 
-    // Moshi - JSON library for parsing JSON data
+    // JSON processing libraries
     implementation 'com.squareup.moshi:moshi:1.9.2'
-
-    // Jackson Databind - JSON library for data binding
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
-
-    // Jackson Core
     implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
-
-    // Jackson Annotations
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.16.0'
-
-    // Jackson Dataformat XML
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.0'
-
-    // Woodstox Core (XML parser)
-    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
-
-    // Jackson Dataformat CSV
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.16.0'
 
-    // JUnit Jupiter API - Testing framework
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    // XML parsing library
+    implementation 'com.fasterxml.woodstox:woodstox-core:6.5.0'
 
-    // JUnit Jupiter Engine - Test runtime for JUnit
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-
-    // XChart - Library for creating charts
+    // Charting library
     implementation 'org.knowm.xchart:xchart:3.8.0'
 
-    // JDatePicker
+    // Date picker library
     implementation 'org.jdatepicker:jdatepicker:1.3.4'
+
+    // Testing libraries
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 application {
@@ -57,4 +43,18 @@ application {
 test {
     // Use JUnit Platform for running tests
     useJUnitPlatform()
+}
+
+task generateJavadoc(type: Javadoc) {
+    source = sourceSets.main.allJava
+    classpath = sourceSets.main.compileClasspath
+    destinationDir = file("$buildDir/docs/javadoc")
+
+    options {
+        encoding 'UTF-8'
+        charSet 'UTF-8'
+        author true
+        version true
+        links "https://docs.oracle.com/en/java/javase/22/docs/api/"
+    }
 }

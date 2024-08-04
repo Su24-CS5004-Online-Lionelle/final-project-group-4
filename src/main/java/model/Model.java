@@ -1,8 +1,13 @@
 package model;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import controller.Controller;
 import model.NetUtils.MarketDataAPI;
 import model.DataMgmt.Stock;
+import model.Exceptions.ApiLimitReachedException;
+import model.Exceptions.InvalidStockSymbolException;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
@@ -10,15 +15,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
+
 import java.util.*;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import controller.Controller;
 
 /**
  * The Model class represents the core data management logic of the application. It interacts with
@@ -56,10 +61,9 @@ public class Model {
      * constructor for singleton pattern.
      */
     private Model() {
-        // Initialize the MarketDataAPI with the API key
-        this.marketDataAPI = new MarketDataAPI(apiKey);
-        // Initialize the list to store stock data
-        this.stocks = new ArrayList<>();
+        this.marketDataAPI = new MarketDataAPI(apiKey); // Initialize the MarketDataAPI with the API
+                                                        // key
+        this.stocks = new ArrayList<>(); // Initialize the list to store stock data
     }
 
     /**
@@ -80,7 +84,6 @@ public class Model {
      * @return a randomly generated Stock object
      */
     public static Stock getRandomStock() {
-        // Create a new Stock object
         Stock randomStock = new Stock();
         Random rand = new Random();
 
@@ -105,16 +108,15 @@ public class Model {
      */
     public List<Stock> fetchStockData(String symbol)
             throws InvalidStockSymbolException, ApiLimitReachedException {
-        // Fetch stock data from the MarketDataAPI
         TimeSeriesResponse response = marketDataAPI.fetchStockData(symbol);
 
-        // Check if the response contains an error message indicating an invalid API call
+        // Check for invalid stock symbol error
         if (response.getErrorMessage() != null
                 && response.getErrorMessage().contains("Invalid API call")) {
             throw new InvalidStockSymbolException("Invalid stock symbol: " + symbol);
         }
 
-        // Check if the response contains an error message indicating the API limit is reached
+        // Check for API limit reached error
         if (response.getErrorMessage() != null && response.getErrorMessage().contains("limit")) {
             throw new ApiLimitReachedException("API limit reached");
         }
@@ -124,15 +126,13 @@ public class Model {
             throw new InvalidStockSymbolException("Invalid stock symbol: " + symbol);
         }
 
-        // Clear the existing stocks before adding new data
+        // Clear existing stocks and add new data
         stocks.clear();
-        // Convert the stock units from the response to Stock objects and add them to the list
         for (StockUnit unit : response.getStockUnits()) {
             stocks.add(new Stock(unit.getOpen(), unit.getHigh(), unit.getLow(), unit.getClose(),
                     unit.getVolume(), unit.getDate(), symbol));
         }
-        // Write the fetched stock data to a temporary XML file
-        writeTempStockDataToXML(stocks);
+        writeTempStockDataToXML(stocks); // Write the fetched stock data to a temporary XML file
         return stocks;
     }
 
@@ -142,7 +142,6 @@ public class Model {
      * @return the most recent Stock object
      */
     public Stock fetchMostRecentStockData() {
-        // Find the stock with the most recent date
         return stocks.stream().max(Comparator.comparing(Stock::getDate)).orElse(null);
     }
 
@@ -150,10 +149,8 @@ public class Model {
      * Clears the cache by removing all stored stock data.
      */
     public void cleanCache() {
-        // Clear the list of stored stock data
-        stocks.clear();
-        // Clear the temporary XML file
-        clearTempStockData();
+        stocks.clear(); // Clear the list of stored stock data
+        clearTempStockData(); // Clear the temporary XML file
     }
 
     /**
@@ -165,24 +162,23 @@ public class Model {
         String filePath = "bin/data/data.xml";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            // Write the content to the file
-            writer.write(content);
+            writer.write(content); // Write the content to the file
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Reload the data from the database
-        Controller.getInstance().loadDataFromDB();
+        Controller.getInstance().loadDataFromDB(); // Reload the data from the database
     }
 
     /**
      * Imports stock data from a file.
      *
+     * @throws IOException if an I/O error occurs
      * @param selectedFile the file to import
      */
     public void importStockDataFromFile(File selectedFile) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(selectedFile.getPath())));
-        writeDataToDB(content);
+        writeDataToDB(content); // Write the imported data to the database
     }
 
     /**
@@ -192,14 +188,12 @@ public class Model {
      * @return the Stock object for the specified date, or null if not found
      */
     public Stock fetchSpecificStockDate(Date specificDate) {
-        // Format the specific date to a string
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String specificDateString = dateFormat.format(specificDate);
 
-        // Find the stock with the specified date
-        Optional<Stock> opStock = stocks.stream()
-                .filter(stock -> stock.getDate().equals(specificDateString)).findFirst();
-        return opStock.orElse(null);
+        return stocks.stream().filter(stock -> stock.getDate().equals(specificDateString))
+                .findFirst().orElse(null); // Return the stock with the specified date or null if
+                                           // not found
     }
 
     /**
@@ -211,9 +205,6 @@ public class Model {
         XmlMapper xmlMapper = new XmlMapper();
         try {
             xmlMapper.writeValue(new File(TEMP_XML_PATH), stockData);
-            // Log the stock data being written to the file
-            System.out.println("Writing to temp XML:");
-            stockData.forEach(stock -> System.out.println(stock.getDate()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -240,30 +231,9 @@ public class Model {
         try {
             stockData = xmlMapper.readValue(new File(TEMP_XML_PATH),
                     new TypeReference<List<Stock>>() {});
-            // Log the stock data being read from the file
-            System.out.println("Reading from temp XML:");
-            stockData.forEach(stock -> System.out.println(stock.getDate()));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return stockData;
-    }
-
-    /**
-     * Custom exception for invalid stock symbol.
-     */
-    public static class InvalidStockSymbolException extends Exception {
-        public InvalidStockSymbolException(String message) {
-            super(message);
-        }
-    }
-
-    /**
-     * Custom exception for API limit reached.
-     */
-    public static class ApiLimitReachedException extends Exception {
-        public ApiLimitReachedException(String message) {
-            super(message);
-        }
     }
 }
