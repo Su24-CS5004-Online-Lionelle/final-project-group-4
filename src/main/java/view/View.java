@@ -73,7 +73,7 @@ public class View {
      */
     public static void goodbye() {
         JOptionPane.showMessageDialog(null,
-                "Thank you for using the Stock Data Viewer. May the price forever be in your favor",
+                "Thank you for using the Stock Data Viewer. May the price forever be in your favor!",
                 "Goodbye", JOptionPane.INFORMATION_MESSAGE);
     }
 
