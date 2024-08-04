@@ -17,7 +17,7 @@ public class DynamicBackgroundCanvas extends JPanel implements Runnable {
     public DynamicBackgroundCanvas() {
         try {
             // Load the background image using the absolute path
-            backgroundImage = ImageIO.read(new File("libs/images/stockmarket.jpeg"));
+            backgroundImage = ImageIO.read(new File("libs/images/background.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

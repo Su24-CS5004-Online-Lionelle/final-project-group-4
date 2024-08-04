@@ -65,8 +65,8 @@ public class HintTextFieldHelper {
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setColor(Color.GRAY);
-            g2d.setStroke(new BasicStroke(2));
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(new BasicStroke(6));
             g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius));
             g2d.dispose();
         }

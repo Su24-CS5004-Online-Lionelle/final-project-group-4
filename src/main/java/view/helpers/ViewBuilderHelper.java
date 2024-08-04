@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Properties;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import controller.Controller;
 import view.View;
@@ -42,87 +43,111 @@ public class ViewBuilderHelper {
                 canvas.setLayout(null);
                 frame.setContentPane(canvas);
 
+                // Define larger fonts foe text and headers
+                Font font = new Font("Arial", Font.PLAIN, 16);
+                Font headerFont = new Font("Arial", Font.BOLD, 16);
+
+                // Add a logo to the top left
+                JLabel logoLabel = new JLabel(new ImageIcon("libs/images/logo.png"));
+                logoLabel.setBounds(50, 50, 500, 80);
+                frame.add(logoLabel);
+
                 // Create HintTextField instance with a hint
                 HintTextField textField = new HintTextField(" Enter a stock symbol");
-                textField.setBounds(50, 50, 250, 30);
+                textField.setBounds(50, 148, 400, 34);
+                textField.setFont(font);
                 frame.add(textField);
 
                 // Create search Button instance
-                JButton searchButton = new JButton("Search");
-                searchButton.setBounds(470, 50, 80, 30);
+                CustomButton searchButton = new CustomButton("Search");
+                searchButton.setBounds(650, 150, 100, 30);
                 frame.add(searchButton);
 
                 // Create add Button instance
-                JButton addButton = new JButton("Add");
-                addButton.setBounds(310, 170, 80, 30);
+                CustomButton addButton = new CustomButton("Add");
+                addButton.setBounds(410, 270, 100, 30);
                 frame.add(addButton);
 
                 // Create remove Button instance
-                JButton removeButton = new JButton("Delete");
-                removeButton.setBounds(390, 170, 80, 30);
+                CustomButton removeButton = new CustomButton("Delete");
+                removeButton.setBounds(530, 270, 100, 30);
                 frame.add(removeButton);
 
+                // Create clear Button instance
+                CustomButton clearButton = new CustomButton("Clear");
+                clearButton.setBounds(650, 270, 100, 30);
+                frame.add(clearButton);
+
                 // Create import Button instance
-                JButton importButton = new JButton("Import");
-                importButton.setBounds(390, 520, 80, 30);
+                CustomButton importButton = new CustomButton("Import");
+                importButton.setBounds(530, 750, 100, 30);
                 frame.add(importButton);
 
                 // Create export Button instance
-                JButton exportButton = new JButton("Export");
-                exportButton.setBounds(470, 520, 80, 30);
+                CustomButton exportButton = new CustomButton("Export");
+                exportButton.setBounds(650, 750, 100, 30);
                 frame.add(exportButton);
 
-                // Create help Button instance
-                JButton helpButton = new JButton("Help");
-                helpButton.setBounds(880, 520, 80, 30);
-                frame.add(helpButton);
-
-                // Create clear Button instance
-                JButton clearButton = new JButton("Clear");
-                clearButton.setBounds(470, 170, 80, 30);
-                frame.add(clearButton);
-
                 // Create push Button instance
-                JButton pushButton = new JButton("Rand");
-                pushButton.setBounds(50, 520, 80, 30);
+                CustomButton pushButton = new CustomButton("Rand");
+                pushButton.setBounds(50, 750, 100, 30);
                 frame.add(pushButton);
+
+                // Create help Button instance
+                CustomButton helpButton = new CustomButton("Help");
+                helpButton.setBounds(1250, 750, 100, 30);
+                frame.add(helpButton);
 
                 // Create JComboBox for sort options
                 String[] sortOptions = {"Name", "Date", "Open", "High", "Low", "Close", "Volume"};
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
-                sortByComboBox.setBounds(45, 170, 100, 30);
+                sortByComboBox.setBounds(45, 270, 120, 30);
+                sortByComboBox.setFont(font);
                 frame.add(sortByComboBox);
 
                 // Create JScrollPane and JTextArea
+                textArea.setFont(font);
                 JScrollPane scrollPane = new JScrollPane(textArea);
-                scrollPane.setBounds(570, 270, 380, 230); // Set position and size of JScrollPane
+                scrollPane.setBounds(800, 480, 550, 240); // Set position and size of JScrollPane
                 frame.add(scrollPane); // Add JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for multiple records
                 String[] columnNames = {"Symbol", "Date", "Open", "High", "Low", "Close", "Volume"};
                 DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
                 JTable table = new JTable(tableModel);
+                table.setFont(font);
+                table.setRowHeight(30); // Adjust row height
+                table.setBackground(Color.WHITE); // Set table background color
+                JTableHeader tableHeader = table.getTableHeader();
+                tableHeader.setFont(headerFont); // Set the larger font for header
+                tableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPane = new JScrollPane(table);
-                tableScrollPane.setBounds(50, 220, 500, 280); // Set position and size of table
-                                                              // JScrollPane
+                tableScrollPane.setBounds(50, 320, 700, 400); // Set position and size of table
+                tableScrollPane.getViewport().setBackground(Color.WHITE); // Set viewport background color
                 frame.add(tableScrollPane); // Add table JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for single result of search
                 DefaultTableModel tableSingle = new DefaultTableModel(columnNames, 0);
                 JTable singleTable = new JTable(tableSingle);
+                singleTable.setFont(font);
+                singleTable.setRowHeight(35); // Adjust row height
+                singleTable.setBackground(Color.WHITE); // Set table background color
+                JTableHeader singleTableHeader = singleTable.getTableHeader();
+                singleTableHeader.setFont(headerFont); // Set the larger font for header
+                singleTableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPaneSingle = new JScrollPane(singleTable);
-                tableScrollPaneSingle.setBounds(50, 100, 500, 50);
+                tableScrollPaneSingle.setBounds(50, 200, 700, 50); // Set position and size of table
+                tableScrollPaneSingle.getViewport().setBackground(Color.WHITE); // Set viewport background color
                 frame.add(tableScrollPaneSingle);
 
                 // Clear any existing rows from the table model to ensure it starts empty
                 tableModel.setRowCount(0);
 
                 // Create JPanel for chart
-                chartPanel.setBounds(570, 50, 380, 200);
+                chartPanel.setBounds(800, 150, 550, 300);
                 chartPanel.setBackground(Color.WHITE);
                 frame.add(chartPanel);
 
-                // Create and add the date picker
                 // Create and add the date picker
                 UtilDateModel model = new UtilDateModel();
                 Properties p = new Properties();
@@ -132,7 +157,8 @@ public class ViewBuilderHelper {
                 JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
                 PromptDatePicker datePicker = new PromptDatePicker(datePanel,
                                 new DateLabelFormatter(), "Select a date", controller);
-                datePicker.setBounds(310, 50, 150, 30);
+                datePicker.setBounds(460, 150, 170, 30);
+                datePicker.getJFormattedTextField().setFont(font);
                 frame.add(datePicker);
 
                 // Set initial welcome text
