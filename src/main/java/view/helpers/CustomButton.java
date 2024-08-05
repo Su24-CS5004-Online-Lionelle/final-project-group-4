@@ -1,20 +1,21 @@
 package view.helpers;
 
-import javax.swing.JButton;
-
 import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
 
 /**
- * Custom button with rounded corners, custom colors, and antialiasing.
+ * Custom button with custom colors and antialiasing. This class handles regular buttons with custom
+ * colors and images.
  */
 public class CustomButton extends JButton {
     /**
@@ -23,12 +24,12 @@ public class CustomButton extends JButton {
     private Color backgroundColor;
 
     /**
-     * The color of the button when it is pressed.
+     * The color of the button when pressed.
      */
     private Color pressedColor;
 
     /**
-     * The color of the text on the button.
+     * The foreground color (text color) of the button.
      */
     private Color foregroundColor;
 
@@ -42,11 +43,15 @@ public class CustomButton extends JButton {
      */
     private boolean isPressed = false;
 
+    /**
+     * Indicates if the button is image-only.
+     */
+    private boolean isImageButton = false; // Indicates if the button is image-only
 
     /**
-     * Constructor for creating a custom button with the specified text.
+     * Constructs a CustomButton with text.
      *
-     * @param text the text to display on the button
+     * @param text the text for the button
      */
     public CustomButton(String text) {
         super(text);
@@ -54,30 +59,32 @@ public class CustomButton extends JButton {
     }
 
     /**
-     * Overrides the paintBorder method to avoid default border painting.
+     * Constructs a CustomButton with an icon image.
      *
-     * @param g the Graphics context in which to paint
+     * @param icon the ImageIcon for the button
      */
-    @Override
-    public void paintBorder(Graphics g) {
-        // Do not call super.paintBorder(g) to avoid default border painting
+    public CustomButton(ImageIcon icon) {
+        super(icon);
+        isImageButton = true;
+        initialize();
     }
 
     /**
-     * Initializes the custom button properties and listeners.
+     * Initializes the custom button with default settings.
      */
     private void initialize() {
         backgroundColor = new Color(160, 235, 200);
-        pressedColor = new Color(80, 150, 110); // Slightly darker color for pressed state
+        pressedColor = new Color(80, 150, 110);
         foregroundColor = Color.BLACK;
         borderColor = new Color(160, 235, 200);
         setFont(new Font("Arial", Font.PLAIN, 16));
         setFocusPainted(false);
-        setContentAreaFilled(false);
-        setOpaque(false);
+        setContentAreaFilled(false); // Ensures no default background painting
+        setOpaque(false); // Ensures no background painting
+        setBorderPainted(false); // Ensures no border painting
         setForeground(foregroundColor);
 
-        // Add focus listener to handle border painting when the button gains or loses focus
+        // Add a focus listener to manage border painting on focus
         addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -90,7 +97,7 @@ public class CustomButton extends JButton {
             }
         });
 
-        // Add mouse listener to handle the pressed state and repaint the button
+        // Add a mouse listener to manage pressed state
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -107,31 +114,54 @@ public class CustomButton extends JButton {
     }
 
     /**
-     * Overrides the paintComponent method to customize the button's appearance.
+     * Paints the button component.
      *
-     * @param g the Graphics context in which to paint
+     * @param g the Graphics object to protect
      */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw the background
-        g2.setColor(isPressed ? pressedColor : backgroundColor);
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+        if (isImageButton) {
+            // Draw only the image for image-only buttons
+            super.paintComponent(g);
+        } else {
+            // Draw the button background
+            g2.setColor(isPressed ? pressedColor : backgroundColor);
+            g2.fillRect(0, 0, getWidth(), getHeight()); // Ensure square corners
 
-        // Draw the border
-        g2.setColor(isPressed ? pressedColor : borderColor);
-        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+            // Draw the button border
+            g2.setColor(borderColor);
+            g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1); // Ensure square corners
 
-        // Draw the text
-        g2.setColor(isPressed ? Color.WHITE : foregroundColor);
-        g2.setFont(getFont());
-        int stringWidth = g2.getFontMetrics().stringWidth(getText());
-        int stringHeight = g2.getFontMetrics().getAscent();
-        g2.drawString(getText(), (getWidth() - stringWidth) / 2,
-                (getHeight() + stringHeight) / 2 - 3);
+            // Draw the button text
+            g2.setColor(foregroundColor);
+            g2.setFont(getFont());
+            int stringWidth = g2.getFontMetrics().stringWidth(getText());
+            int stringHeight = g2.getFontMetrics().getAscent();
+            g2.drawString(getText(), (getWidth() - stringWidth) / 2,
+                    (getHeight() + stringHeight) / 2 - 3);
+        }
 
         g2.dispose();
+    }
+
+    /**
+     * Sets the pressed color for the button.
+     *
+     * @param pressedColor the new pressed color
+     */
+    public void setPressedColor(Color pressedColor) {
+        this.pressedColor = pressedColor;
+    }
+
+    /**
+     * Sets the border color for the button.
+     *
+     * @param borderColor the new border color
+     */
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
     }
 }

@@ -8,15 +8,17 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+
 
 import java.awt.*;
 import java.awt.event.*;
-
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+
+import javax.swing.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -30,9 +32,6 @@ import java.util.stream.Collectors;
  * Custom date picker component with a prompt text.
  */
 public class PromptDatePicker extends JDatePickerImpl {
-
-    /** Indicates if the prompt text is currently being shown. */
-    private boolean showingPrompt;
 
     /** Track calendar visibility. */
     private boolean calendarVisible;
@@ -49,16 +48,13 @@ public class PromptDatePicker extends JDatePickerImpl {
     /** The prompt icon. */
     private final ImageIcon promptIcon;
 
-    /** The menu to show calendar */
+    /** The menu to show calendar. */
     private JPopupMenu popupMenu;
 
     /** The icon button to show the calendar. */
     private JButton iconButton;
 
-    /** The date panel inside the popup menu. */
-    private JDatePanelImpl datePanel;
-
-    /** Track if the last click was on the button */
+    /** Track if the last click was on the button. */
     private boolean lastClickOnButton;
 
     /** Indicates if the search query has been used. */
@@ -72,13 +68,15 @@ public class PromptDatePicker extends JDatePickerImpl {
      * @param controller the controller for fetching data
      */
     public PromptDatePicker(JDatePanelImpl datePanel,
-                            JFormattedTextField.AbstractFormatter formatter,
-                            Controller controller) {
+            JFormattedTextField.AbstractFormatter formatter, Controller controller) {
         super(datePanel, formatter);
         this.calendarVisible = false;
         this.controller = controller;
-        this.promptIcon = createScaledIcon("libs/images/calendar.png", 24, 24);
-        this.datePanel = datePanel;
+
+        // Assuming button size should match the icon size
+        int iconWidth = 24;
+        int iconHeight = 24;
+        this.promptIcon = createScaledIcon("libs/images/calendar.png", iconWidth, iconHeight);
         this.popupMenu = new JPopupMenu();
         this.popupMenu.add(datePanel);
         this.lastClickOnButton = false; // Initialize the flag
@@ -98,44 +96,47 @@ public class PromptDatePicker extends JDatePickerImpl {
         add(iconButton, BorderLayout.CENTER);
 
         // Add action listener to toggle the calendar popup
-        iconButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (calendarVisible) {
-                    hideCalendar();
-                } else {
-                    showCalendar();
-                }
+        iconButton.addActionListener(e -> {
+            if (calendarVisible) {
+                hideCalendar();
+            } else {
+                showCalendar();
             }
         });
-
 
         // Add a mouse listener to hide the calendar if clicked outside
-        // Use a global mouse listener to check clicks across the application
         addGlobalMouseListener();
-
-        /*
-        // Adding mouse listener to handle prompt text behavior on click
-        getJFormattedTextField().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (!isSearchQueryUsed) {
-                    DialogHelper.showSingleDialog("Please use the search query first.",
-                            "Action Required", DialogHelper.DialogState.ACTION_REQUIRED);
-                }
-            }
-        });
-         */
 
         // Adding action listener to disable date selection until search is used
         datePanel.addActionListener(e -> {
             if (!isSearchQueryUsed) {
                 DialogHelper.showSingleDialog("Please perform a search query first.",
                         "Action Required", DialogHelper.DialogState.ACTION_REQUIRED);
+            } else {
+                UtilDateModel model = (UtilDateModel) datePanel.getModel();
+                if (model.getValue() == null) {
+                    // Handle clear date action here
+                    clearDate();
+                }
+            }
+        });
+
+        // Add action listener to clear the date if the text field is empty
+        textField.addActionListener(e -> {
+            if (textField.getText().isEmpty()) {
+                clearDate();
             }
         });
     }
 
+    /**
+     * Creates a scaled icon from the specified path.
+     *
+     * @param path the path to the image file
+     * @param width the desired width of the icon
+     * @param height the desired height of the icon
+     * @return the scaled ImageIcon
+     */
     private ImageIcon createScaledIcon(String path, int width, int height) {
         try {
             // Load the image from the file system
@@ -151,56 +152,54 @@ public class PromptDatePicker extends JDatePickerImpl {
         }
     }
 
+    /**
+     * Shows the calendar popup menu.
+     */
     private void showCalendar() {
         popupMenu.show(iconButton, 0, iconButton.getHeight());
         calendarVisible = true;
     }
 
+    /**
+     * Hides the calendar popup menu.
+     */
     private void hideCalendar() {
         popupMenu.setVisible(false);
         calendarVisible = false;
         lastClickOnButton = true; // Reset the flag when hiding the calendar
     }
 
+    /**
+     * Adds a global mouse listener to hide the calendar if clicked outside.
+     */
     private void addGlobalMouseListener() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
-            @Override
-            public void eventDispatched(AWTEvent event) {
-                if (event instanceof MouseEvent) {
-                    MouseEvent mouseEvent = (MouseEvent) event;
-                    if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
-                        if (iconButton.getBounds().contains(mouseEvent.getPoint())) {
-                            lastClickOnButton = true;
-                        } else {
-                            lastClickOnButton = false;
-                        }
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if (event instanceof MouseEvent) {
+                MouseEvent mouseEvent = (MouseEvent) event;
+                if (mouseEvent.getID() == MouseEvent.MOUSE_PRESSED) {
+                    if (iconButton.getBounds().contains(mouseEvent.getPoint())) {
+                        lastClickOnButton = true;
+                    } else {
+                        lastClickOnButton = false;
                     }
-                    if (calendarVisible && !lastClickOnButton &&
-                            !popupMenu.getBounds().contains(mouseEvent.getPoint())) {
-                        hideCalendar();
-                    }
+                }
+                if (calendarVisible && !lastClickOnButton
+                        && !popupMenu.getBounds().contains(mouseEvent.getPoint())) {
+                    hideCalendar();
                 }
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
     }
 
     /**
-     * Sets the default prompt icon.
+     * Clears the date from the text field without triggering an error.
      */
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (!calendarVisible) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            int iconHeight = promptIcon.getIconHeight();
-            int iconWidth = promptIcon.getIconWidth();
-            int x = (getWidth() - iconWidth) / 2;
-            int y = (getHeight() - iconHeight) / 2;
-            promptIcon.paintIcon(this, g2, x, y);
-            g2.dispose();
-        }
+    private void clearDate() {
+        JFormattedTextField textField = getJFormattedTextField();
+        textField.setValue(null);
+        // Additional logic to handle clearing the date without triggering an error
+        // You can also reset other states if needed
     }
-
 
     /**
      * Sets the flag to indicate if the search query has been used.
@@ -219,7 +218,6 @@ public class PromptDatePicker extends JDatePickerImpl {
     public static boolean isSearchQueryUsed() {
         return isSearchQueryUsed;
     }
-
 
     /**
      * Parses the selected date from the text field.

@@ -136,6 +136,11 @@ public class TableHelper {
         });
     }
 
+    /**
+     * Sets the first column to have a gray background by default.
+     *
+     * @param table the JTable whose first column will be set to gray
+     */
     public static void setFirstColumnGray(JTable table) {
         lastSelected = "Symbol";
 
@@ -143,7 +148,7 @@ public class TableHelper {
         table.getColumn(lastSelected).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+                    boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected,
                         hasFocus, row, column);
                 if (!isSelected) {

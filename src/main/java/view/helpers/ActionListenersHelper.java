@@ -77,21 +77,22 @@ public class ActionListenersHelper {
             JTextArea textArea, DefaultTableModel tableSingle, PromptDatePicker datePicker) {
 
         searchButton.addActionListener(e -> {
-            // Set the flag to true when search is used
-            ActionListenersHelper.isSearchQueryUsed = true;
-
-            // Get content from input field
-            String codeInput = textField.getText();
-
-            // Validate stock symbol
-            if (codeInput.isEmpty()) {
-                DialogHelper.showSingleDialog("Please enter a stock symbol.", "Invalid Input",
-                        DialogHelper.DialogState.INVALID_INPUT);
-                TableHelper.updateModelSingle(null, tableSingle);
-                return;
-            }
-
             try {
+                // Set the flag to true when search is used
+                ActionListenersHelper.isSearchQueryUsed = true;
+                PromptDatePicker.setSearchQueryUsed(true);
+
+                // Get content from input field
+                String codeInput = textField.getText();
+
+                // Validate stock symbol
+                if (codeInput.isEmpty()) {
+                    DialogHelper.showSingleDialog("Please enter a stock symbol.", "Invalid Input",
+                            DialogHelper.DialogState.INVALID_INPUT);
+                    TableHelper.updateModelSingle(null, tableSingle);
+                    return;
+                }
+
                 // Fetch stock data using the Controller
                 controller.cleanCache();
                 List<Stock> stockData = controller.fetchStockData(codeInput);

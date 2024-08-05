@@ -13,7 +13,26 @@ public class DialogHelper {
      * Enum representing different dialog states.
      */
     public enum DialogState {
-        ACTION_REQUIRED, DATE_OUT_OF_RANGE, DATA_NOT_FOUND, INVALID_DATE, INVALID_INPUT, API_LIMIT_REACHED, OTHER
+        /** Indicates an action is required. */
+        ACTION_REQUIRED,
+
+        /** Indicates the selected date is out of range. */
+        DATE_OUT_OF_RANGE,
+
+        /** Indicates the requested data was not found. */
+        DATA_NOT_FOUND,
+
+        /** Indicates the selected date is invalid. */
+        INVALID_DATE,
+
+        /** Indicates the input provided is invalid. */
+        INVALID_INPUT,
+
+        /** Indicates the API limit has been reached. */
+        API_LIMIT_REACHED,
+
+        /** Represents any other state not covered by the above constants. */
+        OTHER
     }
 
     /**

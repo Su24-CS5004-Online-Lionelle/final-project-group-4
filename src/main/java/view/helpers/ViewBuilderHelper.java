@@ -51,6 +51,7 @@ public class ViewBuilderHelper {
                 // Define larger fonts for text and headers
                 Font font = new Font("Arial", Font.PLAIN, 16);
                 Font headerFont = new Font("Arial", Font.BOLD, 16);
+                Font customFont = new Font("Serif", Font.PLAIN, 16);
 
                 // Add a logo to the top left
                 JLabel logoLabel = new JLabel(new ImageIcon("libs/images/logo.png"));
@@ -111,7 +112,7 @@ public class ViewBuilderHelper {
                 frame.add(sortByComboBox);
 
                 // Create JScrollPane and JTextArea
-                textArea.setFont(font);
+                textArea.setFont(customFont);
                 JScrollPane scrollPane = new JScrollPane(textArea);
                 scrollPane.setBounds(800, 480, 550, 240); // Set position and size of JScrollPane
                 frame.add(scrollPane); // Add JScrollPane to JFrame
