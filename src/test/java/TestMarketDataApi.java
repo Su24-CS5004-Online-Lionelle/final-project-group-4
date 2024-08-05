@@ -1,5 +1,3 @@
-package Test;
-
 import model.NetUtils.MarketDataAPI;
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import org.junit.jupiter.api.BeforeEach;
