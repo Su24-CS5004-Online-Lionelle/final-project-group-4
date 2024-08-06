@@ -57,6 +57,9 @@ public class TableHelper {
             // Clear existing rows
             tableModel.setRowCount(0);
 
+            // Add default 12 data to our database
+            Controller.getInstance().getStockList().generateDefault();
+
             // Get stock data from the controller
             List<Stock> stockData = Controller.getInstance().getStockList().getStockList();
 

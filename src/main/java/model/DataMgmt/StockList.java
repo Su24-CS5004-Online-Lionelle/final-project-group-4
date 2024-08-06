@@ -4,6 +4,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import controller.Controller;
+import model.Model;
 
 import java.io.File;
 import java.io.IOException;
@@ -178,5 +180,15 @@ public class StockList {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Generate 12 default stocks in the stock list.
+     */
+    public void generateDefault() {
+        for (int i = 0; i < 12; i++) {
+            Stock stockToAdd = Model.getRandomStock();
+            this.stockList.add(stockToAdd);
+        }
     }
 }
