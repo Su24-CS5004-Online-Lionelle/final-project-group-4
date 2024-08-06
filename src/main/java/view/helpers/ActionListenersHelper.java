@@ -87,8 +87,8 @@ public class ActionListenersHelper {
 
                 // Validate stock symbol
                 if (codeInput.isEmpty()) {
-                    DialogHelper.showSingleDialog("Please enter a stock symbol.", "Invalid Input",
-                            DialogHelper.DialogState.INVALID_INPUT);
+                    DialogHelper.showSingleDialog(ErrorMessages.INVALID_INPUT.getMessage(),
+                            "Invalid Input", DialogHelper.DialogState.INVALID_INPUT);
                     TableHelper.updateModelSingle(null, tableSingle);
                     return;
                 }
@@ -99,8 +99,7 @@ public class ActionListenersHelper {
 
                 // Handle API limit exception
                 if (stockData.isEmpty()) {
-                    DialogHelper.showSingleDialog(
-                            "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
+                    DialogHelper.showSingleDialog(ErrorMessages.API_LIMIT_REACHED.getMessage(),
                             "API Limit Reached", DialogHelper.DialogState.API_LIMIT_REACHED);
                     TableHelper.updateModelSingle(null, tableSingle);
                     return;
@@ -132,7 +131,7 @@ public class ActionListenersHelper {
                     TableHelper.updateModelSingle(mostRecentStock, tableSingle);
                 } else {
                     // Display an error message if no data is available
-                    view.displayError("No data available for the specified symbol: " + codeInput);
+                    view.displayError(ErrorMessages.NO_DATA_AVAILABLE.getMessage() + codeInput);
                     TableHelper.updateModelSingle(null, tableSingle); // Clear the table
                 }
             } catch (InvalidStockSymbolException ex) {
@@ -142,8 +141,7 @@ public class ActionListenersHelper {
                 TableHelper.updateModelSingle(null, tableSingle); // Clear the table
             } catch (ApiLimitReachedException ex) {
                 // Handle API limit reached exception
-                DialogHelper.showSingleDialog(
-                        "You have reached the 25 times daily limit, please Paypal $50 to Jubal",
+                DialogHelper.showSingleDialog(ErrorMessages.API_LIMIT_REACHED.getMessage(),
                         "API Limit Reached", DialogHelper.DialogState.API_LIMIT_REACHED);
                 TableHelper.updateModelSingle(null, tableSingle); // Clear the table
             } catch (Exception ex) {
@@ -205,7 +203,7 @@ public class ActionListenersHelper {
                     if (selectedDate != null) {
                         if (!datePicker.isDateWithinRange(selectedDate)) {
                             DialogHelper.showSingleDialog(
-                                    "Selected date is outside the valid range: " + selectedDate,
+                                    ErrorMessages.DATE_OUT_OF_RANGE.getMessage() + selectedDate,
                                     "Date Out of Range",
                                     DialogHelper.DialogState.DATE_OUT_OF_RANGE);
                             TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
@@ -217,8 +215,7 @@ public class ActionListenersHelper {
                                 TableHelper.updateModelSingle(specificStock, tableSingle);
                             } else {
                                 DialogHelper.showSingleDialog(
-                                        "No stock data available for the selected date: "
-                                                + selectedDate,
+                                        ErrorMessages.DATA_NOT_FOUND.getMessage() + selectedDate,
                                         "Data Not Found", DialogHelper.DialogState.DATA_NOT_FOUND);
                                 TableHelper.updateModelSingle(null, tableSingle); // Clear or reset
                                                                                   // the table
@@ -226,8 +223,7 @@ public class ActionListenersHelper {
                         }
                     } else if (!datePicker.isDateClearedIntentionally()) { // Check if date is not
                                                                            // cleared intentionally
-                        DialogHelper.showSingleDialog(
-                                "Selected date is invalid. Please select a valid date.",
+                        DialogHelper.showSingleDialog(ErrorMessages.INVALID_DATE.getMessage(),
                                 "Invalid Date", DialogHelper.DialogState.INVALID_DATE);
                         TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
                                                                           // table
@@ -435,8 +431,9 @@ public class ActionListenersHelper {
                     TableHelper.updateTableModel(tableModel);
                 } else {
                     // Display a warning message if no stock has been searched
-                    JOptionPane.showMessageDialog(frame, "You have to search Stock first",
-                            "No Search Exception", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(frame,
+                            ErrorMessages.NO_DATA_AVAILABLE.getMessage(), "No Search Exception",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

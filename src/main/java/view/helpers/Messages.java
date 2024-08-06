@@ -10,7 +10,7 @@ public enum Messages {
    */
   HELP_MESSAGE("""
       =======================================
-      \u2605 HELP MESSAGE \u2605
+                  HELP MESSAGE
       =======================================
 
       \u2192 1. Searching Stock Data:
@@ -58,7 +58,7 @@ public enum Messages {
    */
   WELCOME_MESSAGE("""
       =======================================
-      \u2605 WELCOME MESSAGE \u2605
+                WELCOME MESSAGE
       =======================================
 
       Welcome to the Stock Data Viewer!
@@ -108,7 +108,7 @@ public enum Messages {
   public static String apiMessage(String inputText) {
     return String.format("""
         =======================================
-        \u2605 LOAD Successful \u2605
+                   LOAD SUCESSFUL
         =======================================
 
         Current API Key: %s

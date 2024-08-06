@@ -13,7 +13,8 @@ public enum ErrorMessages {
     /**
      * Error message for reaching the API limit.
      */
-    API_LIMIT_REACHED("You have reached the 25 times daily limit, please Paypal $50 to Jubal"),
+    API_LIMIT_REACHED(
+            "You have reached the 25 times daily limit, please subscribe for unlimited access."),
 
     /**
      * Error message for date out of range.
