@@ -173,88 +173,117 @@ direction TB
         +main(String[] args)
     }
 
-    class View {
-        +printHelp(Exception e)
-        +welcome()
-        +getInput(String prompt) String
-        +askForMoreStocks() boolean
-        +goodbye()
-        +display(List<Stock> records)
-        +displayError(String message)
-        -build(JFrame frame)
-        +show()
-        -class Slot
-        -showChart(List<Stock> stockData)
-        -showChart() void
-    }
+class View {
+    +printHelp(Exception e)
+    +welcome()
+    +getInput(String prompt) String
+    +askForMoreStocks() boolean
+    +goodbye()
+    +display(List<Stock> records)
+    +displayError(String message)
+    -build(JFrame frame)
+    +show()
+    -class Slot
+    -showChart(List<Stock> stockData)
+    -showChart() void
+}
 
-    class Model {
-        -MarketDataAPI marketDataAPI
-        -static Model instance
-        +Model(String apiKey)
-        +static getInstance(String apiKey) Model
-        +static getInstance() Model
-        +fetchStockData(String symbol) List<Stock>
-        +fetchMostRecentStockData(String symbol) Stock
-        -getComparator(String orderBy) Comparator<Stock>
-    }
+class Model {
+    -MarketDataAPI marketDataAPI
+    -static Model instance
+    +Model(String apiKey)
+    +static getInstance(String apiKey) Model
+    +static getInstance() Model
+    +fetchStockData(String symbol) List<Stock>
+    +fetchMostRecentStockData(String symbol) Stock
+    +fetchSpecificStockDate(Date date) Stock
+    +cleanCache()
+    -getComparator(String orderBy) Comparator<Stock>
+}
 
-    class MarketDataAPI {
-        +MarketDataAPI(String apiKey)
-        +fetchStockData(String symbol) TimeSeriesResponse
-    }
+class MarketDataAPI {
+    +MarketDataAPI(String apiKey)
+    +fetchStockData(String symbol) TimeSeriesResponse
+}
 
-    class Controller {
-        -Model model
-        -static Controller instance
-        -StockList stockList
-        -View view
-        +Controller(String apiKey)
-        +static getInstance(String apiKey) Controller
-        +static getInstance() Controller
-        +fetchStockData(String symbol) List<Stock>
-        +fetchMostRecentStockData(String symbol) Stock
-    }
+class Controller {
+    -Model model
+    -static Controller instance
+    -StockList stockList
+    -View view
+    +Controller(String apiKey)
+    +static getInstance(String apiKey) Controller
+    +static getInstance() Controller
+    +fetchStockData(String symbol) List<Stock>
+    +fetchMostRecentStockData(String symbol) Stock
+    +fetchSpecificStockDate(Date date) Stock
+    +cleanCache()
+    +writeTempStockDataToXML(List<Stock> stockData)
+    +importStockDataFromFile(File selectedFile, DefaultTableModel tableModel)
+}
 
     class Stock {
-        -double open
-        -double high
-        -double low
-        -double close
-        -long volume
-        -String date
-        -String symbol
-        +Stock(double open, double high, double low, double close, long volume, String date, String symbol)
-        +Stock()
-        +getOpen() double
-        +setOpen(double open)
-        +getHigh() double
-        +setHigh(double high)
-        +getLow() double
-        +setLow(double low)
-        +getClose() double
-        +setClose(double close)
-        +getVolume() long
-        +setVolume(long volume)
-        +getDate() String
-        +setDate(String date)
-        +getSymbol() String
-        +setSymbol(String symbol)
-        +fromTimeSeriesResponse(TimeSeriesResponse response) List<Stock>
-        +toString() String
+      -double open
+      -double high
+      -double low
+      -double close
+      -long volume
+      -String date
+      -String symbol
+      +Stock(double open, double high, double low, double close, long volume, String date, String symbol)
+      +Stock()
+      +getOpen() double
+      +setOpen(double open)
+      +getHigh() double
+      +setHigh(double high)
+      +getLow() double
+      +setLow(double low)
+      +getClose() double
+      +setClose(double close)
+      +getVolume() long
+      +setVolume(long volume)
+      +getDate() String
+      +setDate(String date)
+      +getSymbol() String
+      +setSymbol(String symbol)
+      +fromTimeSeriesResponse(TimeSeriesResponse response) List<Stock>
+      +toString() String
     }
 
     class StockList {
-        -List<Stock> stockList
-        -String database
-        +StockList()
-        +getStockList() List<Stock>
-        +setStockList(List<Stock> stockList)
-        +addStock(Stock stock)
-        +save()
-        +loadStockFromXML()
-        +getStockFromSymbol(String symbol) Stock
-        +toString() String
+      -List<Stock> stockList
+      -String database
+      +StockList()
+      +getStockList() List<Stock>
+      +setStockList(List<Stock> stockList)
+      +addStock(Stock stock)
+      +save()
+      +loadStockFromXML()
+      +getStockFromSymbol(String symbol) Stock
+      +toString() String
+    }
+
+    class StockList {
+      -List<Stock> stockList
+      -String database
+      +StockList()
+      +getStockList() List<Stock>
+      +setStockList(List<Stock> stockList)
+      +addStock(Stock stock)
+      +save()
+      +loadStockFromXML()
+      +getStockFromSymbol(String symbol) Stock
+      +toString() String
+    }
+
+    class ApiLimitReachedException {
+      +ApiLimitReachedException()
+      +ApiLimitReachedException(String message)
+    }
+
+    class InvalidStockSymbolException {
+      +InvalidStockSymbolException()
+      +InvalidStockSymbolException(String message)
     }
 
     class ActionListenersHelper {
@@ -286,9 +315,8 @@ direction TB
     }
 
     class DateRangePanel {
-        +DateRangePanel()
-        +getSelectedStartDate() LocalDate
-        +getSelectedEndDate() LocalDate
+        +DateRangePanel(Date minDate, Date maxDate)
+        +paintComponent(Graphics g)
     }
 
     class DialogHelper {
@@ -296,15 +324,21 @@ direction TB
     }
 
     class DynamicBackgroundCanvas {
-        +DynamicBackgroundCanvas()
-        +paintComponent(Graphics g)
+      +DynamicBackgroundCanvas()
+      +paintComponent(Graphics g)
+      +run()
     }
 
     class ErrorMessages {
-        +ErrorMessages()
-        +getInvalidInputMessage() String
-        +getApiLimitReachedMessage() String
-        +getInvalidDateMessage() String
+      INVALID_INPUT("Please enter a stock symbol.")
+      API_LIMIT_REACHED("You have reached the 25 times daily limit, please subscribe for unlimited access.")
+      DATE_OUT_OF_RANGE("Selected date is outside the valid range: ")
+      DATA_NOT_FOUND("No stock data available for the selected date: ")
+      INVALID_DATE("Selected date is invalid. Please select a valid date.")
+      NO_DATA_AVAILABLE("No data available for the specified symbol: ")
+      -String message
+      +ErrorMessages(String message)
+      +getMessage() String
     }
 
     class HintTextFieldHelper {
@@ -315,27 +349,34 @@ direction TB
     }
 
     class Messages {
-        +Messages(String message)
-        +getMessage() String
+      +Messages(String message)
+      +getMessage() String
+      +apiMessage(String inputText) String
     }
 
     class PromptDatePicker {
-        +PromptDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter, String promptText, Controller controller)
-        +setSearchQueryUsed(boolean used)
-        +getSelectedDate() LocalDate
-        +updateDatePickerRange(List<LocalDate> dates)
-        +isDateWithinRange(LocalDate date)
-        +updateDateRangeFromXML()
+      +PromptDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter, String promptText, Controller controller)
+      +setSearchQueryUsed(boolean used)
+      +getSelectedDate() LocalDate
+      +updateDatePickerRange(List<LocalDate> dates)
+      +isDateWithinRange(LocalDate date)
+      +updateDateRangeFromXML()
+      +resetLastClickOnButton()
+      +resetClearDateAction()
+      +resetDateClearedIntentionally()
+      +isDateClearedIntentionally() boolean
+      +isClearDateAction() boolean
     }
 
     class TableHelper {
-        +updateModelSingle(Stock stock, DefaultTableModel tableModel)
-        +updateTableModel(DefaultTableModel tableModel)
-        +highLightSelected(String selectedOption, JTable table)
+      +updateModelSingle(Stock stock, DefaultTableModel tableModel)
+      +updateTableModel(DefaultTableModel tableModel)
+      +highLightSelected(String selectedOption, JTable table)
+      +setFirstColumnGray(JTable table)
     }
 
     class ViewBuilderHelper {
-        +build()
+      +build(JFrame frame, Controller controller, JTextArea textArea, JPanel chartPanel, View view)
     }
 
 Main --> Controller
