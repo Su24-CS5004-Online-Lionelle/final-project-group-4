@@ -44,7 +44,7 @@ public class Model {
     /**
      * API key used for authenticating with the Alpha Vantage API.
      */
-    private final String apiKey = "SZPBC0GPHK788VZT";
+    private String apiKey = "SZPBC0GPHK788VZT";
 
     /**
      * List to store stock data fetched from the API.
@@ -64,6 +64,14 @@ public class Model {
         this.marketDataAPI = new MarketDataAPI(apiKey); // Initialize the MarketDataAPI with the API
                                                         // key
         this.stocks = new ArrayList<>(); // Initialize the list to store stock data
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     /**

@@ -2,6 +2,8 @@ package view.helpers;
 
 import java.awt.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 import java.util.Properties;
@@ -11,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import controller.Controller;
+import model.Model;
 import view.View;
 import view.helpers.HintTextFieldHelper.HintTextField;
 
@@ -104,6 +107,11 @@ public class ViewBuilderHelper {
                 helpButton.setBounds(1250, 750, 100, 30);
                 frame.add(helpButton);
 
+                // Create API key Button instance
+                CustomButton apiDialogButton = new CustomButton("API Key");
+                apiDialogButton.setBounds(1130, 750, 100, 30);
+                frame.add(apiDialogButton);
+
                 // Create JComboBox for sort options
                 String[] sortOptions = {"Symbol", "Date", "Open", "High", "Low", "Close", "Volume"};
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
@@ -187,6 +195,14 @@ public class ViewBuilderHelper {
                                 frame);
                 ActionListenersHelper.addDatePickerListener(datePicker, controller, tableSingle);
 
+                // API String dialog
+                apiDialogButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                openInputDialog(frame, textArea);
+                        }
+                });
+
                 // Center the frame on screen
                 frame.setLocationRelativeTo(null);
                 // Set JFrame visible
@@ -199,5 +215,37 @@ public class ViewBuilderHelper {
 
                 // set the first column default to gray
                 TableHelper.setFirstColumnGray(table);
+        }
+
+        private static void openInputDialog(JFrame frame, JTextArea textArea) {
+                // create a JDialog
+                JDialog dialog = new JDialog(frame, "API Key String", true);
+
+                // set size and close function
+                dialog.setSize(300, 100);
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setLocationRelativeTo(frame);
+
+                // create JTextField with default data
+                JTextField textField = new JTextField(Model.getInstance().getApiKey());
+                textField.setPreferredSize(new Dimension(200, 30));
+
+                JPanel panel = new JPanel();
+                panel.add(textField);
+                dialog.add(panel, BorderLayout.CENTER);
+
+                JButton okButton = new JButton("LOAD");
+                okButton.addActionListener(e -> {
+                        // get string from input and print
+                        String inputText = textField.getText();
+                        Model.getInstance().setApiKey(inputText);
+                        textArea.setText(Messages.apiMessage(inputText));
+
+                        // close dialog
+                        dialog.dispose();
+                });
+                panel.add(okButton, BorderLayout.SOUTH);
+
+                dialog.setVisible(true);
         }
 }

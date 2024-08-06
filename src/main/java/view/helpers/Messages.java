@@ -99,6 +99,18 @@ public enum Messages {
         this.message = message;
     }
 
+    public static String apiMessage(String inputText) {
+        return String.format("""
+            =======================================
+            \u2605 LOAD Successful \u2605
+            =======================================
+
+            Current API Key: %s
+
+            If you encounter any issues, please refer to the help message.
+            """, inputText);
+    }
+
     /**
      * Retrieves the message text.
      *
