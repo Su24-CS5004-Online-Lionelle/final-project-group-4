@@ -9,7 +9,6 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.imageio.ImageIO;
 
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -60,6 +59,12 @@ public class PromptDatePicker extends JDatePickerImpl {
     /** Indicates if the search query has been used. */
     private static boolean isSearchQueryUsed = false;
 
+    /** Flag to track intentional date clearing. */
+    private boolean dateClearedIntentionally = false;
+
+    /** Flag to track if the clear date button was clicked. */
+    private boolean isClearDateAction = false;
+
     /**
      * Constructor for PromptDatePicker.
      *
@@ -104,20 +109,14 @@ public class PromptDatePicker extends JDatePickerImpl {
             }
         });
 
-        // Add a mouse listener to hide the calendar if clicked outside
-        addGlobalMouseListener();
-
         // Adding action listener to disable date selection until search is used
         datePanel.addActionListener(e -> {
             if (!isSearchQueryUsed) {
                 DialogHelper.showSingleDialog("Please perform a search query first.",
                         "Action Required", DialogHelper.DialogState.ACTION_REQUIRED);
             } else {
-                UtilDateModel model = (UtilDateModel) datePanel.getModel();
-                if (model.getValue() == null) {
-                    // Handle clear date action here
-                    clearDate();
-                }
+                // Reset the flag after handling
+                dateClearedIntentionally = false;
             }
         });
 
@@ -127,6 +126,9 @@ public class PromptDatePicker extends JDatePickerImpl {
                 clearDate();
             }
         });
+
+        // Call addGlobalMouseListener to handle clicks outside the popup
+        addGlobalMouseListener();
     }
 
     /**
@@ -186,6 +188,7 @@ public class PromptDatePicker extends JDatePickerImpl {
                 if (calendarVisible && !lastClickOnButton
                         && !popupMenu.getBounds().contains(mouseEvent.getPoint())) {
                     hideCalendar();
+                    lastClickOnButton = false; // Ensure the flag is reset when hiding the calendar
                 }
             }
         }, AWTEvent.MOUSE_EVENT_MASK);
@@ -194,11 +197,13 @@ public class PromptDatePicker extends JDatePickerImpl {
     /**
      * Clears the date from the text field without triggering an error.
      */
-    private void clearDate() {
+    public void clearDate() {
+        isClearDateAction = true;
+        dateClearedIntentionally = true; // Set both flags
         JFormattedTextField textField = getJFormattedTextField();
         textField.setValue(null);
-        // Additional logic to handle clearing the date without triggering an error
-        // You can also reset other states if needed
+        // Ensure the calendar remains open after clearing the date
+        showCalendar();
     }
 
     /**
@@ -293,5 +298,37 @@ public class PromptDatePicker extends JDatePickerImpl {
      */
     public void resetLastClickOnButton() {
         this.lastClickOnButton = false;
+    }
+
+    /**
+     * Resets the isClearDateAction flag.
+     */
+    public void resetClearDateAction() {
+        this.isClearDateAction = false;
+    }
+
+    /**
+     * Resets the dateClearedIntentionally flag.
+     */
+    public void resetDateClearedIntentionally() {
+        this.dateClearedIntentionally = false;
+    }
+
+    /**
+     * Checks if the date was cleared intentionally.
+     *
+     * @return true if the date was cleared intentionally, false otherwise
+     */
+    public boolean isDateClearedIntentionally() {
+        return dateClearedIntentionally;
+    }
+
+    /**
+     * Checks if the clear date action was triggered.
+     *
+     * @return true if the clear date action was triggered, false otherwise
+     */
+    public boolean isClearDateAction() {
+        return isClearDateAction;
     }
 }

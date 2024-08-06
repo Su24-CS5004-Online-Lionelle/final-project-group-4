@@ -191,6 +191,13 @@ public class ActionListenersHelper {
             Timer timer = new Timer(400, new ActionListener() { // 400 milliseconds delay
                 @Override
                 public void actionPerformed(ActionEvent evt) {
+                    // Check if the clear date action was triggered
+                    if (datePicker.isClearDateAction()) {
+                        datePicker.resetClearDateAction(); // Reset the flag after handling
+                        ((Timer) evt.getSource()).stop(); // Stop the timer after execution
+                        return; // Skip further processing
+                    }
+
                     LocalDate selectedDate = datePicker.getSelectedDate();
                     if (selectedDate != null) {
                         if (!datePicker.isDateWithinRange(selectedDate)) {
@@ -214,7 +221,8 @@ public class ActionListenersHelper {
                                                                                   // the table
                             }
                         }
-                    } else {
+                    } else if (!datePicker.isDateClearedIntentionally()) { // Check if date is not
+                                                                           // cleared intentionally
                         DialogHelper.showSingleDialog(
                                 "Selected date is invalid. Please select a valid date.",
                                 "Invalid Date", DialogHelper.DialogState.INVALID_DATE);
@@ -222,6 +230,7 @@ public class ActionListenersHelper {
                                                                           // table
                     }
                     datePicker.resetLastClickOnButton(); // Ensure the flag is reset
+                    datePicker.resetDateClearedIntentionally(); // Reset the intentional clear flag
                     ((Timer) evt.getSource()).stop(); // Stop the timer after execution
                 }
             });
