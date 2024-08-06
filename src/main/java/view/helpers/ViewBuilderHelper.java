@@ -161,8 +161,13 @@ public class ViewBuilderHelper {
 
                 // Create JPanel for chart
                 chartPanel.setBounds(800, 150, 550, 300);
-                chartPanel.setBackground(Color.WHITE);
+                chartPanel.setOpaque(false);  // Make the chart panel non-opaque
                 frame.add(chartPanel);
+
+                // Create the background image panel for chart
+                ImagePanel backgroundPanel = new ImagePanel("libs/images/image_chart.png");
+                backgroundPanel.setBounds(800, 150, 550, 300);
+                frame.add(backgroundPanel);
 
                 // Create and add the date picker
                 UtilDateModel model = new UtilDateModel();
