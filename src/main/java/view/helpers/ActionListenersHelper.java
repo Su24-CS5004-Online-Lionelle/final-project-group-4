@@ -221,6 +221,7 @@ public class ActionListenersHelper {
                         TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
                                                                           // table
                     }
+                    datePicker.resetLastClickOnButton(); // Ensure the flag is reset
                     ((Timer) evt.getSource()).stop(); // Stop the timer after execution
                 }
             });

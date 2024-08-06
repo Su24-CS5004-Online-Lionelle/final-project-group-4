@@ -287,4 +287,11 @@ public class PromptDatePicker extends JDatePickerImpl {
                 .collect(Collectors.toList());
         updateDatePickerRange(dates);
     }
+
+    /**
+     * Resets the lastClickOnButton flag.
+     */
+    public void resetLastClickOnButton() {
+        this.lastClickOnButton = false;
+    }
 }
