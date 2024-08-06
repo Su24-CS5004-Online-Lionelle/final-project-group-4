@@ -106,8 +106,12 @@ public enum Messages {
             =======================================
 
             Current API Key: %s
-
-            If you encounter any issues, please refer to the help message.
+            
+            Thank you for using Alpha Vantage!
+            Our standard API rate limit is 25 requests per day.
+            Please subscribe to any of the premium plans at
+            https://www.alphavantage.co/premium/
+            to instantly remove all daily rate limits.
             """, inputText);
     }
 
