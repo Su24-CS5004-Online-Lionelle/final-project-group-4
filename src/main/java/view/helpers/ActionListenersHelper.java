@@ -191,14 +191,17 @@ public class ActionListenersHelper {
             Timer timer = new Timer(400, new ActionListener() { // 400 milliseconds delay
                 @Override
                 public void actionPerformed(ActionEvent evt) {
-                    // Check if the clear date action was triggered
-                    if (datePicker.isClearDateAction()) {
-                        datePicker.resetClearDateAction(); // Reset the flag after handling
+                    LocalDate selectedDate = datePicker.getSelectedDate();
+
+                    // Check if the model value is null (date cleared) and reset the table
+                    if (selectedDate == null && datePicker.getModel().getValue() == null) {
+                        TableHelper.updateModelSingle(null, tableSingle); // Clear or reset the
+                                                                          // table
+                        datePicker.resetLastClickOnButton(); // Ensure the flag is reset
                         ((Timer) evt.getSource()).stop(); // Stop the timer after execution
-                        return; // Skip further processing
+                        return;
                     }
 
-                    LocalDate selectedDate = datePicker.getSelectedDate();
                     if (selectedDate != null) {
                         if (!datePicker.isDateWithinRange(selectedDate)) {
                             DialogHelper.showSingleDialog(

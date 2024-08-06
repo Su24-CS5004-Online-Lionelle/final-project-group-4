@@ -8,6 +8,7 @@ import model.NetUtils.MarketDataAPI;
 import model.DataMgmt.Stock;
 import model.Exceptions.ApiLimitReachedException;
 import model.Exceptions.InvalidStockSymbolException;
+
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse;
 import com.crazzyghost.alphavantage.timeseries.response.StockUnit;
 
@@ -20,9 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import java.text.SimpleDateFormat;
-
 import java.time.LocalDate;
-
 import java.util.*;
 
 /**
@@ -66,10 +65,20 @@ public class Model {
         this.stocks = new ArrayList<>(); // Initialize the list to store stock data
     }
 
+    /**
+     * Gets the API key used for authenticating with the Alpha Vantage API.
+     *
+     * @return the API key
+     */
     public String getApiKey() {
         return apiKey;
     }
 
+    /**
+     * Sets the API key used for authenticating with the Alpha Vantage API.
+     *
+     * @param apiKey the API key to set
+     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
