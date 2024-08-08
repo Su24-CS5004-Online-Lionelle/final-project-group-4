@@ -18,7 +18,7 @@
 - [Proposal](./DesignDocuments/Proposal.md)
 - [Design](./DesignDocuments/Design.md)
 - [Features](./DesignDocuments/Features.md)
-- [Testing](./DesignDocuments/Testing.md)
+- [GUITesting](./DesignDocuments/GUITesting.md)
 - [View Javadoc Documentation](./build/docs/javadoc/index.html)
 
 ## Instructions to Run the Application

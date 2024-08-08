@@ -8,22 +8,22 @@ Below is a comprehensive list of features implemented in the Stock Data Viewer p
    - Implemented using Java Swing.
 
 2. **View All Items in the Collection**
-   - **Table View**: Displays stock data in a tabular format.
+   - **Table View**: Displays most recent day stock data in a tabular format.
    - **Charts**: Displays stock data in charts, including line charts and OHLC charts.
 
 3. **Build a List of Items from the Collection**
    - **Stock List Management**:
-     - Add Stock: Allows adding stocks to a custom list.
-     - Remove Stock: Users can remove selected stocks from the list.
-     - Clear All: Provides an option to clear all stocks from the list.
+     - Add Stock: Allows adding a stock from the current search query in the form of the most recent day stock data to a custom list.
+     - Remove Stock: Users can remove select stocks from the list.
+     - Clear All: Provides an option to clear all stocks from the list that is in table view.
 
 4. **Save Out the List Using a File Format**
-   - **Export Stock Data**: Users can export the stock list to XML files.
+   - **Export Stock Data**: Users can export the stock list to XML files to a preset folder destination for ease of use.
 
 ## Additional/Optional Features
 
 1. **Load in Lists of Items / Previously Saved Lists and Modify Them**
-   - **Import Stock Data**: Users can import stock data from XML files.
+   - **Import Stock Data**: Users can import stock data from XML files from a preset folder destination for ease of use.
    - **Edit Stock Data**: Users can modify the stock list and have those modifications persist.
 
 2. **Search for Items in the Collection**
@@ -71,3 +71,6 @@ Below is a comprehensive list of features implemented in the Stock Data Viewer p
 
 4. **Hint Text Field**
    - **HintTextFieldHelper**: Custom JTextField that displays a hint ("Enter a stock symbol") when the field is empty and not focused, setting the user's cursor to that field/box.
+
+5. **API Key Input**
+   - **API Key Input Dialog**: Allows users to input their API key for Alpha Vantage.
