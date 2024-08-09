@@ -33,6 +33,9 @@ dependencies {
     // Testing libraries
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // JavaParser library
+    implementation 'com.github.javaparser:javaparser-core:3.24.2'
 }
 
 application {
@@ -58,3 +61,11 @@ task generateJavadoc(type: Javadoc) {
         links "https://docs.oracle.com/en/java/javase/22/docs/api/"
     }
 }
+
+task generateMermaid(type: JavaExec) {
+    main = 'JavaToMermaid'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['src/main/java']  // Adjust the path to the root directory of your Java source files
+}
+
+tasks.build.dependsOn generateMermaid
