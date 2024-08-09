@@ -34,3 +34,4 @@ idea/
 src/.DS_Store
 bin/main/.DS_Store
 bin/main/model/.DS_Store
+.DS_Store
