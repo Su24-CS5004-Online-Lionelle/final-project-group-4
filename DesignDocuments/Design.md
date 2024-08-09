@@ -2,7 +2,8 @@
 
 ## Overview
 
-The Stock Data Viewer Application is designed to provide users with daily updated stock data and historical data for the last 100 trading days. Users can query stock information, create custom watchlists of stocks, and visualize individual stock performance through detailed line charts. Additionally, the application includes a calendar section that allows users to select individual days and search through historical data visually.
+The Stock Data Viewer Application is designed to provide users with daily updated stock data and historical data for the last 100 trading days. Users can query stock information, create custom watchlists of stocks, and visualize
+individual stock performance through detailed line charts. Additionally, the application includes a calendar section that allows users to select individual days and search through historical data visually.
 
 ## Design Principles
 
@@ -169,41 +170,28 @@ direction TB
 
 classDiagram
 direction TB
-    class Main {
-        +main(String[] args)
-    }
 
-class View {
-    +printHelp(Exception e)
-    +welcome()
-    +getInput(String prompt) String
-    +askForMoreStocks() boolean
-    +goodbye()
-    +display(List<Stock> records)
-    +displayError(String message)
-    -build(JFrame frame)
-    +show()
-    -class Slot
-    -showChart(List<Stock> stockData)
-    -showChart() void
+class ActionListenersHelper {
+    +addSearchButtonListener(JButton searchButton, JTextField textField, UtilDateModel model, LocalDate today, Controller controller, View view, JTextArea textArea, DefaultTableModel tableSingle, PromptDatePicker datePicker)
+    +addDatePickerListener(PromptDatePicker datePicker, Controller controller, DefaultTableModel tableSingle)
+    +addImportButtonListener(JButton importButton, JTextArea textArea, DefaultTableModel tableModel, Controller controller)
+    +addExportButtonListener(JButton exportButton, JTextArea textArea)
+    +addHelpButtonListener(JButton helpButton, JTextArea textArea)
+    +addClearButtonListener(JButton clearButton, DefaultTableModel tableModel)
+    +addPushButtonListener(JButton pushButton, DefaultTableModel tableModel)
+    +addSortByComboBoxListener(JComboBox<String> sortByComboBox, DefaultTableModel tableModel, JTable table)
+    +addAddButtonListener(JButton addButton, JFrame frame, DefaultTableModel tableModel)
+    +addRemoveButtonListener(JButton removeButton, JTable table, DefaultTableModel tableModel, JFrame frame)
 }
 
-class Model {
-    -MarketDataAPI marketDataAPI
-    -static Model instance
-    +Model(String apiKey)
-    +static getInstance(String apiKey) Model
-    +static getInstance() Model
-    +fetchStockData(String symbol) List<Stock>
-    +fetchMostRecentStockData(String symbol) Stock
-    +fetchSpecificStockDate(Date date) Stock
-    +cleanCache()
-    -getComparator(String orderBy) Comparator<Stock>
+class ApiLimitReachedException {
+    +ApiLimitReachedException()
+    +ApiLimitReachedException(String message)
 }
 
-class MarketDataAPI {
-    +MarketDataAPI(String apiKey)
-    +fetchStockData(String symbol) TimeSeriesResponse
+class ChartHelper {
+    +drawLineChart(List<Stock> stockData)
+    +drawOHLCChart(List<Stock> stockData)
 }
 
 class Controller {
@@ -222,169 +210,164 @@ class Controller {
     +importStockDataFromFile(File selectedFile, DefaultTableModel tableModel)
 }
 
-    class Stock {
-      -double open
-      -double high
-      -double low
-      -double close
-      -long volume
-      -String date
-      -String symbol
-      +Stock(double open, double high, double low, double close, long volume, String date, String symbol)
-      +Stock()
-      +getOpen() double
-      +setOpen(double open)
-      +getHigh() double
-      +setHigh(double high)
-      +getLow() double
-      +setLow(double low)
-      +getClose() double
-      +setClose(double close)
-      +getVolume() long
-      +setVolume(long volume)
-      +getDate() String
-      +setDate(String date)
-      +getSymbol() String
-      +setSymbol(String symbol)
-      +fromTimeSeriesResponse(TimeSeriesResponse response) List<Stock>
-      +toString() String
-    }
+class CustomButton {
+    +CustomButton(String text)
+}
 
-    class StockList {
-      -List<Stock> stockList
-      -String database
-      +StockList()
-      +getStockList() List<Stock>
-      +setStockList(List<Stock> stockList)
-      +addStock(Stock stock)
-      +save()
-      +loadStockFromXML()
-      +getStockFromSymbol(String symbol) Stock
-      +toString() String
-    }
+class DateLabelFormatter {
+    +DateLabelFormatter()
+    +stringToValue(String text) Object
+    +valueToString(Object value) String
+}
 
-    class StockList {
-      -List<Stock> stockList
-      -String database
-      +StockList()
-      +getStockList() List<Stock>
-      +setStockList(List<Stock> stockList)
-      +addStock(Stock stock)
-      +save()
-      +loadStockFromXML()
-      +getStockFromSymbol(String symbol) Stock
-      +toString() String
-    }
+class DateRangePanel {
+    +DateRangePanel(Date minDate, Date maxDate)
+    +paintComponent(Graphics g)
+}
 
-    class ApiLimitReachedException {
-      +ApiLimitReachedException()
-      +ApiLimitReachedException(String message)
-    }
+class DialogHelper {
+    +showSingleDialog(String message, String title, DialogState state)
+}
 
-    class InvalidStockSymbolException {
-      +InvalidStockSymbolException()
-      +InvalidStockSymbolException(String message)
-    }
+class DynamicBackgroundCanvas {
+    +DynamicBackgroundCanvas()
+    +paintComponent(Graphics g)
+    +run()
+}
 
-    class ActionListenersHelper {
-        +addSearchButtonListener(JButton searchButton, JTextField textField, UtilDateModel model, LocalDate today, Controller controller, View view, JTextArea textArea, DefaultTableModel tableSingle, PromptDatePicker datePicker)
-        +addDatePickerListener(PromptDatePicker datePicker, Controller controller, DefaultTableModel tableSingle)
-        +addImportButtonListener(JButton importButton, JTextArea textArea, DefaultTableModel tableModel, Controller controller)
-        +addExportButtonListener(JButton exportButton, JTextArea textArea)
-        +addHelpButtonListener(JButton helpButton, JTextArea textArea)
-        +addClearButtonListener(JButton clearButton, DefaultTableModel tableModel)
-        +addPushButtonListener(JButton pushButton, DefaultTableModel tableModel)
-        +addSortByComboBoxListener(JComboBox<String> sortByComboBox, DefaultTableModel tableModel, JTable table)
-        +addAddButtonListener(JButton addButton, JFrame frame, DefaultTableModel tableModel)
-        +addRemoveButtonListener(JButton removeButton, JTable table, DefaultTableModel tableModel, JFrame frame)
-    }
+class ErrorMessages {
+    INVALID_INPUT("Please enter a stock symbol.")
+    API_LIMIT_REACHED("You have reached the 25 times daily limit, please subscribe for unlimited access.")
+    DATE_OUT_OF_RANGE("Selected date is outside the valid range: ")
+    DATA_NOT_FOUND("No stock data available for the selected date: ")
+    INVALID_DATE("Selected date is invalid. Please select a valid date.")
+    NO_DATA_AVAILABLE("No data available for the specified symbol: ")
+    -String message
+    +ErrorMessages(String message)
+    +getMessage() String
+}
 
-    class ChartHelper {
-        +drawLineChart(List<Stock> stockData)
-        +drawOHLCChart(List<Stock> stockData)
-    }
+class HintTextFieldHelper {
+    +HintTextField(String hint)
+    +focusGained(FocusEvent e)
+    +focusLost(FocusEvent e)
+    +getText() String
+}
 
-    class CustomButton {
-        +CustomButton(String text)
-    }
+class InvalidStockSymbolException {
+    +InvalidStockSymbolException()
+    +InvalidStockSymbolException(String message)
+}
 
-    class DateLabelFormatter {
-        +DateLabelFormatter()
-        +stringToValue(String text) Object
-        +valueToString(Object value) String
-    }
+class Main {
+    +main(String[] args)
+}
 
-    class DateRangePanel {
-        +DateRangePanel(Date minDate, Date maxDate)
-        +paintComponent(Graphics g)
-    }
+class MarketDataAPI {
+    +MarketDataAPI(String apiKey)
+    +fetchStockData(String symbol) TimeSeriesResponse
+}
 
-    class DialogHelper {
-        +showSingleDialog(String message, String title, DialogState state)
-    }
+class Messages {
+    +Messages(String message)
+    +getMessage() String
+    +apiMessage(String inputText) String
+}
 
-    class DynamicBackgroundCanvas {
-      +DynamicBackgroundCanvas()
-      +paintComponent(Graphics g)
-      +run()
-    }
+class Model {
+    -MarketDataAPI marketDataAPI
+    -static Model instance
+    +Model(String apiKey)
+    +static getInstance(String apiKey) Model
+    +static getInstance() Model
+    +fetchStockData(String symbol) List<Stock>
+    +fetchMostRecentStockData(String symbol) Stock
+    +fetchSpecificStockDate(Date date) Stock
+    +cleanCache()
+    -getComparator(String orderBy) Comparator<Stock>
+}
 
-    class ErrorMessages {
-      INVALID_INPUT("Please enter a stock symbol.")
-      API_LIMIT_REACHED("You have reached the 25 times daily limit, please subscribe for unlimited access.")
-      DATE_OUT_OF_RANGE("Selected date is outside the valid range: ")
-      DATA_NOT_FOUND("No stock data available for the selected date: ")
-      INVALID_DATE("Selected date is invalid. Please select a valid date.")
-      NO_DATA_AVAILABLE("No data available for the specified symbol: ")
-      -String message
-      +ErrorMessages(String message)
-      +getMessage() String
-    }
+class PromptDatePicker {
+    +PromptDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter, String promptText, Controller controller)
+    +setSearchQueryUsed(boolean used)
+    +getSelectedDate() LocalDate
+    +updateDatePickerRange(List<LocalDate> dates)
+    +isDateWithinRange(LocalDate date)
+    +updateDateRangeFromXML()
+    +resetLastClickOnButton()
+    +resetClearDateAction()
+    +resetDateClearedIntentionally()
+    +isDateClearedIntentionally() boolean
+    +isClearDateAction() boolean
+}
 
-    class HintTextFieldHelper {
-        +HintTextField(String hint)
-        +focusGained(FocusEvent e)
-        +focusLost(FocusEvent e)
-        +getText() String
-    }
+class Stock {
+    -double open
+    -double high
+    -double low
+    -double close
+    -long volume
+    -String date
+    -String symbol
+    +Stock(double open, double high, double low, double close, long volume, String date, String symbol)
+    +Stock()
+    +getOpen() double
+    +setOpen(double open)
+    +getHigh() double
+    +setHigh(double high)
+    +getLow() double
+    +setLow(double low)
+    +getClose() double
+    +setClose(double close)
+    +getVolume() long
+    +setVolume(long volume)
+    +getDate() String
+    +setDate(String date)
+    +getSymbol() String
+    +setSymbol(String symbol)
+    +fromTimeSeriesResponse(TimeSeriesResponse response) List<Stock>
+    +toString() String
+}
 
-    class Messages {
-      +Messages(String message)
-      +getMessage() String
-      +apiMessage(String inputText) String
-    }
+class StockList {
+    -List<Stock> stockList
+    -String database
+    +StockList()
+    +getStockList() List<Stock>
+    +setStockList(List<Stock> stockList)
+    +addStock(Stock stock)
+    +save()
+    +loadStockFromXML()
+    +getStockFromSymbol(String symbol) Stock
+    +toString() String
+}
 
-    class PromptDatePicker {
-      +PromptDatePicker(JDatePanelImpl datePanel, JFormattedTextField.AbstractFormatter formatter, String promptText, Controller controller)
-      +setSearchQueryUsed(boolean used)
-      +getSelectedDate() LocalDate
-      +updateDatePickerRange(List<LocalDate> dates)
-      +isDateWithinRange(LocalDate date)
-      +updateDateRangeFromXML()
-      +resetLastClickOnButton()
-      +resetClearDateAction()
-      +resetDateClearedIntentionally()
-      +isDateClearedIntentionally() boolean
-      +isClearDateAction() boolean
-    }
+class TableHelper {
+    +updateModelSingle(Stock stock, DefaultTableModel tableModel)
+    +updateTableModel(DefaultTableModel tableModel)
+    +highLightSelected(String selectedOption, JTable table)
+    +setFirstColumnGray(JTable table)
+}
 
-    class TableHelper {
-      +updateModelSingle(Stock stock, DefaultTableModel tableModel)
-      +updateTableModel(DefaultTableModel tableModel)
-      +highLightSelected(String selectedOption, JTable table)
-      +setFirstColumnGray(JTable table)
-    }
+class View {
+    +printHelp(Exception e)
+    +welcome()
+    +getInput(String prompt) String
+    +askForMoreStocks() boolean
+    +goodbye()
+    +display(List<Stock> records)
+    +displayError(String message)
+    -build(JFrame frame)
+    +show()
+    -class Slot
+    -showChart(List<Stock> stockData)
+    -showChart() void
+}
 
-    class ViewBuilderHelper {
-      +build(JFrame frame, Controller controller, JTextArea textArea, JPanel chartPanel, View view)
-    }
+class ViewBuilderHelper {
+    +build(JFrame frame, Controller controller, JTextArea textArea, JPanel chartPanel, View view)
+}
 
-Main --> Controller
-Controller --> ActionListenersHelper
-Controller --> DialogHelper
-Controller --> Model
-Controller --> StockList
-Controller --> View
 ActionListenersHelper --> ChartHelper
 ActionListenersHelper --> CustomButton
 ActionListenersHelper --> DateLabelFormatter
@@ -394,7 +377,15 @@ ActionListenersHelper --> DynamicBackgroundCanvas
 ActionListenersHelper --> ErrorMessages
 ActionListenersHelper --> PromptDatePicker
 ActionListenersHelper --> TableHelper
+API_LIMIT_REACHED --> ErrorMessages
 ChartHelper --> Stock
+Controller --> ActionListenersHelper
+Controller --> DialogHelper
+Controller --> Model
+Controller --> StockList
+Controller --> View
+InvalidStockSymbolException --> ErrorMessages
+Main --> Controller
 Model --> MarketDataAPI
 Stock --> StockList
 View --> ChartHelper
@@ -402,6 +393,11 @@ View --> DynamicBackgroundCanvas
 View --> ErrorMessages
 View --> Stock
 View --> ViewBuilderHelper
+ViewBuilderHelper --> CustomButton
+ViewBuilderHelper --> DateLabelFormatter
+ViewBuilderHelper --> HintTextFieldHelper
+ViewBuilderHelper --> ImagePanel
+
 ```
 
 ## Key Architectural Changes and Modularization Efforts
@@ -412,8 +408,8 @@ View --> ViewBuilderHelper
 
 ### Final Design
 
-- The final design introduced several helper classes to offload specific responsibilities from the main classes, particularly the View class. This change significantly improved modularization, making the application easier to maintain and extend. There was a significant increase in functionalities and features.
-- Along with the increase in features, modularity also came with increased bugs and errors. The final design included a more robust error-handling mechanism to address these issues.
+- The final design introduced several helper classes to offload specific responsibilities from the main classes, particularly the View class. This change significantly improved modularization, making the application easier to maintain and extend. Additionally, there was a significant increase in functionalities and features.
+- Along with the increase in features, modularity also brought more bugs and errors. The final design included a more robust error-handling mechanism to address these issues. Error handling was centralized around encapsulated error messages and dialog management, along with adding logic to deal with timing issues that occurred with components interacting with the temporary XML storage, mouse clicks, and action listeners.
 
 ## Key Helper Classes Added
 
