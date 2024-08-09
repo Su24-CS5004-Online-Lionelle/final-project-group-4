@@ -58,71 +58,71 @@ public class ViewBuilderHelper {
 
                 // Add a logo to the top left
                 JLabel logoLabel = new JLabel(new ImageIcon("libs/images/logo.png"));
-                logoLabel.setBounds(50, 50, 500, 80);
+                logoLabel.setBounds(50, 30, 500, 80);
                 frame.add(logoLabel);
 
                 // Create HintTextField instance with a hint
                 HintTextField textField = new HintTextField(" Enter a stock symbol");
-                textField.setBounds(50, 148, 510, 34);
+                textField.setBounds(50, 128, 510, 34);
                 textField.setFont(font);
                 frame.add(textField);
 
                 // Create search Button instance
                 CustomButton searchButton = new CustomButton("Search");
-                searchButton.setBounds(580, 150, 100, 30);
+                searchButton.setBounds(580, 130, 100, 30);
                 frame.add(searchButton);
 
                 // Create add Button instance
                 CustomButton addButton = new CustomButton("Add");
-                addButton.setBounds(410, 270, 100, 30);
+                addButton.setBounds(410, 250, 100, 30);
                 frame.add(addButton);
 
                 // Create remove Button instance
                 CustomButton removeButton = new CustomButton("Delete");
-                removeButton.setBounds(530, 270, 100, 30);
+                removeButton.setBounds(530, 250, 100, 30);
                 frame.add(removeButton);
 
                 // Create clear Button instance
                 CustomButton clearButton = new CustomButton("Clear");
-                clearButton.setBounds(650, 270, 100, 30);
+                clearButton.setBounds(650, 250, 100, 30);
                 frame.add(clearButton);
 
                 // Create import Button instance
                 CustomButton importButton = new CustomButton("Import");
-                importButton.setBounds(530, 750, 100, 30);
+                importButton.setBounds(530, 730, 100, 30);
                 frame.add(importButton);
 
                 // Create export Button instance
                 CustomButton exportButton = new CustomButton("Export");
-                exportButton.setBounds(650, 750, 100, 30);
+                exportButton.setBounds(650, 730, 100, 30);
                 frame.add(exportButton);
 
                 // Create push Button instance
                 CustomButton pushButton = new CustomButton("Rand");
-                pushButton.setBounds(50, 750, 100, 30);
+                pushButton.setBounds(50, 730, 100, 30);
                 frame.add(pushButton);
 
                 // Create help Button instance
                 CustomButton helpButton = new CustomButton("Help");
-                helpButton.setBounds(1250, 750, 100, 30);
+                helpButton.setBounds(1250, 730, 100, 30);
                 frame.add(helpButton);
 
                 // Create API key Button instance
                 CustomButton apiDialogButton = new CustomButton("API Key");
-                apiDialogButton.setBounds(1130, 750, 100, 30);
+                apiDialogButton.setBounds(1130, 730, 100, 30);
                 frame.add(apiDialogButton);
 
                 // Create JComboBox for sort options
                 String[] sortOptions = {"Symbol", "Date", "Open", "High", "Low", "Close", "Volume"};
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
-                sortByComboBox.setBounds(45, 270, 120, 30);
+                sortByComboBox.setBounds(45, 250, 120, 30);
                 sortByComboBox.setFont(font);
                 frame.add(sortByComboBox);
 
                 // Create JScrollPane and JTextArea
                 textArea.setFont(customFont);
                 JScrollPane scrollPane = new JScrollPane(textArea);
-                scrollPane.setBounds(800, 480, 550, 240); // Set position and size of JScrollPane
+                scrollPane.setBounds(800, 460, 550, 240); // Set position and size of JScrollPane
                 frame.add(scrollPane); // Add JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for multiple records
@@ -136,7 +136,7 @@ public class ViewBuilderHelper {
                 tableHeader.setFont(headerFont); // Set the larger font for header
                 tableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPane = new JScrollPane(table);
-                tableScrollPane.setBounds(50, 320, 700, 400); // Set position and size of table
+                tableScrollPane.setBounds(50, 300, 700, 400); // Set position and size of table
                 tableScrollPane.getViewport().setBackground(Color.WHITE); // Set viewport background
                                                                           // color
                 frame.add(tableScrollPane); // Add table JScrollPane to JFrame
@@ -151,7 +151,7 @@ public class ViewBuilderHelper {
                 singleTableHeader.setFont(headerFont); // Set the larger font for header
                 singleTableHeader.setBackground(Color.LIGHT_GRAY); // Set header color
                 JScrollPane tableScrollPaneSingle = new JScrollPane(singleTable);
-                tableScrollPaneSingle.setBounds(50, 200, 700, 50); // Set position and size of table
+                tableScrollPaneSingle.setBounds(50, 180, 700, 50); // Set position and size of table
                 tableScrollPaneSingle.getViewport().setBackground(Color.WHITE); // Set viewport
                                                                                 // background color
                 frame.add(tableScrollPaneSingle);
@@ -160,13 +160,13 @@ public class ViewBuilderHelper {
                 tableModel.setRowCount(0);
 
                 // Create JPanel for chart
-                chartPanel.setBounds(800, 150, 550, 300);
+                chartPanel.setBounds(800, 130, 550, 300);
                 chartPanel.setOpaque(false);  // Make the chart panel non-opaque
                 frame.add(chartPanel);
 
                 // Create the background image panel for chart
                 ImagePanel backgroundPanel = new ImagePanel("libs/images/image_chart.png");
-                backgroundPanel.setBounds(800, 150, 550, 300);
+                backgroundPanel.setBounds(800, 130, 550, 300);
                 frame.add(backgroundPanel);
 
                 // Create and add the date picker
@@ -178,7 +178,7 @@ public class ViewBuilderHelper {
                 JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
                 PromptDatePicker datePicker = new PromptDatePicker(datePanel,
                                 new DateLabelFormatter(), controller);
-                datePicker.setBounds(700, 150, 50, 30);
+                datePicker.setBounds(700, 130, 50, 30);
                 datePicker.getJFormattedTextField().setFont(font);
                 frame.add(datePicker);
 
