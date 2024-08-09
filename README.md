@@ -14,11 +14,10 @@
 ## Design Documents and Manuals
 
 - [Manual/README](./Manual/README.md)
-- [GUI Instructions](./Manual/GUI_Instructions.md)
 - [Proposal](./DesignDocuments/Proposal.md)
 - [Design](./DesignDocuments/Design.md)
 - [Features](./DesignDocuments/Features.md)
-- [GUITesting](./DesignDocuments/GUITesting.md)
+- [GUITesting](src/test/java/GUITesting.md)
 - [View Javadoc Documentation](./build/docs/javadoc/index.html)
 
 ## Instructions to Run the Application
