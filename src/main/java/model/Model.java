@@ -53,7 +53,7 @@ public class Model {
     /**
      * Path to the temporary XML file used for storing fetched stock data.
      */
-    private static final String TEMP_XML_PATH = "temp_stock_data.xml";
+    private static final String TEMP_XML_PATH = "bin/data/temp_stock_data.xml";
 
     /**
      * Constructs a Model and initializes the MarketDataAPI with the provided API key. Private
