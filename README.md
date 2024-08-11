@@ -17,8 +17,8 @@
 - [Proposal](./DesignDocuments/Proposal.md)
 - [Design](./DesignDocuments/Design.md)
 - [Features](./DesignDocuments/Features.md)
-- [GUITesting](src/test/java/GUITesting.md)
-- [View Javadoc Documentation](./build/docs/javadoc/index.html)
+- [GUITesting](./Manual/GUITesting.md)
+- [View Javadoc Documentation](./build/docs/javadoc/index.html) (Must be generated first - see instructions below)
 
 ## Instructions to Run the Application
 
@@ -66,7 +66,7 @@ To generate the Javadoc documentation for this project, follow these steps:
    gradle generateJavadoc
    ```
 
-4. **The generated Javadoc documentation will be located in the `build/docs/javadoc` directory.
+4. \*\*The generated Javadoc documentation will be located in the `build/docs/javadoc` directory.
 
 5. **To view the Javadoc documentation:**
    - Open the `build/docs/javadoc` directory in your file explorer.

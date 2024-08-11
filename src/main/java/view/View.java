@@ -22,7 +22,7 @@ public class View {
     /**
      * The main application frame.
      */
-    private JFrame frame;
+    public JFrame frame;
 
     /**
      * The text area for displaying messages.

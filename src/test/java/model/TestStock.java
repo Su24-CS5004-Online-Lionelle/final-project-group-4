@@ -1,7 +1,7 @@
 package model;
 
 import model.DataMgmt.Stock;
-import model.Model;
+
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;

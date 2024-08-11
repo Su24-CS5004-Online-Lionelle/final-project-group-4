@@ -1,11 +1,10 @@
 package view.helpers;
 
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 
+import java.time.LocalDate;
 import java.util.Properties;
 
 import javax.swing.*;
@@ -49,67 +48,79 @@ public class ViewBuilderHelper {
                 // Create the dynamic background canvas
                 DynamicBackgroundCanvas canvas = new DynamicBackgroundCanvas();
                 canvas.setLayout(null);
+                canvas.putClientProperty("name", "dynamicBackgroundCanvas"); // set name for testing
                 frame.setContentPane(canvas);
 
                 // Define larger fonts for text and headers
                 Font font = new Font("Arial", Font.PLAIN, 16);
                 Font headerFont = new Font("Arial", Font.BOLD, 16);
-                Font customFont = new Font("Serif", Font.PLAIN, 16);
 
                 // Add a logo to the top left
                 JLabel logoLabel = new JLabel(new ImageIcon("libs/images/logo.png"));
                 logoLabel.setBounds(50, 30, 500, 80);
+                logoLabel.putClientProperty("name", "logoLabel"); // set name for testing
                 frame.add(logoLabel);
 
                 // Create HintTextField instance with a hint
                 HintTextField textField = new HintTextField(" Enter a stock symbol");
                 textField.setBounds(50, 128, 510, 34);
                 textField.setFont(font);
+                textField.putClientProperty("name", "textField"); // set name for testing
                 frame.add(textField);
 
                 // Create search Button instance
                 CustomButton searchButton = new CustomButton("Search");
                 searchButton.setBounds(580, 130, 100, 30);
+                searchButton.putClientProperty("name", "searchButton"); // set name for testing
                 frame.add(searchButton);
 
                 // Create add Button instance
                 CustomButton addButton = new CustomButton("Add");
                 addButton.setBounds(410, 250, 100, 30);
+                addButton.putClientProperty("name", "addButton"); // set name for testing
                 frame.add(addButton);
 
                 // Create remove Button instance
                 CustomButton removeButton = new CustomButton("Delete");
                 removeButton.setBounds(530, 250, 100, 30);
+                removeButton.putClientProperty("name", "removeButton"); // set name for testing
                 frame.add(removeButton);
 
                 // Create clear Button instance
                 CustomButton clearButton = new CustomButton("Clear");
                 clearButton.setBounds(650, 250, 100, 30);
+                clearButton.putClientProperty("name", "clearButton"); // set name for testing
                 frame.add(clearButton);
 
                 // Create import Button instance
                 CustomButton importButton = new CustomButton("Import");
                 importButton.setBounds(530, 730, 100, 30);
+                importButton.putClientProperty("name", "importButton"); // set name for testing
                 frame.add(importButton);
 
                 // Create export Button instance
                 CustomButton exportButton = new CustomButton("Export");
                 exportButton.setBounds(650, 730, 100, 30);
+                exportButton.putClientProperty("name", "exportButton"); // set name for testing
                 frame.add(exportButton);
 
                 // Create push Button instance
                 CustomButton pushButton = new CustomButton("Rand");
                 pushButton.setBounds(50, 730, 100, 30);
+                pushButton.putClientProperty("name", "pushButton"); // set name for testing
                 frame.add(pushButton);
 
                 // Create help Button instance
                 CustomButton helpButton = new CustomButton("Help");
                 helpButton.setBounds(1250, 730, 100, 30);
+                helpButton.putClientProperty("name", "helpButton"); // set name for testing
                 frame.add(helpButton);
 
                 // Create API key Button instance
                 CustomButton apiDialogButton = new CustomButton("API Key");
                 apiDialogButton.setBounds(1130, 730, 100, 30);
+                apiDialogButton.putClientProperty("name", "apiDialogButton"); // set name for
+                                                                              // testing
                 frame.add(apiDialogButton);
 
                 // Create JComboBox for sort options
@@ -117,12 +128,16 @@ public class ViewBuilderHelper {
                 JComboBox<String> sortByComboBox = new JComboBox<>(sortOptions);
                 sortByComboBox.setBounds(45, 250, 120, 30);
                 sortByComboBox.setFont(font);
+                sortByComboBox.putClientProperty("name", "sortByComboBox"); // set name for testing
                 frame.add(sortByComboBox);
 
-                // Create JScrollPane and JTextArea
-                textArea.setFont(customFont);
+                // For the JTextArea
+                textArea.putClientProperty("name", "textArea"); // set name for testing
+
+                // For the JScrollPane that contains the JTextArea
                 JScrollPane scrollPane = new JScrollPane(textArea);
                 scrollPane.setBounds(800, 460, 550, 240); // Set position and size of JScrollPane
+                scrollPane.putClientProperty("name", "scrollPane"); // set name for testing
                 frame.add(scrollPane); // Add JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for multiple records
@@ -139,6 +154,8 @@ public class ViewBuilderHelper {
                 tableScrollPane.setBounds(50, 300, 700, 400); // Set position and size of table
                 tableScrollPane.getViewport().setBackground(Color.WHITE); // Set viewport background
                                                                           // color
+                tableScrollPane.putClientProperty("name", "tableScrollPane"); // set name for
+                                                                              // testing
                 frame.add(tableScrollPane); // Add table JScrollPane to JFrame
 
                 // Create JTable and JScrollPane for single result of search
@@ -154,6 +171,10 @@ public class ViewBuilderHelper {
                 tableScrollPaneSingle.setBounds(50, 180, 700, 50); // Set position and size of table
                 tableScrollPaneSingle.getViewport().setBackground(Color.WHITE); // Set viewport
                                                                                 // background color
+                tableScrollPaneSingle.putClientProperty("name", "tableScrollPaneSingle"); // set
+                                                                                          // name
+                                                                                          // for
+                                                                                          // testing
                 frame.add(tableScrollPaneSingle);
 
                 // Clear any existing rows from the table model to ensure it starts empty
@@ -161,12 +182,15 @@ public class ViewBuilderHelper {
 
                 // Create JPanel for chart
                 chartPanel.setBounds(800, 130, 550, 300);
-                chartPanel.setOpaque(false);  // Make the chart panel non-opaque
+                chartPanel.setOpaque(false); // Make the chart panel non-opaque
+                chartPanel.putClientProperty("name", "chartPanel"); // set name for testing
                 frame.add(chartPanel);
 
                 // Create the background image panel for chart
                 ImagePanel backgroundPanel = new ImagePanel("libs/images/image_chart.png");
                 backgroundPanel.setBounds(800, 130, 550, 300);
+                backgroundPanel.putClientProperty("name", "backgroundPanel"); // set name for
+                                                                              // testing
                 frame.add(backgroundPanel);
 
                 // Create and add the date picker
@@ -180,6 +204,7 @@ public class ViewBuilderHelper {
                                 new DateLabelFormatter(), controller);
                 datePicker.setBounds(700, 130, 50, 30);
                 datePicker.getJFormattedTextField().setFont(font);
+                datePicker.putClientProperty("name", "datePicker"); // set name for testing
                 frame.add(datePicker);
 
                 // Set initial welcome text
