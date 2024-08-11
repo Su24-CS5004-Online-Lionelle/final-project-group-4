@@ -52,7 +52,7 @@ To generate the Javadoc documentation for this project, follow these steps:
 
 1. **Open the terminal in VS Code:**
 
-   You can open the terminal by going to `View -> Terminal` or by pressing `Ctrl+` ``.
+   You can open the terminal by going to `View -> Terminal`. If by chance you are using IntelliJ idea, the terminal is located at the bottom left of the IDE in with a `Terminal` tab. Either IDE will work for this step with no change in the following steps.
 
 2. **Navigate to the project root directory:**
 

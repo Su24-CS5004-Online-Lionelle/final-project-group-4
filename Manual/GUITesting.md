@@ -5,14 +5,13 @@
 ### Key Areas of Testing
 
 - **Open and Closing of GUI**
-- **Data Display**
+- **Default and Dynamic Data Display**
 - **Button Usage and Functionality**
-- **Error Handling with Proper Message Dialogue Boxes**
+- **Error Handling with Proper Message Dialog Boxes**
 - **Data Export and Import Functionality**
 - **Sorting and Filtering**
-- **Search Functionality**
-- **Date Range and Formatting**
-- **Chart Display and Functionality**
+- **Search Functionality and Date Picker Interaction**
+- **Chart Display, Interaction, and Functionality**
 - **Text Panel Testing**
 
 ## Pre-Test Setup
@@ -21,7 +20,7 @@ Before beginning manual testing, the following steps were taken:
 
 - **Automated Testing**:
 
-  - An automated test suite was set up and executed to ensure basic functionality, utilizing `AssertJ-Swing` for testing GUI components.
+  - An automated test suite was set up and executed to ensure basic functionality, utilizing `AssertJ-Swing` for testing GUI components and the initial loading of the GUI.
   - The `TestView` class covered visibility and initialization of key components, such as buttons, labels, and panels.
   - The tests ensured that all components, including dynamic backgrounds, buttons, text areas, and charts, were correctly initialized and visible on the GUI.
   - Specific automated tests included:
@@ -99,18 +98,18 @@ This section details the testing process for the critical areas of the applicati
 
   1. Click on each button not used which would be Rand, Delete, API Key, and Help. Intentionally obmitted the export and import buttons as that is covered in a later test case.
 
-     <img src="../libs/images/GuiTestImg/rand_button.png" alt="Rand Button" width="500">
-     <img src="../libs/images/GuiTestImg/delete_button.png" alt="Delete Button" width="500">
-     <img src="../libs/images/GuiTestImg/api_key_button.png" alt="API Key Button" width="500">
-     <img src="../libs/images/GuiTestImg/help_button.png" alt="Help Button" width="500">
+     <img src="../libs/images/GuiTestImg/button_rand.png" alt="Rand Button Display" width="500">
+     <img src="../libs/images/GuiTestImg/button_delete.png" alt="Delete Button Display" width="500">
+     <img src="../libs/images/GuiTestImg/button_api.png" alt="API Key Button Display" width="500">
+     <img src="../libs/images/GuiTestImg/help_button_text_display.png" alt="Help Button" width="500">
 
   2. Click on data picker and make sure the pop out happens appropriately.
 
-     <img src="../libs/images/GuiTestImg/date_picker.png" alt="Date Picker" width="500">
+     <img src="../libs/images/GuiTestImg/button_datepicker.png" alt="Date Picker Popout" width="500">
 
   3. Click on the drop down sort menu for list pane and make sure it sorts the data correctly without anomalous behavior in the rest of the components.
 
-     <img src="../libs/images/GuiTestImg/sort_menu.png" alt="Sort Menu" width="500">
+     <img src="../libs/images/GuiTestImg/button_sortlist.png" alt="Sort Menu Dropdown" width="500">
 
 - **Expected Result**: Each button should trigger the correct action and update the UI accordingly without causing any errors or unexpected behavior in other components.
 
@@ -125,19 +124,19 @@ This section details the testing process for the critical areas of the applicati
 
   1. Attempt to use date picker without a search qeuery to trigger error handling and proper message dialogue box displayed.
 
-     <img src="../libs/images/GuiTestImg/date_picker_no_search.png" alt="Date Picker No Search" width="500">
+     <img src="../libs/images/GuiTestImg/date_picker_search_requested.png" alt="Date Picker No Search" width="500">
 
   2. Enter invalid data into the search field to trigger error handling with proper message dialogue box displayed.
 
-     <img src="../libs/images/GuiTestImg/invalid_search.png" alt="Invalid Search" width="500">
+     <img src="../libs/images/GuiTestImg/search_dialogue_error_box.png" alt="Invalid Search" width="500">
 
-  3. Click invalid date in the date picker to trigger error handling with proper message dialogue box displayed.
+  3. Click invalid date in the date picker pop out for valid date range to trigger error handling with proper message dialogue box displayed.
 
-     <img src="../libs/images/GuiTestImg/invalid_date.png" alt="Invalid Date" width="500">
+     <img src="../libs/images/GuiTestImg/date_picker_dnf.png" alt="Invalid Date" width="500">
 
   4. Click out of bounds date in the date picker to trigger error handling with proper message dialogue box displayed.
 
-     <img src="../libs/images/GuiTestImg/out_of_bounds_date.png" alt="Out of Bounds Date" width="500">
+     <img src="../libs/images/GuiTestImg/date_picker_search_door.png" alt="Out of Bounds Date" width="500">
 
 - **Expected Result**: Invalid inputs should be caught, and a proper error message should be displayed. Only one error box should be displayed at a time and no other components should be affected by the error message.
 
@@ -152,11 +151,11 @@ This section details the testing process for the critical areas of the applicati
 
   1. Click on the export button and make sure the file explorer pops up and the file is exported correctly and allows the user to name the file. Also verify the destination for the file is set to customlists.
 
-     <img src="../libs/images/GuiTestImg/export_button.png" alt="Export Button" width="500">
+     <img src="../libs/images/GuiTestImg/button_export.png" alt="Export Button" width="500">
 
   2. Click on import button and make sure the file explorer pops up and the file is imported correctly. Also verify the destination for loading the file(s) is set to customlists.
 
-     <img src="../libs/images/GuiTestImg/import_button.png" alt="Import Button" width="500">
+     <img src="../libs/images/GuiTestImg/button_import.png" alt="Import Button" width="500">
 
 - **Expected Result**: The data should be exported and imported correctly to from with no loss of information and correct formatting. No change to other components should be observed outside of the list pane.
 
@@ -171,12 +170,12 @@ This section details the testing process for the critical areas of the applicati
 
   1. Sort the data using different criteria: date, open, close, high, low and volume. In the photos I used random data to show the sorting functionality so as not to expire my API, I found no difference in the sorting functionality between the random data and the API data.
 
-     <img src="../libs/images/GuiTestImg/date_sort.png" alt="Date Sort" width="500">
-     <img src="../libs/images/GuiTestImg/open_sort.png" alt="Open Sort" width="500">
-     <img src="../libs/images/GuiTestImg/close_sort.png" alt="Close Sort" width="500">
-     <img src="../libs/images/GuiTestImg/high_sort.png" alt="High Sort" width="500">
-     <img src="../libs/images/GuiTestImg/low_sort.png" alt="Low Sort" width="500">
-     <img src="../libs/images/GuiTestImg/volume_sort.png" alt="Volume Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_date.png" alt="Date Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_open.png" alt="Open Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_high.png" alt="High Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_low.png" alt="Low Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_close.png" alt="Close Sort" width="500">
+     <img src="../libs/images/GuiTestImg/sort_volume.png" alt="Volume Sort" width="500">
 
 - **Expected Result**: The data should be sorted according to the selected criteria and the selected column should be the only column highlighted in grey. No other components should be affected by the sorting.
 
@@ -185,13 +184,9 @@ This section details the testing process for the critical areas of the applicati
 - **Objective**: Test the filtering functionality for parsing search qeuery data that is displayed on the chart as tabular data for a valid specific date in the date range. The display will be in the single stock pane. The date picker will be used to filter the data.
 - **Steps**:
 
-  1. Click on the date picker and select a valid date range to filter the data.
+  1. Click on the date picker and select a valid date range to filter the data. Verify that the data is filtered correctly and displayed in the single stock pane for the date selected.
 
-     <img src="../libs/images/GuiTestImg/date_picker.png" alt="Date Picker" width="500">
-
-  2. Verify that the data is filtered correctly and displayed in the single stock pane.
-
-     <img src="../libs/images/GuiTestImg/date_picker_filter.png" alt="Date Picker Filter" width="500">
+     <img src="../libs/images/GuiTestImg/date_picker_single_update.png" alt="Date Picker" width="500">
 
 - **Expected Result**: The JDatePicker component should trigger data filtering based on the selected date from its calendar pop-out. After clearing the date, users can manually select valid dates for the current search query multiple times. This interaction should only affect the single stock pane, leaving all other components unchanged. It is expected that if the user does not clear the date between each selection that date will stay selected as they pan through various months which loads that date on each new month. This will cause error and needs to be cleared before selecting a new date.
 
@@ -206,15 +201,15 @@ Test interactive elements within the chart (e.g., zoom, hover).
 
 1. Interact with the chart and select time ranges of week, month and all for line chart.
 
-   <src="../libs/images/GuiTestImg/line_chart_week.png" alt="Line Chart Zoom" width="500">
-   <src="../libs/images/GuiTestImg/line_chart_month.png" alt="Line Chart Zoom" width="500">
-   <src="../libs/images/GuiTestImg/line_chart_all.png" alt="Line Chart Zoom" width="500">
+   <img src="../libs/images/GuiTestImg/chart_line_week.png" alt="Line Chart Week" width="500">
+   <img src="../libs/images/GuiTestImg/chart_line_month.png" alt="Line Chart Month" width="500">
+   <img src="../libs/images/GuiTestImg/chart_line_all.png" alt="Line Chart All" width="500">
 
 2. Interact with the chart and select time ranges of week, month and all for OHLC chart.
 
-   <src="../libs/images/GuiTestImg/ohlc_chart_week.png" alt="OHLC Chart Zoom" width="500">
-   <src="../libs/images/GuiTestImg/ohlc_chart_month.png" alt="OHLC Chart Zoom" width="500">
-   <src="../libs/images/GuiTestImg/ohlc_chart_all.png" alt="OHLC Chart Zoom" width="500">
+   <img src="../libs/images/GuiTestImg/chart_ohlc_week.png" alt="OHLC Chart Week" width="500">
+   <img src="../libs/images/GuiTestImg/chart_ohlc_month.png" alt="OHLC Chart Month" width="500">
+   <img src="../libs/images/GuiTestImg/chart_ohlc_all.png" alt="OHLC Chart All" width="500">
 
 **Expected Result**:
 The chart should respond to interactions smoothly and correctly, allowing users to select various time ranges to be displayed in the chart. The chart should be able to use line chart selection and OHLC selection without any effect on the rest of the components.
