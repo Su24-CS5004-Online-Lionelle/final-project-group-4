@@ -9,7 +9,7 @@
 
 ## Application Overview
 
-**Stock Data View** is an application that leverages the Alpha Vantage API to provide daily updated stock data and historical data for the last 100 trading days. Users can query stock information, create custom watchlists of stocks, and visualize individual stock performance through detailed line charts. Additionally, the application includes a calendar section that allows users to select individual days and search through historical data visually.
+**Stock Data View** is an application that leverages the Alpha Vantage API to provide daily updated stock data and historical data for the last 100 trading days. Users can query stock information, create custom watchlists of stocks, and visualize individual stock performance through detailed line charts and OHLC charts. Additionally, the application includes a calendar section that allows users to select individual days and search through historical data visually. For more detailed highlights of features offered to users please refer to the Features section of the Design Document.
 
 ## Design Documents and Manuals
 
